@@ -11,3 +11,13 @@
 *.lai
 *.la
 *.a
+
+# ignore files from the teacher
+bin/*
+lib/*
+obj/*
+textures/*
+*.make
+Makefile
+premake4.lua
+
