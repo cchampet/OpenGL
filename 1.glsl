@@ -92,5 +92,17 @@ void main(void)
 	int tmpCoordX = int(frag.uv.x * 10)+1;
 	int tmpCoordY = int(frag.uv.y * 10)+1;
 	Color = vec4((tmpCoordX%2)*(tmpCoordY%2)*sin(5*frag.uv.y), (tmpCoordX%2), 0.5, 1.0);
+	//float x = uv.x + sin(Time);
+	//float y = uv.y + cos(Time);
+
+	//x = x*50 - 20;
+	//y = y*50 - 20 ;
+	//y*= 3.14159;
+
+	//if(( int(float(abs(x-sin(y)))%10 <4))) {
+	//	color = vec4(1.0*x, 0.25*sin(Time), 0.1*cos(Time), 1.0);;
+	//}
+
+	//Color = color;
 }	
 #endif
