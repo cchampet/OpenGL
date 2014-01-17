@@ -86,23 +86,36 @@ out vec4 Color;
 
 void main(void)
 {
-	//ColorOut = vec4(1.0, 0.0, 1.0, 1.0);
-	//Color = vec4(frag.position.x, frag.position.y, frag.position.z, 1.0);
-	//Color = vec4(frag.normal.x, frag.normal.y, frag.normal.z, 1.0);
-	int tmpCoordX = int(frag.uv.x * 10)+1;
-	int tmpCoordY = int(frag.uv.y * 10)+1;
-	Color = vec4((tmpCoordX%2)*(tmpCoordY%2)*sin(5*frag.uv.y), (tmpCoordX%2), 0.5, 1.0);
-	//float x = uv.x + sin(Time);
-	//float y = uv.y + cos(Time);
+	/* Texture procédurale */
+	//x => les bandes
+	//x-cos(y) => les vagues
+	float x = frag.uv.x + sin(Time); // -1/2
+	float y = frag.uv.y + cos(Time); // -1/2
 
-	//x = x*50 - 20;
-	//y = y*50 - 20 ;
+	x = x*50 - 20; // -30/80
+	y = y*50 - 20; // -30/80
+	
 	//y*= 3.14159;
 
-	//if(( int(float(abs(x-sin(y)))%10 <4))) {
-	//	color = vec4(1.0*x, 0.25*sin(Time), 0.1*cos(Time), 1.0);;
-	//}
+	vec4 color = vec4(0.0, 0.0, 1.0, 1.0);
 
-	//Color = color;
-}	
+	//x - sin(y)
+	if(int(abs(x-cos(y)))%10 < 6) {
+		color = vec4(x, 0.25, 0.1, 1.0);
+	}
+	Color = color;
+
+	/* Lumières */
+	vec3 l = vec3(0.0, 0.3, 0.2); // vecteur surface vers lumière
+	vec3 v = normalize(CameraPosition - frag.normal); // vecteur surface vers caméra
+	vec3 n = frag.normal; // normale
+	vec3 h = normalize(l-v);
+
+	vec4 diffuse = color;
+	vec4 specular = vec4(0.5, 0.5, 0.5, 1.0);
+	float specular_power = 1.0;
+
+	Color = diffuse * dot(n, l) + specular *  pow(dot(n, h), specular_power);
+}
+
 #endif

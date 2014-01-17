@@ -376,6 +376,22 @@ int main( int argc, char **argv )
         //
         // Activate texture units and bind textures to them
         //
+        GLuint textures[1];
+
+        int x = 0;
+        int y = 0;
+        int comp = 0;
+        int req_comp = 1;
+        stbi_load ("../textures/spnza_bricks_a_diff.tga", &x, &y, &comp, req_comp);
+
+        glGenTextures( 1, textures);
+        //glActiveTexture(texture[0]);
+        glBindTexture(GL_TEXTURE_2D, textures[0]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, (void*)0);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glDeleteTextures(1, textures);
 
         // Select shader
         glUseProgram(program);
@@ -390,7 +406,7 @@ int main( int argc, char **argv )
         //
         // Render vaos
         //
-        animation = 1;
+        //animation = 1;
         glUniform1i(animationIndexLocation, animation);
         glBindVertexArray(vao[0]);
         //glDrawElements(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
