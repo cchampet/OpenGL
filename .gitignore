@@ -6,9 +6,9 @@
 *.exe
 *.o
 *.so
-bin/*
-obj/*
-lib/*
+*/bin
+*/obj
+*/lib
 
 # Packages #
 ############
