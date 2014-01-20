@@ -1,0 +1,42 @@
+// Early-Z Rejection
+Chaque pixel recouvert par une primitive(même un tout petit peu) forment des fragments.
+Chaque fragment a une notion de profondeur, normalisé entre 0 et 1.
+
+Le shader est ensuite exécuté sur chaque fragment. Si plusieurs fragments se superposent, le shader fait le calcul autant de fois qu'il y a de fragment. S'il y en a beaucoup, c'est trop de travail pour rien ! 
+
+Du coup : on va stocker la profondeur du fragment et n'effectuer le shader que si .. 
+Le GL_Frag_Depth d'un fragment peut être modifié dans le fragment shader !
+
+Forward : on part du fond pour aller vers l'avant
+Deffered : utilisation du Buffer. Un seul fragment par pixel. Optimisation, du coup on peut mettre plus de lumières ou de trucs lourds. 
+
+
+
+// Lumières
+Diffuse = la lumière reçue se reflète dans toutes les directions. 
+Modèle théorique qui n'existe pas en vrai. 
+
+Specular = la lumière reçue se reflète dans une seule direction. 
+Modèle théorique qui n'existe pas en vrai non plus.
+
+Du coup, on fait un modèle qui mélange ces deux approches. 
+
+Plusieurs espaces de travail :
+- espace monde
+- espace Window (écran)
+- espace model
+- espace caméra
+Il est possible de calculer l'illumination dans chacun des modèles ; chacun à ses avantages et ses inconvénients.
+
+
+// Deferred Shading
+On rend la scène et pour chaque fragment, on crée trois textures représentant la couleur, la normale et profondeur. 
+
+Pour chaque lumière et chaque pixel, on fait le calcul de l'illumination à partir des trois textures et on le stocke qqpart. 
+
+Selon si les lumières sont allumées ou non, on affiche les quads correspondants. Mais on ne les recalcule pas à chaque tour de boucle. 
+
+/!\ Attention /!\
+Objets transparents = ça ne marche pas.
+Beaucoup de textures différentes justaposées : pas idéal non plus...
+
