@@ -1,23 +1,50 @@
-# Compiled Object files
-*.slo
-*.lo
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
 *.o
-
-# Compiled Dynamic libraries
 *.so
-*.dylib
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-
-# ignore files from the teacher
 bin/*
-lib/*
 obj/*
-textures/*
-*.make
+lib/*
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+*.vcproj*
 Makefile
-premake4.lua
+*.make
+*.sublime-workspace
+*.lua
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+
+
 
