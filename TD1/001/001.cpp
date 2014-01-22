@@ -412,8 +412,6 @@ int main( int argc, char **argv )
         glUniformMatrix4fv(objectLocation, 1, 0, glm::value_ptr(objectToWorld));
         glUniform1f(timeLocation, t);
         glUniform3fv(cameraPositionLocation, 1, glm::value_ptr(camera.eye));
-
-        glUniform1
         
         //
         // Render vaos
