@@ -128,7 +128,7 @@ struct Light{
 
     // Spot Light
     glm::vec3 m_spotDirection;
-    float m_phi; // Angle d'ouverture du spot
+    float m_phi; // Angle d'ouverture du spot, en degrée
 
     GLuint m_intensityLocation;
     GLuint m_specCoeffLocation;
@@ -282,8 +282,8 @@ int main( int argc, char **argv )
     Light* light2 = createLight(program, "2", 1.f, 0.3f, glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f, 1.f, 0.8f));
     Light* directionalLight = createLight(program, "3", 1.f, 0.3f, glm::vec3(0.3f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f));
     Light* spotLight = createLight(program, "4", 10.f, 0.3f, glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f, 5.f, 0.f));
-    spotLight->m_phi = 3.14;
-    spotLight->m_spotDirection = glm::vec3(0.f, -1.f, 0.f);
+    spotLight->m_phi = 60.;
+    spotLight->m_spotDirection = glm::vec3(1.f, -1.f, 0.f);
 
     // Load geometry
     int cube_triangleCount = 12;
@@ -487,7 +487,7 @@ int main( int argc, char **argv )
         imguiSlider("X", &(light1->m_position.x), -10.0, 10.0, 0.1);
         imguiSlider("Y", &(light1->m_position.y), -10.0, 10.0, 0.1);
         imguiSlider("Z", &(light1->m_position.z), -10.0, 10.0, 0.1);
-        imguiSlider("Spot angle", &(spotLight->m_phi), 0.0, 3.14159, 0.001);
+        imguiSlider("Spot angle", &(spotLight->m_phi), 0, 180, 0.001);
         imguiEndScrollArea();
         imguiEndFrame();
         imguiRenderGLDraw(width, height);
