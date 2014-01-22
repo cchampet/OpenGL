@@ -19,8 +19,17 @@ out vData
 
 void main(void)
 {	
-	
-	gl_Position = vec4(VertexPosition + vec3(gl_InstanceID, gl_InstanceID, 0), 1.0);
+	float rotationX = cos(Time);
+	float rotationY = sin(Time);
+
+	if(gl_InstanceID < 5)
+		gl_Position = vec4(VertexPosition + vec3(gl_InstanceID*rotationX, gl_InstanceID*rotationY, 0), 1.0);
+	else if(gl_InstanceID < 10)
+		gl_Position = vec4(VertexPosition + vec3(-(gl_InstanceID%5)*rotationX, -(gl_InstanceID%5)*rotationY, 0), 1.0);
+	else if(gl_InstanceID < 15)
+		gl_Position = vec4(VertexPosition + vec3(0, (gl_InstanceID%5)*rotationX, (gl_InstanceID%5)*rotationY), 1.0);
+	else
+		gl_Position = vec4(VertexPosition + vec3(0, -(gl_InstanceID%5)*rotationX, -(gl_InstanceID%5)*rotationY), 1.0);
 
 	vertex.uv = VertexTexCoord;
 	vertex.normal = VertexNormal;

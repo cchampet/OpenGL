@@ -1,0 +1,11 @@
+TD1
+- quand on envoie les textures au shader, glUniform1i prend un int (0 et 1 ici). Pourquoi ?
+- dans la boucle de rendu, on ré-active et re-bind les textures... Pourquoi ?
+//
+// Select textures
+//
+glActiveTexture(GL_TEXTURE0);
+glBindTexture(GL_TEXTURE_2D, textures[0]);
+glActiveTexture(GL_TEXTURE1);
+glBindTexture(GL_TEXTURE_2D, textures[1]);
+- le geometry shader peut-il créer de nouvelles primitives ? Si oui, possible d'afficher plusieurs cubes supplémentaires à partir d'une seule instance ?

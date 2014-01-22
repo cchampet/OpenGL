@@ -403,15 +403,14 @@ int main( int argc, char **argv )
         // Render vaos
         //
         //animation = 1;
-        glUniform1i(animationIndexLocation, animation);
+        //glUniform1i(animationIndexLocation, animation);
         glBindVertexArray(vao[0]);
         //glDrawElements(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-        glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 5);
+        glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 20);
         animation = 0;
         glUniform1i(animationIndexLocation, animation);
         glBindVertexArray(vao[1]);
         glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-
 
 #if 1
         // Draw UI
