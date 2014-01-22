@@ -181,24 +181,23 @@ int main( int argc, char **argv )
     int comp;
 
     unsigned char * diffuse = stbi_load("textures/spnza_bricks_a_diff.tga", &x, &y, &comp, 3);
-    
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textures[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, diffuse);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-/*    glBindTexture(GL_TEXTURE_2D, 0);
-    glDeleteTextures(1, textures);
-*/
-    //
-    // Load into a GL texture
-    //
     fprintf(stderr, "Diffuse %dx%d:%d\n", x, y, comp);
 
     unsigned char * spec = stbi_load("textures/spnza_bricks_a_spec.tga", &x, &y, &comp, 1);
-    //
-    // Load into a GL texture
-    //
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, textures[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, x, y, 0, GL_RED, GL_UNSIGNED_BYTE, spec);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     fprintf(stderr, "Spec %dx%d:%d\n", x, y, comp);
 
     glerr = glGetError();
@@ -219,6 +218,8 @@ int main( int argc, char **argv )
     // Apply shader
     GLuint program = shader.program;
     glUseProgram(program);
+
+    //create location in order to send to the shader
     GLuint projectionLocation = glGetUniformLocation(program, "Projection");
     GLuint viewLocation = glGetUniformLocation(program, "View");
     GLuint objectLocation = glGetUniformLocation(program, "Object");
@@ -227,11 +228,10 @@ int main( int argc, char **argv )
     GLuint specLocation = glGetUniformLocation(program, "Spec");
     GLuint cameraPositionLocation = glGetUniformLocation(program, "CameraPosition");
     GLuint animationIndexLocation = glGetUniformLocation(program, "Animation");
-
-/*    glUniform1i(diffuseLocation, 0);
+    
+    //send diffuse and spec to the shader
+    glUniform1i(diffuseLocation, 0);
     glUniform1i(specLocation, 1);
-    glUniform1f(timeLocation, 2);*/
-
 
     // Load geometry
     // Cube
@@ -252,10 +252,8 @@ int main( int argc, char **argv )
     //
     // Create and bind VAO and VBO
     //
-
     GLuint vao[2];
     glGenVertexArrays(2, vao);
-
     GLuint vbo[8];
     glGenBuffers(8, vbo);
 
@@ -386,22 +384,10 @@ int main( int argc, char **argv )
         //
         // Activate texture units and bind textures to them
         //
-        /*GLuint textures[1];
-
-        int x = 0;
-        int y = 0;
-        int comp = 0;
-        int req_comp = 1;
-        stbi_load ("../textures/spnza_bricks_a_diff.tga", &x, &y, &comp, req_comp);
-
-        glGenTextures( 1, textures);
-        //glActiveTexture(texture[0]);
+        glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textures[0]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, (void*)0);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDeleteTextures(1, textures);*/
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, textures[1]);
 
         // Select shader
         glUseProgram(program);

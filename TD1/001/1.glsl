@@ -82,11 +82,15 @@ in fData
     vec3 position;
 }frag;
 
+uniform sampler2D Diffuse;
+uniform sampler2D Spec;
+
 out vec4 Color;
 
 void main(void)
 {
 	/* Texture procédurale */
+	/*
 	//x => les bandes
 	//x-cos(y) => les vagues
 	float x = frag.uv.x + sin(Time); // -1/2
@@ -104,8 +108,10 @@ void main(void)
 		color = vec4(x, 0.25, 0.1, 1.0);
 	}
 	Color = color;
+	*/
 
 	/* Lumières */
+	/*
 	vec3 l = vec3(0.0, 0.3, 0.2); // vecteur surface vers lumière
 	vec3 v = normalize(CameraPosition - frag.normal); // vecteur surface vers caméra
 	vec3 n = frag.normal; // normale
@@ -116,6 +122,23 @@ void main(void)
 	float specular_power = 1.0;
 
 	Color = diffuse * dot(n, l) + specular *  pow(dot(n, h), specular_power);
+	*/
+
+	/* Textures */
+	vec3 diffuse = texture(Diffuse, frag.uv).rgb;
+	float spec = texture(Spec, frag.uv).r;
+
+	vec3 n = normalize(frag.normal);
+	vec3 l = vec3(0.0, 1.0, 10.0) - frag.position;
+
+	vec3 v = frag.position - CameraPosition;
+	vec3 h = normalize(l-v);
+	float n_dot_l = clamp(dot(n, l), 0, 1.0);
+	float n_dot_h = clamp(dot(n, h), 0, 1.0);
+
+	vec3 color = diffuse * n_dot_l + spec * vec3(1.0, 1.0, 1.0) *  pow(n_dot_h, spec * 100.0);
+
+	Color = vec4(color, 1.0);
 }
 
 #endif
