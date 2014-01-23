@@ -283,7 +283,7 @@ int main( int argc, char **argv )
     Light* directionalLight = createLight(program, "3", 1.f, 0.3f, glm::vec3(0.3f, 0.f, 1.f), glm::vec3(0.f, -1.f, 0.f));
     Light* spotLight = createLight(program, "4", 10.f, 0.3f, glm::vec3(1.f, 0.f, 0.f), glm::vec3(0.f, 5.f, 0.f));
     spotLight->m_phi = 60.;
-    spotLight->m_spotDirection = glm::vec3(1.f, -1.f, 0.f);
+    spotLight->m_spotDirection = glm::vec3(0.f, 1.f, 0.f);
 
     // Load geometry
     int cube_triangleCount = 12;
