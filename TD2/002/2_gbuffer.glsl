@@ -38,7 +38,10 @@ out vec4  Normal;
 
 void main(void)
 {
-	Color = vec4(1.0, 0.0, 1.0, 1.0);
+	//Color = vec4(1.0, 0.0, 1.0, 1.0);	
+	//Color = vec4(abs(normal), 1.0); // Normal
+	Color = vec4(texture(Diffuse, uv).rgb, 1.0); // Diffuse color	
+	//Color = vec4(texture(Spec, uv).r); // Specular coeff
 }
 
 #endif
