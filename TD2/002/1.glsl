@@ -87,16 +87,23 @@ vec3 computeColor(float intensity, float specCoeff, vec3 color, vec3 lPosition, 
 	if(type == 2) {
 		// cosTheta = dot(a,b) / (norm(a)norm(b))
 		float cosTheta = dot(l, SpotDirection4)/(sqrt(dot(SpotDirection4, SpotDirection4))*sqrt(dot(l, l)));
-		float angle_radian = SpotAngle4*3.14/180;
-		if(cosTheta < cos(angle_radian)){
-			fallOff = pow(((cosTheta - cos(angle_radian)) / (cos(50.) - cos(angle_radian))),4);
+		float spotAngleExtern_rad = SpotAngle4*3.14/180;
+		float spotAngleIntern_rad = 50.;
+		if(cosTheta < cos(spotAngleExtern_rad)){
+			fallOff = 0.f;
+		}
+		else if(cosTheta > cos(spotAngleExtern_rad) && cosTheta < cos(spotAngleIntern_rad)) {
+			fallOff = pow(((cosTheta - cos(spotAngleExtern_rad)) / (cos(spotAngleIntern_rad) - cos(spotAngleExtern_rad))),4);
+		}
+		else{
+			fallOff = 1.f;
 		}
 	}
 	float distance = sqrt(dot(l, l));
 	float coeffIntensity = 1./(pow(distance, 2.f));
-	float lightIntensity = intensity*coeffIntensity/fallOff;
+	float lightIntensity = intensity*coeffIntensity;
 
-	vec3 colorRes = lightColor * lightIntensity * (diffuse * n_dot_l + spec * vec3(1.0, 1.0, 1.0) *  pow(n_dot_h, spec * 100.0));
+	vec3 colorRes = lightColor * lightIntensity * fallOff * (diffuse * n_dot_l + spec * vec3(1.0, 1.0, 1.0) *  pow(n_dot_h, spec * 100.0));
 	return colorRes;
 }
 
