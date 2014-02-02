@@ -279,56 +279,56 @@ int main( int argc, char **argv )
 
     // Cube
     glBindVertexArray(vao[0]);
-    // Bind indices and upload data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[0]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_triangleList), cube_triangleList, GL_STATIC_DRAW);
-    // Bind vertices and upload data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
-    // Bind normals and upload data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_normals), cube_normals, GL_STATIC_DRAW);
-    // Bind uv coords and upload data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_uvs), cube_uvs, GL_STATIC_DRAW);
+        // Bind indices and upload data
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[0]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_triangleList), cube_triangleList, GL_STATIC_DRAW);
+        // Bind vertices and upload data
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
+        // Bind normals and upload data
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cube_normals), cube_normals, GL_STATIC_DRAW);
+        // Bind uv coords and upload data
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cube_uvs), cube_uvs, GL_STATIC_DRAW);
 
     // Plane
     glBindVertexArray(vao[1]);
-    // Bind indices and upload data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[4]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(plane_triangleList), plane_triangleList, GL_STATIC_DRAW);
-    // Bind vertices and upload data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[5]);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
-    // Bind normals and upload data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[6]);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(plane_normals), plane_normals, GL_STATIC_DRAW);
-    // Bind uv coords and upload data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[7]);
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(plane_uvs), plane_uvs, GL_STATIC_DRAW);
+        // Bind indices and upload data
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[4]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(plane_triangleList), plane_triangleList, GL_STATIC_DRAW);
+        // Bind vertices and upload data
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[5]);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
+        // Bind normals and upload data
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[6]);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(plane_normals), plane_normals, GL_STATIC_DRAW);
+        // Bind uv coords and upload data
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[7]);
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(plane_uvs), plane_uvs, GL_STATIC_DRAW);
 
     // Quad
     glBindVertexArray(vao[2]);
-    // Bind indices and upload data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[8]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_triangleList), quad_triangleList, GL_STATIC_DRAW);
-    // Bind vertices and upload data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[9]);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+        // Bind indices and upload data
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[8]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_triangleList), quad_triangleList, GL_STATIC_DRAW);
+        // Bind vertices and upload data
+        glBindBuffer(GL_ARRAY_BUFFER, vbo[9]);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
 
     // Unbind everything. Potentially illegal on some implementations
     glBindVertexArray(0);
@@ -342,6 +342,15 @@ int main( int argc, char **argv )
 
     // Create color texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Create RGBA32F texture
+    glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
     //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -363,9 +372,11 @@ int main( int argc, char **argv )
 
     // Attach textures to framebuffer
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, gbufferTextures[0], 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1 , GL_TEXTURE_2D, gbufferTextures[1], 0);
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, gbufferTextures[2], 0);
     gbufferDrawBuffers[0] = GL_COLOR_ATTACHMENT0;
     gbufferDrawBuffers[1] = GL_COLOR_ATTACHMENT1;
+    // Note : GL_DEPTH_ATTACHMENT is filled automaticaly.
 
     if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
@@ -455,6 +466,7 @@ int main( int argc, char **argv )
 
         // Bind gbuffer shader
         glUseProgram(gbuffer_shader.program);
+        
         // Upload uniforms
         glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
         glUniformMatrix4fv(gbuffer_viewLocation, 1, 0, glm::value_ptr(worldToView));
@@ -462,6 +474,19 @@ int main( int argc, char **argv )
         glUniform1f(gbuffer_timeLocation, t);
         glUniform1i(gbuffer_diffuseLocation, 0);
         glUniform1i(gbuffer_specLocation, 1);
+
+        /////////////////////////////
+        // Draw on the FrameBuffer //
+        /////////////////////////////
+
+        // Bind personnal buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, gbufferFbo);
+
+        // Clear the FrameBuffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Activate buffer list when drawing
+        glDrawBuffers(2, gbufferDrawBuffers);
 
         // Bind textures
         glActiveTexture(GL_TEXTURE0);
@@ -474,6 +499,89 @@ int main( int argc, char **argv )
         glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 4);
         glBindVertexArray(vao[1]);
         glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+
+        // Debind personnal buffer
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        /////////////////////////////////////////////////////////////////
+        // Compute all light and render the merge into the main window //
+        /////////////////////////////////////////////////////////////////
+
+        // Reset Viewport
+        glViewport( 0, 0, width, height );
+        //camera.setViewport(0, 0, width, height);
+        // Clear FrameBuffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Disable Depth
+        glDisable(GL_DEPTH_BUFFER);
+
+        // Bind lighting shader
+        glUseProgram(lighting_shader.program);
+        // Update uniform of the shader
+        glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
+        glUniform1i(lighting_materialLocation, 0);
+        glUniform1i(lighting_normalLocation, 1);
+        glUniform1i(lighting_depthLocation, 2);
+        glUniform3fv(lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
+        glUniformMatrix4fv(lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+
+        // Bind textures
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);        
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);    
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);
+
+        // Draw a quad per light
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_ONE, GL_ONE);
+        for (unsigned int i = 0; i < numLights; ++i)
+        {
+            float lightPosition[3] = { 0.0, 1.0, 10.0 };
+            float lightColor[3] = {1.0, 1.0, 1.0};
+            float lightIntensity = 1.0;
+            glUniform3fv(lighting_lightPositionLocation, 1, lightPosition);
+            glUniform3fv(lighting_lightColorLocation, 1, lightColor);
+            glUniform1f(lighting_lightIntensityLocation, lightIntensity);
+            glBindVertexArray(vao[2]);
+            glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+        }
+        glDisable(GL_BLEND);
+
+        ////////////////////////////////////////////
+        // Draw data from FrameBuffer into a quad //
+        ////////////////////////////////////////////
+
+        // Enable the 3 debug window to overlap the principal render
+        glDisable(GL_DEPTH_TEST);
+
+        // Bind blit shader
+        glUseProgram(blit_shader.program);
+        // Update uniform of the shader
+        glUniform1i(blit_tex1Location, 0);
+
+        // Activate the unit texture 0 (TEXTURE0)
+        glActiveTexture(GL_TEXTURE0);
+
+        // Quad 1/3
+        glViewport(0, 0, width/3, height/4);
+        glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);
+        //draw the quad
+        glBindVertexArray(vao[2]); 
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+
+        // Quad 2/3
+        glViewport(width/3, 0, width/3, height/4);
+        glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);
+        glBindVertexArray(vao[2]); 
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+
+        // Quad 3/3
+        glViewport(2*width/3, 0, width/3, height/4);
+        glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);
+        glBindVertexArray(vao[2]); 
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
 #if 1
         // Draw UI

@@ -114,6 +114,6 @@ void main(void)
 	vec3 color3 = computeColor(Intensity3, SpecCoeff3, LightColor3, LightPosition3, 1);
 	vec3 color4 = computeColor(Intensity4, SpecCoeff4, LightColor4, LightPosition4, 2);
 	
-	Color = vec4(color1+ color4, 1.0);
+	Color = vec4(color1+color2+color3+color4, 1.0);
 }
 #endif
