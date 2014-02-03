@@ -60,9 +60,9 @@ vec3 computePointLight(float intensity, float specCoeff, vec3 diffuse, vec3 lPos
 void main(void)
 {
 	vec3 normal = texture(Normal, uv).xyz;
-	vec4 material = texture (Material, uv);
+	vec4 material = texture(Material, uv);
 	vec3 diffuse = material.xyz;
-	float specular = material.w;
+	float specular = material.x;//.z
 	float depth = texture(Depth, uv).x;
 
 	vec2  xy = uv * 2.0 -1.0;
