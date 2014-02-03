@@ -6,9 +6,6 @@
 *.exe
 *.o
 *.so
-*/bin
-*/obj
-*/lib
 
 # Packages #
 ############
@@ -29,10 +26,7 @@
 *.sql
 *.sqlite
 *.vcproj*
-Makefile
-*.make
 *.sublime-workspace
-*.lua
 
 # OS generated files #
 ######################
@@ -45,6 +39,16 @@ Icon?
 ehthumbs.db
 Thumbs.db
 
+# Libs, obj and bin #
+#####################
+*/bin/*
+!*/bin/EMPTY
+*/obj/*
+!*/obj/EMPTY
+*/lib/*
+!*/lib/README
 
-
-
+# exec files #
+##############
+TD1/001d
+TD1/001r
