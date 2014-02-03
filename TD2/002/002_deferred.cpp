@@ -107,6 +107,62 @@ void init_gui_states(GUIStates & guiStates)
     guiStates.playing = false;
 }
 
+struct Light {
+    Light(glm::vec3 position, glm::vec3 color, float intensity) {
+       // m_name = name;
+        m_intensity = intensity;
+        //m_specCoeff = specCoeff;
+        m_color = color;
+        m_position = position;
+
+      //  m_spotDirection = glm::vec3(0., 0., 0.);
+        //m_phi = 0;
+    }
+    
+    //std::string m_name;
+
+    float m_intensity;
+    //float m_specCoeff;
+    glm::vec3 m_color;
+    glm::vec3 m_position;
+
+    // Spot Light
+   // glm::vec3 m_spotDirection;
+    //float m_phi; // Angle d'ouverture du spot, en degrée
+
+    GLuint m_intensityLocation;
+    //GLuint m_specCoeffLocation;
+    GLuint m_lightColorLocation;
+    GLuint m_lightPositionLocation;
+
+    //GLuint m_spotDirectionLocation;
+    //GLuint m_spotAngleLocation;
+};
+
+Light* createLight(GLuint program, glm::vec3 position, glm::vec3 color, float intensity){
+    Light* light = new Light(position, color, intensity);
+
+    light->m_intensityLocation = glGetUniformLocation(program, "LightIntensity");
+    //light->m_specCoeffLocation = glGetUniformLocation(program, ("SpecCoeff"+light->m_name).c_str());
+    light->m_lightColorLocation = glGetUniformLocation(program, "LightColor");
+    light->m_lightPositionLocation = glGetUniformLocation(program, "LightPosition");
+
+    //light->m_spotDirectionLocation = glGetUniformLocation(program, ("SpotDirection"+light->m_name).c_str());
+    //light->m_spotAngleLocation = glGetUniformLocation(program, ("SpotAngle"+light->m_name).c_str());
+
+    return light;
+}
+
+void sendLight(Light* light){
+    glUniform1f(light->m_intensityLocation, light->m_intensity);
+    //glUniform1f(light->m_specCoeffLocation, light->m_specCoeff);
+    glUniform3fv(light->m_lightColorLocation, 1, glm::value_ptr(light->m_color));
+    glUniform3fv(light->m_lightPositionLocation, 1, glm::value_ptr(light->m_position));
+
+    //glUniform3fv(light->m_spotDirectionLocation, 1, glm::value_ptr(light->m_spotDirection));
+    //glUniform1f(light->m_spotAngleLocation, light->m_phi);
+}
+
 int main( int argc, char **argv )
 {
     int width = 1024, height=768;
@@ -175,12 +231,17 @@ int main( int argc, char **argv )
     // GUI
     float numLights = 10.f;
 
+    // Lights
+    //std::vector<Light*> lightArray;
+
     // Load images and upload textures
     GLuint textures[3];
     glGenTextures(3, textures);
     int x;
     int y;
     int comp; 
+
+    // Diffuse texture
     unsigned char * diffuse = stbi_load("textures/spnza_bricks_a_diff.tga", &x, &y, &comp, 3);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, textures[0]);
@@ -190,6 +251,8 @@ int main( int argc, char **argv )
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     fprintf(stderr, "Diffuse %dx%d:%d\n", x, y, comp);
+
+    // Specular texture
     unsigned char * spec = stbi_load("textures/spnza_bricks_a_spec.tga", &x, &y, &comp, 1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, textures[1]);
@@ -255,16 +318,21 @@ int main( int argc, char **argv )
     GLuint lighting_lightIntensityLocation = glGetUniformLocation(lighting_shader.program, "LightIntensity");
 
     // Load geometry
+    // Cube
     int   cube_triangleCount = 12;
     int   cube_triangleList[] = {0, 1, 2, 2, 1, 3, 4, 5, 6, 6, 5, 7, 8, 9, 10, 10, 9, 11, 12, 13, 14, 14, 13, 15, 16, 17, 18, 19, 17, 20, 21, 22, 23, 24, 25, 26, };
     float cube_uvs[] = {0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f, 1.f, 1.f, 0.f, 0.f, 0.f, 1.f, 1.f, 0.f,  1.f, 0.f,  1.f, 1.f,  0.f, 1.f,  1.f, 1.f,  0.f, 0.f, 0.f, 0.f, 1.f, 1.f,  1.f, 0.f,  };
     float cube_vertices[] = {-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5 };
     float cube_normals[] = {0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, };
+    
+    // Plane
     int   plane_triangleCount = 2;
     int   plane_triangleList[] = {0, 1, 2, 2, 1, 3}; 
     float plane_uvs[] = {0.f, 0.f, 0.f, 10.f, 10.f, 0.f, 10.f, 10.f};
     float plane_vertices[] = {-50.0, -1.0, 50.0, 50.0, -1.0, 50.0, -50.0, -1.0, -50.0, 50.0, -1.0, -50.0};
     float plane_normals[] = {0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
+    
+    // Quad
     int   quad_triangleCount = 2;
     int   quad_triangleList[] = {0, 1, 2, 2, 1, 3}; 
     float quad_vertices[] =  {-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0};
@@ -343,7 +411,6 @@ int main( int argc, char **argv )
     // Create color texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -352,7 +419,6 @@ int main( int argc, char **argv )
     // Create RGBA32F texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -456,7 +522,7 @@ int main( int argc, char **argv )
         glm::mat4 screenToWorld = glm::transpose(glm::inverse(worldToScreen));
 
         // Viewport 
-        glViewport( 0, 0, width, height  );
+        glViewport(0, 0, width, height);
 
         // Default states
         glEnable(GL_DEPTH_TEST);
@@ -482,23 +548,21 @@ int main( int argc, char **argv )
         // Bind personnal buffer
         glBindFramebuffer(GL_FRAMEBUFFER, gbufferFbo);
 
-        // Clear the FrameBuffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            // Clear the FrameBuffer
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Activate buffer list when drawing
-        glDrawBuffers(2, gbufferDrawBuffers);
+            // Activate buffer list when drawing
+            glDrawBuffers(2, gbufferDrawBuffers);
 
-        // Bind textures
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textures[0]);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, textures[1]);
+            // Bind textures
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, textures[0]);
 
-        // Render vaos
-        glBindVertexArray(vao[0]);
-        glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 4);
-        glBindVertexArray(vao[1]);
-        glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+            // Render vaos
+            glBindVertexArray(vao[0]);
+            glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 4);
+            glBindVertexArray(vao[1]);
+            glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
         // Debind personnal buffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -508,12 +572,12 @@ int main( int argc, char **argv )
         /////////////////////////////////////////////////////////////////
 
         // Reset Viewport
-        glViewport( 0, 0, width, height );
+        glViewport(0, 0, width, height);
         //camera.setViewport(0, 0, width, height);
         // Clear FrameBuffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         // Disable Depth
-        glDisable(GL_DEPTH_BUFFER);
+        glDisable(GL_DEPTH_TEST);
 
         // Bind lighting shader
         glUseProgram(lighting_shader.program);
@@ -538,22 +602,17 @@ int main( int argc, char **argv )
         glBlendFunc(GL_ONE, GL_ONE);
         for (unsigned int i = 0; i < numLights; ++i)
         {
-            float lightPosition[3] = { 0.0, 1.0, 10.0 };
-            float lightColor[3] = {1.0, 1.0, 1.0};
-            float lightIntensity = 1.0;
-            glUniform3fv(lighting_lightPositionLocation, 1, lightPosition);
-            glUniform3fv(lighting_lightColorLocation, 1, lightColor);
-            glUniform1f(lighting_lightIntensityLocation, lightIntensity);
+            Light* light = createLight(lighting_shader.program, glm::vec3(i, 1.0, 10.0), glm::vec3(1.0, 1.0, 1.0), 1.0);
+            sendLight(light);
             glBindVertexArray(vao[2]);
             glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
         }
-        glDisable(GL_BLEND);
+        glDisable(GL_BLEND); 
 
-        ////////////////////////////////////////////
-        // Draw data from FrameBuffer into a quad //
-        ////////////////////////////////////////////
+        /////////////////////////////////////////////
+        // Draw data from FrameBuffer into 3 quads //
+        /////////////////////////////////////////////
 
-        // Enable the 3 debug window to overlap the principal render
         glDisable(GL_DEPTH_TEST);
 
         // Bind blit shader
@@ -564,23 +623,23 @@ int main( int argc, char **argv )
         // Activate the unit texture 0 (TEXTURE0)
         glActiveTexture(GL_TEXTURE0);
 
-        // Quad 1/3
+        // Quad 1/3 - Diffuse color
         glViewport(0, 0, width/3, height/4);
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);
         //draw the quad
         glBindVertexArray(vao[2]); 
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
-        // Quad 2/3
+        // Quad 2/3 - Normal
         glViewport(width/3, 0, width/3, height/4);
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);
-        glBindVertexArray(vao[2]); 
+        glBindVertexArray(vao[2]);  // Not necessary because already binded 
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
-        // Quad 3/3
+        // Quad 3/3 - Depth
         glViewport(2*width/3, 0, width/3, height/4);
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);
-        glBindVertexArray(vao[2]); 
+        glBindVertexArray(vao[2]);  // Not necessary because already binded 
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
 #if 1

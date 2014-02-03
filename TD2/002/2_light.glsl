@@ -6,7 +6,7 @@ out vec2 uv;
 
 void main(void)
 {	
-	uv = VertexPosition * 0.5 + 0.5;
+	uv = VertexPosition * 0.5 + 0.5; // Astuce : on retrouve les normales à partir des positions des vertices
 	gl_Position = vec4(VertexPosition.xy, 0.0, 1.0);
 }
 
@@ -30,16 +30,14 @@ uniform mat4 InverseViewProjection;
 
 out vec4  Color;
 
-vec3 computePointLight(float intensity, float specCoeff, vec3 color, vec3 lPosition, vec3 position, vec3 normal, vec4 material) {
+vec3 computePointLight(float intensity, float specCoeff, vec3 diffuse, vec3 lPosition, vec3 position, vec3 normal, vec4 material) {
 	
-	vec3 diffuse = color; //odd !!!!!
-	float spec = specCoeff;
 	vec3 n = normalize(normal);
 
-	vec3  lightColor = color;
+	vec3  lightColor = LightColor;
 	vec3  lightPosition = lPosition;
 
-	 // Vecteur surface vers lumière
+	// Vecteur surface vers lumière
 	vec3 l =  lightPosition - position;
 
 	vec3 v = position - CameraPosition; // Vecteur surface vers caméra
@@ -51,7 +49,7 @@ vec3 computePointLight(float intensity, float specCoeff, vec3 color, vec3 lPosit
 	float coeffIntensity = 1./(pow(distance, 2.f));
 	float lightIntensity = intensity*coeffIntensity;
 
-	vec3 colorRes = lightColor * lightIntensity * (diffuse * n_dot_l + spec * vec3(1.0, 1.0, 1.0) *  pow(n_dot_h, spec * 100.0));
+	vec3 colorRes = lightColor * lightIntensity * (diffuse * n_dot_l + specCoeff * vec3(1.0, 1.0, 1.0) *  pow(n_dot_h, specCoeff * 100.0));
 	return colorRes;
 }
 
