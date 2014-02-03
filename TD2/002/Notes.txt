@@ -47,4 +47,9 @@ Beaucoup de textures différentes justaposées : pas idéal non plus...
 
 
 
+Pourquoi au bout d'un certain nombre de lumières, ça rame ?
+    - Bande Passante : texture RGBA32F (3 floats) => Passer en RGBA8
+    - Idem pour les normales ( /!\ Entiers, il faut donc modifier les normales )
 
+
+ShaderToy

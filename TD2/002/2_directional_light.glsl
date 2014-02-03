@@ -30,7 +30,7 @@ uniform mat4 InverseViewProjection;
 
 out vec4  Color;
 
-vec3 computePointLight(float intensity, float specCoeff, vec3 diffuse, vec3 lPosition, vec3 position, vec3 normal, vec4 material) {
+vec3 computeDirectionalLight(float intensity, float specCoeff, vec3 diffuse, vec3 lPosition, vec3 position, vec3 normal, vec4 material) {
 	
 	vec3 n = normalize(normal);
 
@@ -38,7 +38,7 @@ vec3 computePointLight(float intensity, float specCoeff, vec3 diffuse, vec3 lPos
 	vec3  lightPosition = lPosition;
 
 	// Vecteur surface vers lumière
-	vec3 l =  lightPosition - position;
+	vec3 l =  -lightPosition;
 
 	vec3 v = position - CameraPosition; // Vecteur surface vers caméra
 	vec3 h = normalize(l-v); // Normale
@@ -65,8 +65,8 @@ void main(void)
 	vec4  wPosition =  vec4(xy, depth * 2.0 -1.0, 1.0) * InverseViewProjection;
 	vec3  position = vec3(wPosition/wPosition.w);
 
-	vec3 pointLight = computePointLight(LightIntensity, specular, diffuse, LightPosition, position, normal, material);
-	Color = vec4(pointLight, 1.);
+	vec3 light = computeDirectionalLight(LightIntensity, specular, diffuse, LightPosition, position, normal, material);
+	Color = vec4(light, 1.);
 }
 
 #endif

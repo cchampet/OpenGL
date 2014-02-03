@@ -109,17 +109,14 @@ void init_gui_states(GUIStates & guiStates)
 
 struct Light {
     Light(glm::vec3 position, glm::vec3 color, float intensity) {
-       // m_name = name;
         m_intensity = intensity;
-        //m_specCoeff = specCoeff;
         m_color = color;
         m_position = position;
 
-      //  m_spotDirection = glm::vec3(0., 0., 0.);
-        //m_phi = 0;
+        m_spotDirection = glm::vec3(0., 0., 0.);
+        m_phi = 0;
     }
     
-    //std::string m_name;
 
     float m_intensity;
     //float m_specCoeff;
@@ -127,40 +124,37 @@ struct Light {
     glm::vec3 m_position;
 
     // Spot Light
-   // glm::vec3 m_spotDirection;
-    //float m_phi; // Angle d'ouverture du spot, en degrée
+    glm::vec3 m_spotDirection;
+    float m_phi; // Angle d'ouverture du spot, en degrée
 
     GLuint m_intensityLocation;
-    //GLuint m_specCoeffLocation;
     GLuint m_lightColorLocation;
     GLuint m_lightPositionLocation;
 
-    //GLuint m_spotDirectionLocation;
-    //GLuint m_spotAngleLocation;
+    GLuint m_spotDirectionLocation;
+    GLuint m_spotAngleLocation;
 };
 
 Light* createLight(GLuint program, glm::vec3 position, glm::vec3 color, float intensity){
     Light* light = new Light(position, color, intensity);
 
     light->m_intensityLocation = glGetUniformLocation(program, "LightIntensity");
-    //light->m_specCoeffLocation = glGetUniformLocation(program, ("SpecCoeff"+light->m_name).c_str());
     light->m_lightColorLocation = glGetUniformLocation(program, "LightColor");
     light->m_lightPositionLocation = glGetUniformLocation(program, "LightPosition");
 
-    //light->m_spotDirectionLocation = glGetUniformLocation(program, ("SpotDirection"+light->m_name).c_str());
-    //light->m_spotAngleLocation = glGetUniformLocation(program, ("SpotAngle"+light->m_name).c_str());
+    light->m_spotDirectionLocation = glGetUniformLocation(program, "SpotDirection");
+    light->m_spotAngleLocation = glGetUniformLocation(program, "SpotAngle");
 
     return light;
 }
 
 void sendLight(Light* light){
     glUniform1f(light->m_intensityLocation, light->m_intensity);
-    //glUniform1f(light->m_specCoeffLocation, light->m_specCoeff);
     glUniform3fv(light->m_lightColorLocation, 1, glm::value_ptr(light->m_color));
     glUniform3fv(light->m_lightPositionLocation, 1, glm::value_ptr(light->m_position));
 
-    //glUniform3fv(light->m_spotDirectionLocation, 1, glm::value_ptr(light->m_spotDirection));
-    //glUniform1f(light->m_spotAngleLocation, light->m_phi);
+    glUniform3fv(light->m_spotDirectionLocation, 1, glm::value_ptr(light->m_spotDirection));
+    glUniform1f(light->m_spotAngleLocation, light->m_phi);
 }
 
 int main( int argc, char **argv )
@@ -230,6 +224,7 @@ int main( int argc, char **argv )
 
     // GUI
     float numLights = 10.f;
+    float typeLight = 0.f;
 
     // Lights
     //std::vector<Light*> lightArray;
@@ -297,25 +292,56 @@ int main( int argc, char **argv )
     // Compute locations for blit_shader
     GLuint blit_tex1Location = glGetUniformLocation(blit_shader.program, "Texture1");
 
-    // Load light accumulation shader
-    ShaderGLSL lighting_shader;
-    const char * shaderFileLighting = "002/2_light.glsl";
-    //int status = load_shader_from_file(lighting_shader, shaderFileLighting, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER | ShaderGLSL::GEOMETRY_SHADER);
-    status = load_shader_from_file(lighting_shader, shaderFileLighting, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    // Load  point light accumulation shader
+    ShaderGLSL point_lighting_shader;
+    const char * shaderFilePointLighting = "002/2_point_light.glsl";
+    //int status = load_shader_from_file(point_lighting_shader, shaderFilePointLighting, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER | ShaderGLSL::GEOMETRY_SHADER);
+    status = load_shader_from_file(point_lighting_shader, shaderFilePointLighting, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
     if ( status == -1 )
     {
-        fprintf(stderr, "Error on loading  %s\n", shaderFileLighting);
+        fprintf(stderr, "Error on loading  %s\n", shaderFilePointLighting);
         exit( EXIT_FAILURE );
     }    
-    // Compute locations for lighting_shader
-    GLuint lighting_materialLocation = glGetUniformLocation(lighting_shader.program, "Material");
-    GLuint lighting_normalLocation = glGetUniformLocation(lighting_shader.program, "Normal");
-    GLuint lighting_depthLocation = glGetUniformLocation(lighting_shader.program, "Depth");
-    GLuint lighting_inverseViewProjectionLocation = glGetUniformLocation(lighting_shader.program, "InverseViewProjection");
-    GLuint lighting_cameraPositionLocation = glGetUniformLocation(lighting_shader.program, "CameraPosition");
-    GLuint lighting_lightPositionLocation = glGetUniformLocation(lighting_shader.program, "LightPosition");
-    GLuint lighting_lightColorLocation = glGetUniformLocation(lighting_shader.program, "LightColor");
-    GLuint lighting_lightIntensityLocation = glGetUniformLocation(lighting_shader.program, "LightIntensity");
+    // Compute locations for point_lighting_shader
+    GLuint point_lighting_materialLocation = glGetUniformLocation(point_lighting_shader.program, "Material");
+    GLuint point_lighting_normalLocation = glGetUniformLocation(point_lighting_shader.program, "Normal");
+    GLuint point_lighting_depthLocation = glGetUniformLocation(point_lighting_shader.program, "Depth");
+    GLuint point_lighting_inverseViewProjectionLocation = glGetUniformLocation(point_lighting_shader.program, "InverseViewProjection");
+    GLuint point_lighting_cameraPositionLocation = glGetUniformLocation(point_lighting_shader.program, "CameraPosition");
+
+    // Load directional light accumulation shader
+    ShaderGLSL directional_lighting_shader;
+    const char * shaderFileDirectionalLighting = "002/2_directional_light.glsl";
+    //int status = load_shader_from_file(directional_lighting_shader, shaderFileDirectionalLighting, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER | ShaderGLSL::GEOMETRY_SHADER);
+    status = load_shader_from_file(directional_lighting_shader, shaderFileDirectionalLighting, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    if ( status == -1 )
+    {
+        fprintf(stderr, "Error on loading  %s\n", shaderFileDirectionalLighting);
+        exit( EXIT_FAILURE );
+    }    
+    // Compute locations for directional_lighting_shader
+    GLuint directional_lighting_materialLocation = glGetUniformLocation(directional_lighting_shader.program, "Material");
+    GLuint directional_lighting_normalLocation = glGetUniformLocation(directional_lighting_shader.program, "Normal");
+    GLuint directional_lighting_depthLocation = glGetUniformLocation(directional_lighting_shader.program, "Depth");
+    GLuint directional_lighting_inverseViewProjectionLocation = glGetUniformLocation(directional_lighting_shader.program, "InverseViewProjection");
+    GLuint directional_lighting_cameraPositionLocation = glGetUniformLocation(directional_lighting_shader.program, "CameraPosition");
+
+    // Load spot light accumulation shader
+    ShaderGLSL spot_lighting_shader;
+    const char * shaderFileSpotLighting = "002/2_spot_light.glsl";
+    //int status = load_shader_from_file(spot_lighting_shader, shaderFileSpotLighting, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER | ShaderGLSL::GEOMETRY_SHADER);
+    status = load_shader_from_file(spot_lighting_shader, shaderFileSpotLighting, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    if ( status == -1 )
+    {
+        fprintf(stderr, "Error on loading  %s\n", shaderFileSpotLighting);
+        exit( EXIT_FAILURE );
+    }    
+    // Compute locations for spot_lighting_shader
+    GLuint spot_lighting_materialLocation = glGetUniformLocation(spot_lighting_shader.program, "Material");
+    GLuint spot_lighting_normalLocation = glGetUniformLocation(spot_lighting_shader.program, "Normal");
+    GLuint spot_lighting_depthLocation = glGetUniformLocation(spot_lighting_shader.program, "Depth");
+    GLuint spot_lighting_inverseViewProjectionLocation = glGetUniformLocation(spot_lighting_shader.program, "InverseViewProjection");
+    GLuint spot_lighting_cameraPositionLocation = glGetUniformLocation(spot_lighting_shader.program, "CameraPosition");
 
     // Load geometry
     // Cube
@@ -521,15 +547,6 @@ int main( int argc, char **argv )
         glm::mat4 worldToScreen = projection * worldToView;
         glm::mat4 screenToWorld = glm::transpose(glm::inverse(worldToScreen));
 
-        // Viewport 
-        glViewport(0, 0, width, height);
-
-        // Default states
-        glEnable(GL_DEPTH_TEST);
-
-        // Clear the front buffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         // Bind gbuffer shader
         glUseProgram(gbuffer_shader.program);
         
@@ -547,6 +564,9 @@ int main( int argc, char **argv )
 
         // Bind personnal buffer
         glBindFramebuffer(GL_FRAMEBUFFER, gbufferFbo);
+    
+            // Default states
+            glEnable(GL_DEPTH_TEST);
 
             // Clear the FrameBuffer
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -580,14 +600,42 @@ int main( int argc, char **argv )
         glDisable(GL_DEPTH_TEST);
 
         // Bind lighting shader
-        glUseProgram(lighting_shader.program);
-        // Update uniform of the shader
-        glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
-        glUniform1i(lighting_materialLocation, 0);
-        glUniform1i(lighting_normalLocation, 1);
-        glUniform1i(lighting_depthLocation, 2);
-        glUniform3fv(lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
-        glUniformMatrix4fv(lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+        // Point light
+        if(typeLight == 0.){
+            glUseProgram(point_lighting_shader.program);
+
+            // Update uniform of the shader
+            glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
+            glUniform1i(point_lighting_materialLocation, 0);
+            glUniform1i(point_lighting_normalLocation, 1);
+            glUniform1i(point_lighting_depthLocation, 2);
+            glUniform3fv(point_lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
+            glUniformMatrix4fv(point_lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+        }
+        // Directional light
+        else if(typeLight == 1.){
+            glUseProgram(directional_lighting_shader.program);
+
+            // Update uniform of the shader
+            glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
+            glUniform1i(directional_lighting_materialLocation, 0);
+            glUniform1i(directional_lighting_normalLocation, 1);
+            glUniform1i(directional_lighting_depthLocation, 2);
+            glUniform3fv(directional_lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
+            glUniformMatrix4fv(directional_lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+        }
+        // Spot light
+        else if(typeLight == 2.){
+            glUseProgram(spot_lighting_shader.program);
+
+            // Update uniform of the shader
+            glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
+            glUniform1i(spot_lighting_materialLocation, 0);
+            glUniform1i(spot_lighting_normalLocation, 1);
+            glUniform1i(spot_lighting_depthLocation, 2);
+            glUniform3fv(spot_lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
+            glUniformMatrix4fv(spot_lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+        }
 
         // Bind textures
         glActiveTexture(GL_TEXTURE0);
@@ -602,7 +650,22 @@ int main( int argc, char **argv )
         glBlendFunc(GL_ONE, GL_ONE);
         for (unsigned int i = 0; i < numLights; ++i)
         {
-            Light* light = createLight(lighting_shader.program, glm::vec3(i, 1.0, 10.0), glm::vec3(1.0, 1.0, 1.0), 1.0);
+            float rotationX = cos(t);
+            float rotationZ = sin(t);
+            glm::vec3 position = glm::vec3(i*rotationX, 5, i*rotationZ);
+
+            Light* light; 
+            if(typeLight == 0.){
+                light = createLight(point_lighting_shader.program, position, glm::vec3(1.0, 1.0, 1.0), 1.0);
+            }
+            else if(typeLight == 1.){
+                light = createLight(directional_lighting_shader.program, glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 1.0);
+            }
+            else if(typeLight == 2.){
+                light = createLight(spot_lighting_shader.program, position, glm::vec3(1.0, 1.0, 1.0), 1.0);
+                light->m_phi = 60.;
+                light->m_spotDirection = glm::vec3(0.f, 1.f, 0.f);
+            }
             sendLight(light);
             glBindVertexArray(vao[2]);
             glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
@@ -665,6 +728,7 @@ int main( int argc, char **argv )
         sprintf(lineBuffer, "FPS %f", fps);
         imguiLabel(lineBuffer);
         imguiSlider("Lights", &numLights, 0.0, 100.0, 1.0);
+        imguiSlider("Light Type", &typeLight, 0.0, 2.0, 1.0);
         imguiEndScrollArea();
         imguiEndFrame();
         imguiRenderGLDraw(width, height); 
