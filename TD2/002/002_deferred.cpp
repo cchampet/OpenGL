@@ -226,11 +226,9 @@ int main( int argc, char **argv )
     init_gui_states(guiStates);
 
     // GUI
-    float numLights = 10.f;
-    float typeLight = 0.f;
-
-    // Lights
-    //std::vector<Light*> lightArray;
+    float numLights = 0.f;
+    bool bPointLights = true;
+    bool bSpotLights = false;
 
     // Load images and upload textures
     GLuint textures[3];
@@ -345,6 +343,9 @@ int main( int argc, char **argv )
     GLuint spot_lighting_depthLocation = glGetUniformLocation(spot_lighting_shader.program, "Depth");
     GLuint spot_lighting_inverseViewProjectionLocation = glGetUniformLocation(spot_lighting_shader.program, "InverseViewProjection");
     GLuint spot_lighting_cameraPositionLocation = glGetUniformLocation(spot_lighting_shader.program, "CameraPosition");
+
+    // Lights
+    Light* pSun = createLight(directional_lighting_shader.program, glm::vec3(0., 7., 0.), glm::vec3(1.0, 1.0, 0.8), 5.);
 
     // Load geometry
     // Cube
@@ -605,8 +606,16 @@ int main( int argc, char **argv )
         glDisable(GL_DEPTH_TEST);
 
         // Bind lighting shader
+        // Directional light -> our sun
+        glUseProgram(directional_lighting_shader.program);
+        glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
+        glUniform1i(directional_lighting_materialLocation, 0);
+        glUniform1i(directional_lighting_normalLocation, 1);
+        glUniform1i(directional_lighting_depthLocation, 2);
+        glUniform3fv(directional_lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
+        glUniformMatrix4fv(directional_lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
         // Point light
-        if(typeLight == 0.){
+        if(bPointLights){
             glUseProgram(point_lighting_shader.program);
 
             // Update uniform of the shader
@@ -617,20 +626,8 @@ int main( int argc, char **argv )
             glUniform3fv(point_lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
             glUniformMatrix4fv(point_lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
         }
-        // Directional light
-        else if(typeLight == 1.){
-            glUseProgram(directional_lighting_shader.program);
-
-            // Update uniform of the shader
-            glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
-            glUniform1i(directional_lighting_materialLocation, 0);
-            glUniform1i(directional_lighting_normalLocation, 1);
-            glUniform1i(directional_lighting_depthLocation, 2);
-            glUniform3fv(directional_lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
-            glUniformMatrix4fv(directional_lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
-        }
         // Spot light
-        else if(typeLight == 2.){
+        else if(bSpotLights){
             glUseProgram(spot_lighting_shader.program);
 
             // Update uniform of the shader
@@ -653,6 +650,10 @@ int main( int argc, char **argv )
         // Draw a quad per light
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
+
+        sendLight(pSun);
+        glBindVertexArray(vao[2]);
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
         for (unsigned int i = 0; i < numLights; ++i)
         {
             float rotationX = cos(t);
@@ -660,13 +661,10 @@ int main( int argc, char **argv )
             glm::vec3 position = glm::vec3(i*rotationX, 5, i*rotationZ);
 
             Light* light; 
-            if(typeLight == 0.){
+            if(bPointLights){
                 light = createLight(point_lighting_shader.program, position, glm::vec3(1.0, 1.0, 1.0), 1.0);
             }
-            else if(typeLight == 1.){
-                light = createLight(directional_lighting_shader.program, glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 1.0);
-            }
-            else if(typeLight == 2.){
+            else if(bSpotLights){
                 light = createLight(spot_lighting_shader.program, position, glm::vec3(1.0, 1.0, 1.0), 1.0);
                 light->m_phi = 60.;
                 light->m_spotDirection = glm::vec3(0.f, 1.f, 0.f);
@@ -675,6 +673,7 @@ int main( int argc, char **argv )
             glBindVertexArray(vao[2]);
             glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
         }
+
         glDisable(GL_BLEND); 
 
         /////////////////////////////////////////////
@@ -729,11 +728,20 @@ int main( int argc, char **argv )
         imguiBeginFrame(mousex, mousey, mbut, mscroll);
         int logScroll = 0;
         char lineBuffer[512];
-        imguiBeginScrollArea("002 - deferred", 0, height/4, 200, 3*height/4-25, &logScroll);
+        imguiBeginScrollArea("002 - deferred", 0, height/4, 220, 3*height/4-25, &logScroll);
         sprintf(lineBuffer, "FPS %f", fps);
         imguiLabel(lineBuffer);
         imguiSlider("Lights", &numLights, 0.0, 100.0, 1.0);
-        imguiSlider("Light Type", &typeLight, 0.0, 2.0, 1.0);
+        imguiLabel("Sun parameter directional light");
+        imguiSlider("pos X", &pSun->m_position.x, -10.0, 10.0, 0.1);
+        imguiSlider("pos Y", &pSun->m_position.y, -10.0, 10.0, 0.1);
+        imguiSlider("pos Z", &pSun->m_position.z, -10.0, 10.0, 0.1);
+        imguiSlider("R", &pSun->m_color.r, 0.0, 1.0, 0.1);
+        imguiSlider("G", &pSun->m_color.g, 0.0, 1.0, 0.1);
+        imguiSlider("B", &pSun->m_color.b, 0.0, 1.0, 0.1);
+        imguiSlider("Intensity", &pSun->m_intensity, 0.0, 10.0, 0.1);
+        //bPointLights = imguiButton("Point lights");
+        //bSpotLights = imguiButton("Spot lights");
         imguiEndScrollArea();
         imguiEndFrame();
         imguiRenderGLDraw(width, height); 
