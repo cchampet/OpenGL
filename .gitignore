@@ -41,7 +41,8 @@ Thumbs.db
 
 # Libs, obj and bin #
 #####################
-.make
+*/Makefile
+*/.make
 */bin/*
 !*/bin/EMPTY
 */obj/*
