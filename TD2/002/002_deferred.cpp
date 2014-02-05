@@ -112,14 +112,14 @@ struct Light {
         m_intensity = intensity;
         m_color = color;
         m_position = position;
+        m_specCoeff = 10.f;
 
         m_spotDirection = glm::vec3(0., 0., 0.);
         m_phi = 0;
     }
     
-
     float m_intensity;
-    //float m_specCoeff;
+    float m_specCoeff;
     glm::vec3 m_color;
     glm::vec3 m_position;
 
@@ -128,6 +128,7 @@ struct Light {
     float m_phi; // Angle d'ouverture du spot, en degrée
 
     GLuint m_intensityLocation;
+    GLuint m_lightSpecCoeffLocation;
     GLuint m_lightColorLocation;
     GLuint m_lightPositionLocation;
 
@@ -139,6 +140,7 @@ Light* createLight(GLuint program, glm::vec3 position, glm::vec3 color, float in
     Light* light = new Light(position, color, intensity);
 
     light->m_intensityLocation = glGetUniformLocation(program, "LightIntensity");
+    light->m_lightSpecCoeffLocation = glGetUniformLocation(program, "LightSpecCoeff");
     light->m_lightColorLocation = glGetUniformLocation(program, "LightColor");
     light->m_lightPositionLocation = glGetUniformLocation(program, "LightPosition");
 
@@ -150,6 +152,7 @@ Light* createLight(GLuint program, glm::vec3 position, glm::vec3 color, float in
 
 void sendLight(Light* light){
     glUniform1f(light->m_intensityLocation, light->m_intensity);
+    glUniform1f(light->m_lightSpecCoeffLocation, light->m_specCoeff);
     glUniform3fv(light->m_lightColorLocation, 1, glm::value_ptr(light->m_color));
     glUniform3fv(light->m_lightPositionLocation, 1, glm::value_ptr(light->m_position));
 
@@ -373,56 +376,56 @@ int main( int argc, char **argv )
 
     // Cube
     glBindVertexArray(vao[0]);
-        // Bind indices and upload data
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[0]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_triangleList), cube_triangleList, GL_STATIC_DRAW);
-        // Bind vertices and upload data
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
-        // Bind normals and upload data
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cube_normals), cube_normals, GL_STATIC_DRAW);
-        // Bind uv coords and upload data
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cube_uvs), cube_uvs, GL_STATIC_DRAW);
+    // Bind indices and upload data
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[0]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cube_triangleList), cube_triangleList, GL_STATIC_DRAW);
+    // Bind vertices and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_vertices), cube_vertices, GL_STATIC_DRAW);
+    // Bind normals and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_normals), cube_normals, GL_STATIC_DRAW);
+    // Bind uv coords and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[3]);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cube_uvs), cube_uvs, GL_STATIC_DRAW);
 
     // Plane
     glBindVertexArray(vao[1]);
-        // Bind indices and upload data
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[4]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(plane_triangleList), plane_triangleList, GL_STATIC_DRAW);
-        // Bind vertices and upload data
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[5]);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
-        // Bind normals and upload data
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[6]);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(plane_normals), plane_normals, GL_STATIC_DRAW);
-        // Bind uv coords and upload data
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[7]);
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(plane_uvs), plane_uvs, GL_STATIC_DRAW);
+    // Bind indices and upload data
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[4]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(plane_triangleList), plane_triangleList, GL_STATIC_DRAW);
+    // Bind vertices and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[5]);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(plane_vertices), plane_vertices, GL_STATIC_DRAW);
+    // Bind normals and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[6]);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(plane_normals), plane_normals, GL_STATIC_DRAW);
+    // Bind uv coords and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[7]);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(plane_uvs), plane_uvs, GL_STATIC_DRAW);
 
     // Quad
     glBindVertexArray(vao[2]);
-        // Bind indices and upload data
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[8]);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_triangleList), quad_triangleList, GL_STATIC_DRAW);
-        // Bind vertices and upload data
-        glBindBuffer(GL_ARRAY_BUFFER, vbo[9]);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+    // Bind indices and upload data
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[8]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(quad_triangleList), quad_triangleList, GL_STATIC_DRAW);
+    // Bind vertices and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[9]);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
 
     // Unbind everything. Potentially illegal on some implementations
     glBindVertexArray(0);
@@ -577,6 +580,8 @@ int main( int argc, char **argv )
             // Bind textures
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, textures[0]);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, textures[1]);
 
             // Render vaos
             glBindVertexArray(vao[0]);
@@ -724,7 +729,7 @@ int main( int argc, char **argv )
         imguiBeginFrame(mousex, mousey, mbut, mscroll);
         int logScroll = 0;
         char lineBuffer[512];
-        imguiBeginScrollArea("001", width - 210, height - 310, 200, 300, &logScroll);
+        imguiBeginScrollArea("002 - deferred", 0, height/4, 200, 3*height/4-25, &logScroll);
         sprintf(lineBuffer, "FPS %f", fps);
         imguiLabel(lineBuffer);
         imguiSlider("Lights", &numLights, 0.0, 100.0, 1.0);
@@ -747,6 +752,8 @@ int main( int argc, char **argv )
         // Swap buffers
         glfwSwapBuffers();
 
+        double newTime = glfwGetTime();
+        fps = 1.f/ (newTime - t);
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
            glfwGetWindowParam( GLFW_OPENED ) );

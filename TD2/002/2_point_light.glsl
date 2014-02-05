@@ -25,6 +25,7 @@ uniform vec3 CameraPosition;
 uniform vec3  LightPosition;
 uniform vec3  LightColor;
 uniform float LightIntensity;
+uniform float LightSpecCoeff;
 
 uniform mat4 InverseViewProjection;
 
@@ -53,7 +54,7 @@ vec3 computePointLight(float intensity, float specCoeff, vec3 diffuse, vec3 lPos
 	}
 	float lightIntensity = intensity*coeffIntensity;
 
-	vec3 colorRes = lightColor * lightIntensity * (diffuse * n_dot_l + specCoeff * vec3(1.0, 1.0, 1.0) *  pow(n_dot_h, specCoeff * 100.0));
+	vec3 colorRes = lightColor * lightIntensity * (diffuse * n_dot_l + specCoeff * vec3(1.0, 1.0, 1.0) *  pow(n_dot_h, specCoeff * LightSpecCoeff));
 	return colorRes;
 }
 
@@ -62,14 +63,14 @@ void main(void)
 	vec3 normal = texture(Normal, uv).xyz;
 	vec4 material = texture(Material, uv);
 	vec3 diffuse = material.xyz;
-	float specular = material.x;//.z
+	float specularCoeff = material.z;
 	float depth = texture(Depth, uv).x;
 
 	vec2  xy = uv * 2.0 -1.0;
 	vec4  wPosition =  vec4(xy, depth * 2.0 -1.0, 1.0) * InverseViewProjection;
 	vec3  position = vec3(wPosition/wPosition.w);
 
-	vec3 light = computePointLight(LightIntensity, specular, diffuse, LightPosition, position, normal, material);
+	vec3 light = computePointLight(LightIntensity, specularCoeff, diffuse, LightPosition, position, normal, material);
 	Color = vec4(light, 1.);
 }
 
