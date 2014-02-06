@@ -227,7 +227,7 @@ int main( int argc, char **argv )
 
     // GUI
     float numLights = 10.f;
-    float typeLight = 0.f;
+    float typeLight = 2.f;
 
     // Lights
     //std::vector<Light*> lightArray;
@@ -673,11 +673,19 @@ int main( int argc, char **argv )
         // Draw a quad per light
         glEnable(GL_BLEND);
         glBlendFunc(GL_ONE, GL_ONE);
-        for (unsigned int i = 0; i < numLights; ++i)
+
+        float delta = 2 * 3.14f / (numLights);
+        for (int i = 0; i < numLights; ++i)
         {
             float rotationX = cos(t);
             float rotationZ = sin(t);
-            glm::vec3 position = glm::vec3(i*rotationX, 5, i*rotationZ);
+            int toto = numLights/2;
+              
+            float c = cos(i * delta * t);
+            float s = sin(i * delta * t);
+
+           // glm::vec3 position = glm::vec3( i*rotationX, 5.0, i*rotationZ);
+            glm::vec3 position = glm::vec3( 5*c, 0,  5*s);
 
             Light* light; 
             if(typeLight == 0.){
@@ -689,7 +697,7 @@ int main( int argc, char **argv )
             else if(typeLight == 2.){
                 light = createLight(spot_lighting_shader.program, position, glm::vec3(1.0, 1.0, 1.0), 1.0);
                 light->m_phi = 60.;
-                light->m_spotDirection = glm::vec3(0.f, 1.f, 0.f);
+                light->m_spotDirection = glm::vec3(0, 1, 0);//glm::vec3( c*5., 0,  s*5.);
             }
             sendLight(light);
             glBindVertexArray(vao[2]);
