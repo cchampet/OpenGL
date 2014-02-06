@@ -206,7 +206,7 @@ int main( int argc, char **argv )
     }
 
     // Ensure we can capture the escape key being pressed below
-    glfwEnable( GLFW_STICKY_KEYS );
+    glfwEnable(GLFW_STICKY_KEYS);
 
     // Enable vertical sync (on cards that support it)
     glfwSwapInterval( 1 );
@@ -605,6 +605,26 @@ int main( int argc, char **argv )
         glDisable(GL_DEPTH_TEST);
 
         // Bind lighting shader
+
+        // Keyboard events
+
+    int onePressed = glfwGetKey('A');
+    int twoPressed = glfwGetKey('Z');
+    int threePressed = glfwGetKey('E');
+
+    if (onePressed == GLFW_PRESS)
+    {
+        typeLight = 0.;
+
+    }
+    else if(twoPressed == GLFW_PRESS)
+    {
+        typeLight = 1.;
+    }
+    else if(threePressed == GLFW_PRESS)
+    {
+        typeLight = 2.;
+    }
         // Point light
         if(typeLight == 0.){
             glUseProgram(point_lighting_shader.program);
@@ -757,6 +777,7 @@ int main( int argc, char **argv )
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
            glfwGetWindowParam( GLFW_OPENED ) );
+
 
     // Clean UI
     imguiRenderGLDestroy();
