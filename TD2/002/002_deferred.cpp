@@ -675,17 +675,31 @@ int main( int argc, char **argv )
         glBlendFunc(GL_ONE, GL_ONE);
 
         float delta = 2 * 3.14f / (numLights);
+        srand(time(NULL));
         for (int i = 0; i < numLights; ++i)
         {
-            float rotationX = cos(t);
-            float rotationZ = sin(t);
-            int toto = numLights/2;
+            // float rotationX = cos(t);
+            // float rotationZ = sin(t);
               
-            float c = cos(i * delta * t);
-            float s = sin(i * delta * t);
+            // Rayon qui varie
+            // float c = cos(i * delta ) * cos(t);
+            // float s = sin(i * delta ) * cos(t);
+
+            // Lumières tournent 
+            // float c = cos(i * delta * t);
+            // float s = sin(i * delta * t);
+
+            // Lumières tournent 
+            float c = cos(i * delta * t) * cos(t);
+            float s = sin(i * delta * t) * cos(t);
+
+            // Couleur aléatoire
+            float r = (rand() % 10) / 10.f;
+            float g = (rand() % 10) / 10.f;
+            float b = (rand() % 10) / 10.f;
 
            // glm::vec3 position = glm::vec3( i*rotationX, 5.0, i*rotationZ);
-            glm::vec3 position = glm::vec3( 5*c, 0,  5*s);
+            glm::vec3 position = glm::vec3( 10*c, 0,  10*s);
 
             Light* light; 
             if(typeLight == 0.){
@@ -695,9 +709,9 @@ int main( int argc, char **argv )
                 light = createLight(directional_lighting_shader.program, glm::vec3(0.0, -1.0, 0.0), glm::vec3(1.0, 1.0, 1.0), 1.0);
             }
             else if(typeLight == 2.){
-                light = createLight(spot_lighting_shader.program, position, glm::vec3(1.0, 1.0, 1.0), 1.0);
+                light = createLight(spot_lighting_shader.program, position, glm::vec3(r, g, b), 1.0);
                 light->m_phi = 60.;
-                light->m_spotDirection = glm::vec3(0, 1, 0);//glm::vec3( c*5., 0,  s*5.);
+                light->m_spotDirection = glm::vec3(0, 1, 0);
             }
             sendLight(light);
             glBindVertexArray(vao[2]);
