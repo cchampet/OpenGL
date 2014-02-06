@@ -686,12 +686,12 @@ int main( int argc, char **argv )
             // float s = sin(i * delta ) * cos(t);
 
             // Lumières tournent 
-            // float c = cos(i * delta * t);
-            // float s = sin(i * delta * t);
+            // float c = cos(i * delta + t);
+            // float s = sin(i * delta + t);
 
-            // Lumières tournent 
-            float c = cos(i * delta * t) * cos(t);
-            float s = sin(i * delta * t) * cos(t);
+            // Lumières tournent + rayon
+            float c = cos(i * delta + t) * cos(t);
+            float s = sin(i * delta + t) * cos(t);
 
             // Couleur aléatoire
             float r = (rand() % 10) / 10.f;
