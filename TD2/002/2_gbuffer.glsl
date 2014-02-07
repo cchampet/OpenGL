@@ -3,6 +3,12 @@ uniform mat4 Projection;
 uniform mat4 View;
 uniform mat4 Object;
 
+uniform float Time;
+
+uniform float NbCubes;
+uniform float CubesPerCircle;
+uniform float SpaceBetweenCircle;
+
 in vec3 VertexPosition;
 in vec3 VertexNormal;
 in vec2 VertexTexCoord;
@@ -16,7 +22,22 @@ void main(void)
 	uv = VertexTexCoord;
 	normal = vec3(Object * vec4(VertexNormal, 1.0));; 
 	position = vec3(Object * vec4(VertexPosition, 1.0));
-	position.y += (gl_InstanceID * 1.5); 
+	
+	if(gl_InstanceID > 0){
+		float varX = cos(gl_InstanceID + Time);
+		float varZ = sin(gl_InstanceID + Time);
+		//OpenGL Error because of (gl_InstanceID / CubesPerCircle) => int / float
+		float ray = SpaceBetweenCircle * (1 + gl_InstanceID / CubesPerCircle);
+		position.x += ray * varX;
+		position.z += ray * varZ;
+
+		float varY = cos(Time);
+		if(gl_InstanceID%2 == 0)
+			position.y += varY;
+		else
+			position.y -= varY;
+	}
+
 	gl_Position = Projection * View * vec4(position, 1.0);
 }
 

@@ -228,6 +228,9 @@ int main( int argc, char **argv )
     // GUI
     float numLights = 10.f;
     float typeLight = 2.f;
+    float nbCubes = 100.f;
+    float cubesPerCircle = 7.f;
+    float spaceBetweenCubes = 1.f;
 
     // Load images and upload textures
     GLuint textures[3];
@@ -275,6 +278,9 @@ int main( int argc, char **argv )
     GLuint gbuffer_viewLocation = glGetUniformLocation(gbuffer_shader.program, "View");
     GLuint gbuffer_objectLocation = glGetUniformLocation(gbuffer_shader.program, "Object");
     GLuint gbuffer_timeLocation = glGetUniformLocation(gbuffer_shader.program, "Time");
+    GLuint gbuffer_nbCubesLocation = glGetUniformLocation(gbuffer_shader.program, "NbCubes");
+    GLuint gbuffer_cubesPerCircleLocation = glGetUniformLocation(gbuffer_shader.program, "CubesPerCircle");
+    GLuint gbuffer_spaceBetweenCircleLocation = glGetUniformLocation(gbuffer_shader.program, "SpaceBetweenCircle");
     GLuint gbuffer_diffuseLocation = glGetUniformLocation(gbuffer_shader.program, "Diffuse");
     GLuint gbuffer_specLocation = glGetUniformLocation(gbuffer_shader.program, "Spec");
 
@@ -558,6 +564,9 @@ int main( int argc, char **argv )
         glUniformMatrix4fv(gbuffer_viewLocation, 1, 0, glm::value_ptr(worldToView));
         glUniformMatrix4fv(gbuffer_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
         glUniform1f(gbuffer_timeLocation, t);
+        glUniform1f(gbuffer_nbCubesLocation, nbCubes);
+        glUniform1f(gbuffer_cubesPerCircleLocation, cubesPerCircle);
+        glUniform1f(gbuffer_spaceBetweenCircleLocation, spaceBetweenCubes);
         glUniform1i(gbuffer_diffuseLocation, 0);
         glUniform1i(gbuffer_specLocation, 1);
 
@@ -585,7 +594,7 @@ int main( int argc, char **argv )
 
         // Render vaos
         glBindVertexArray(vao[0]);
-        glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 4);
+        glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, nbCubes);
         glBindVertexArray(vao[1]);
         glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
@@ -776,16 +785,19 @@ int main( int argc, char **argv )
         sprintf(lineBuffer, "FPS %f", fps);
         imguiLabel(lineBuffer);
         imguiSlider("Lights", &numLights, 0.0, 100.0, 1.0);
-        imguiLabel("Sun parameter directional light");
-        imguiSlider("pos X", &pSun->m_position.x, -10.0, 10.0, 0.1);
-        imguiSlider("pos Y", &pSun->m_position.y, -10.0, 10.0, 0.1);
-        imguiSlider("pos Z", &pSun->m_position.z, -10.0, 10.0, 0.1);
-        imguiSlider("R", &pSun->m_color.r, 0.0, 1.0, 0.1);
-        imguiSlider("G", &pSun->m_color.g, 0.0, 1.0, 0.1);
-        imguiSlider("B", &pSun->m_color.b, 0.0, 1.0, 0.1);
-        imguiSlider("Intensity", &pSun->m_intensity, 0.0, 10.0, 0.1);
-        //bPointLights = imguiButton("Point lights");
-        //bSpotLights = imguiButton("Spot lights");
+        imguiSlider("NbCubes", &nbCubes, 0.0, 500.0, 1.0);
+        imguiSlider("Cubes per circle", &cubesPerCircle, 0.0, 10.0, 1.0);
+        imguiSlider("Space between cubes", &spaceBetweenCubes, 0.0, 5.0, 0.1);
+        if(typeLight == 1.){
+            imguiLabel("Sun parameter directional light");
+            imguiSlider("pos X", &pSun->m_position.x, -10.0, 10.0, 0.1);
+            imguiSlider("pos Y", &pSun->m_position.y, -10.0, 10.0, 0.1);
+            imguiSlider("pos Z", &pSun->m_position.z, -10.0, 10.0, 0.1);
+            imguiSlider("R", &pSun->m_color.r, 0.0, 1.0, 0.1);
+            imguiSlider("G", &pSun->m_color.g, 0.0, 1.0, 0.1);
+            imguiSlider("B", &pSun->m_color.b, 0.0, 1.0, 0.1);
+            imguiSlider("Intensity", &pSun->m_intensity, 0.0, 10.0, 0.1);
+        }
         imguiEndScrollArea();
         imguiEndFrame();
         imguiRenderGLDraw(width, height); 
