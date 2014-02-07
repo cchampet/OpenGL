@@ -206,7 +206,7 @@ int main( int argc, char **argv )
     }
 
     // Ensure we can capture the escape key being pressed below
-    glfwEnable( GLFW_STICKY_KEYS );
+    glfwEnable(GLFW_STICKY_KEYS);
 
     // Enable vertical sync (on cards that support it)
     glfwSwapInterval( 1 );
@@ -226,9 +226,8 @@ int main( int argc, char **argv )
     init_gui_states(guiStates);
 
     // GUI
-    float numLights = 0.f;
-    bool bPointLights = true;
-    bool bSpotLights = false;
+    float numLights = 10.f;
+    float typeLight = 2.f;
 
     // Load images and upload textures
     GLuint textures[3];
@@ -345,7 +344,7 @@ int main( int argc, char **argv )
     GLuint spot_lighting_cameraPositionLocation = glGetUniformLocation(spot_lighting_shader.program, "CameraPosition");
 
     // Lights
-    Light* pSun = createLight(directional_lighting_shader.program, glm::vec3(0., 7., 0.), glm::vec3(1.0, 1.0, 0.8), 5.);
+    Light* pSun = createLight(directional_lighting_shader.program, glm::vec3(0., -4., 0.), glm::vec3(1.0, 1.0, 0.8), 1.3);
 
     // Load geometry
     // Cube
@@ -440,7 +439,7 @@ int main( int argc, char **argv )
 
     // Create color texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_FLOAT, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -448,7 +447,7 @@ int main( int argc, char **argv )
 
     // Create RGBA32F texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_FLOAT, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -569,26 +568,26 @@ int main( int argc, char **argv )
         // Bind personnal buffer
         glBindFramebuffer(GL_FRAMEBUFFER, gbufferFbo);
     
-            // Default states
-            glEnable(GL_DEPTH_TEST);
+        // Default states
+        glEnable(GL_DEPTH_TEST);
 
-            // Clear the FrameBuffer
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Clear the FrameBuffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            // Activate buffer list when drawing
-            glDrawBuffers(2, gbufferDrawBuffers);
+        // Activate buffer list when drawing
+        glDrawBuffers(2, gbufferDrawBuffers);
 
-            // Bind textures
-            glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, textures[0]);
-            glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, textures[1]);
+        // Bind textures
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textures[0]);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, textures[1]);
 
-            // Render vaos
-            glBindVertexArray(vao[0]);
-            glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 4);
-            glBindVertexArray(vao[1]);
-            glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+        // Render vaos
+        glBindVertexArray(vao[0]);
+        glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 4);
+        glBindVertexArray(vao[1]);
+        glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
         // Debind personnal buffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -605,17 +604,27 @@ int main( int argc, char **argv )
         // Disable Depth
         glDisable(GL_DEPTH_TEST);
 
-        // Bind lighting shader
-        // Directional light -> our sun
-        glUseProgram(directional_lighting_shader.program);
-        glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
-        glUniform1i(directional_lighting_materialLocation, 0);
-        glUniform1i(directional_lighting_normalLocation, 1);
-        glUniform1i(directional_lighting_depthLocation, 2);
-        glUniform3fv(directional_lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
-        glUniformMatrix4fv(directional_lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+        // Keyboard events
+        int onePressed = glfwGetKey('A');
+        int twoPressed = glfwGetKey('Z');
+        int threePressed = glfwGetKey('E');
+
+        if (onePressed == GLFW_PRESS)
+        {
+            typeLight = 0.;
+
+        }
+        else if(twoPressed == GLFW_PRESS)
+        {
+            typeLight = 1.;
+        }
+        else if(threePressed == GLFW_PRESS)
+        {
+            typeLight = 2.;
+        }
+
         // Point light
-        if(bPointLights){
+        if(typeLight == 0.){
             glUseProgram(point_lighting_shader.program);
 
             // Update uniform of the shader
@@ -626,8 +635,18 @@ int main( int argc, char **argv )
             glUniform3fv(point_lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
             glUniformMatrix4fv(point_lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
         }
+        // Directional light -> our sun
+        else if(typeLight == 1.){
+            glUseProgram(directional_lighting_shader.program);
+            glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
+            glUniform1i(directional_lighting_materialLocation, 0);
+            glUniform1i(directional_lighting_normalLocation, 1);
+            glUniform1i(directional_lighting_depthLocation, 2);
+            glUniform3fv(directional_lighting_cameraPositionLocation, 1, glm::value_ptr(camera.eye));
+            glUniformMatrix4fv(directional_lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+        }
         // Spot light
-        else if(bSpotLights){
+        else if(typeLight == 2.){
             glUseProgram(spot_lighting_shader.program);
 
             // Update uniform of the shader
@@ -654,20 +673,45 @@ int main( int argc, char **argv )
         sendLight(pSun);
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-        for (unsigned int i = 0; i < numLights; ++i)
+
+        float delta = 2 * 3.14f / (numLights);
+        srand(time(NULL));
+        for (int i = 0; i < numLights; ++i)
         {
-            float rotationX = cos(t);
-            float rotationZ = sin(t);
-            glm::vec3 position = glm::vec3(i*rotationX, 5, i*rotationZ);
+            // float rotationX = cos(t);
+            // float rotationZ = sin(t);
+              
+            // Rayon qui varie
+            // float c = cos(i * delta ) * cos(t);
+            // float s = sin(i * delta ) * cos(t);
+
+            // Lumières tournent 
+            // float c = cos(i * delta + t);
+            // float s = sin(i * delta + t);
+
+            // Lumières tournent + rayon
+            float c = cos(i * delta + t) * cos(t);
+            float s = sin(i * delta + t) * cos(t);
+
+            // Couleur aléatoire
+            float r = (rand() % 10) / 10.f;
+            float g = (rand() % 10) / 10.f;
+            float b = (rand() % 10) / 10.f;
+
+           // glm::vec3 position = glm::vec3( i*rotationX, 5.0, i*rotationZ);
+            glm::vec3 position = glm::vec3( 10*c, 0,  10*s);
 
             Light* light; 
-            if(bPointLights){
+            if(typeLight == 0.){
                 light = createLight(point_lighting_shader.program, position, glm::vec3(1.0, 1.0, 1.0), 1.0);
+            } 
+            else if(typeLight == 1.){
+                light = pSun;
             }
-            else if(bSpotLights){
-                light = createLight(spot_lighting_shader.program, position, glm::vec3(1.0, 1.0, 1.0), 1.0);
+            else if(typeLight == 2.){
+                light = createLight(spot_lighting_shader.program, position, glm::vec3(r, g, b), 1.0);
                 light->m_phi = 60.;
-                light->m_spotDirection = glm::vec3(0.f, 1.f, 0.f);
+                light->m_spotDirection = glm::vec3(0, 1, 0);
             }
             sendLight(light);
             glBindVertexArray(vao[2]);
@@ -765,6 +809,7 @@ int main( int argc, char **argv )
     } // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
            glfwGetWindowParam( GLFW_OPENED ) );
+
 
     // Clean UI
     imguiRenderGLDestroy();
