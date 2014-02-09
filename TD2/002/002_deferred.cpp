@@ -685,14 +685,19 @@ int main( int argc, char **argv )
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
         float delta = 2 * 3.14f / (lightsPerCircle);
-        float count = numLights/lightsPerCircle;
+        float count = 0;
+        if(lightsPerCircle != 0) {
+            count = numLights/lightsPerCircle;
+        }
+
+        
         srand(time(NULL));
 
         // std::cout << numLights/lightsPerCircle << std::endl;
         while(count > 0)
         {        
    
-             for (int i = 0; i < lightsPerCircle; ++i)
+            for (int i = 0; i < lightsPerCircle; ++i)
             {
                 // Lumières tournent + rayon
                 float c = cos(i * delta + t);// * cos(t);
