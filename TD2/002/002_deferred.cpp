@@ -226,7 +226,8 @@ int main( int argc, char **argv )
     init_gui_states(guiStates);
 
     // GUI
-    float numLights = 10.f;
+    float numLights = 30.f;
+    float lightsPerCircle = 10.f;
     float typeLight = 2.f;
     float nbCubes = 100.f;
     float cubesPerCircle = 7.f;
@@ -683,49 +684,49 @@ int main( int argc, char **argv )
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
-        float delta = 2 * 3.14f / (numLights);
+        float delta = 2 * 3.14f / (lightsPerCircle);
+        float count = numLights/lightsPerCircle;
         srand(time(NULL));
-        for (int i = 0; i < numLights; ++i)
-        {
-            // float rotationX = cos(t);
-            // float rotationZ = sin(t);
-              
-            // Rayon qui varie
-            // float c = cos(i * delta ) * cos(t);
-            // float s = sin(i * delta ) * cos(t);
 
-            // Lumières tournent 
-            // float c = cos(i * delta + t);
-            // float s = sin(i * delta + t);
+        // std::cout << numLights/lightsPerCircle << std::endl;
+        while(count > 0)
+        {        
+   
+             for (int i = 0; i < lightsPerCircle; ++i)
+            {
+                // Lumières tournent + rayon
+                float c = cos(i * delta + t);// * cos(t);
+                float s = sin(i * delta + t);// * cos(t);
 
-            // Lumières tournent + rayon
-            float c = cos(i * delta + t) * cos(t);
-            float s = sin(i * delta + t) * cos(t);
+                // Lumières en spirales
 
-            // Couleur aléatoire
-            float r = (rand() % 10) / 10.f;
-            float g = (rand() % 10) / 10.f;
-            float b = (rand() % 10) / 10.f;
+                // Couleur aléatoire
+                float r = (rand() % 10) / 10.f;
+                float g = (rand() % 10) / 10.f;
+                float b = (rand() % 10) / 10.f;
 
-           // glm::vec3 position = glm::vec3( i*rotationX, 5.0, i*rotationZ);
-            glm::vec3 position = glm::vec3( 10*c, 0,  10*s);
+                glm::vec3 position = glm::vec3( 5*count*c, 0,  5*count*s);
 
-            Light* light; 
-            if(typeLight == 0.){
-                light = createLight(point_lighting_shader.program, position, glm::vec3(1.0, 1.0, 1.0), 1.0);
-            } 
-            else if(typeLight == 1.){
-                light = pSun;
+                Light* light; 
+                if(typeLight == 0.){
+                    light = createLight(point_lighting_shader.program, position, glm::vec3(1.0, 1.0, 1.0), 1.0);
+                } 
+                else if(typeLight == 1.){
+                    light = pSun;
+                }
+                else if(typeLight == 2.){
+                    light = createLight(spot_lighting_shader.program, position, glm::vec3(r, g, b), 1.0);
+                    light->m_phi = 60.;
+                    light->m_spotDirection = glm::vec3(0, 1, 0);
+                }
+                sendLight(light);
+                glBindVertexArray(vao[2]);
+                glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
             }
-            else if(typeLight == 2.){
-                light = createLight(spot_lighting_shader.program, position, glm::vec3(r, g, b), 1.0);
-                light->m_phi = 60.;
-                light->m_spotDirection = glm::vec3(0, 1, 0);
-            }
-            sendLight(light);
-            glBindVertexArray(vao[2]);
-            glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+            count--;
         }
+        
+       
 
         glDisable(GL_BLEND); 
 
@@ -784,10 +785,17 @@ int main( int argc, char **argv )
         imguiBeginScrollArea("002 - deferred", 0, height/4, 220, 3*height/4-25, &logScroll);
         sprintf(lineBuffer, "FPS %f", fps);
         imguiLabel(lineBuffer);
-        imguiSlider("Lights", &numLights, 0.0, 100.0, 1.0);
+
+        // Lights parameters
+        imguiSlider("Lights", &numLights, lightsPerCircle, 100.0, 1.0);
+        imguiSlider("Lights per circle", &lightsPerCircle, 0.0, numLights, 1.0);
+
+        // Cubes parameters
         imguiSlider("NbCubes", &nbCubes, 0.0, 500.0, 1.0);
         imguiSlider("Cubes per circle", &cubesPerCircle, 0.0, 10.0, 1.0);
         imguiSlider("Space between cubes", &spaceBetweenCubes, 0.0, 5.0, 0.1);
+        
+        // Sun parameters
         if(typeLight == 1.){
             imguiLabel("Sun parameter directional light");
             imguiSlider("pos X", &pSun->m_position.x, -10.0, 10.0, 0.1);

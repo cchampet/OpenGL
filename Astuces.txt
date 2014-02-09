@@ -1,0 +1,25 @@
+// Pour former un cercle
+
+Périmètre d'un cercle = 2*PI*R
+
+// Périmètre d'un cercle de rayon 1, diviser par le nombre d'objets = distance entre chaque
+float delta = 2*3.14f / num; 
+
+float c = cos(i*delta);
+float s = sin(i*delat);
+
+glm::vec3 position = (r*c, 0, r*s);
+
+
+// Rotation circulaire
+float c = cos(i * delta + t);
+float s = sin(i * delta + t);
+
+Si on ajoute le temps au cos, on décale la position selon le temps, et tous les objets bougent de 
+la même façon
+
+// Rayon qui varie
+float c = cos(i * delta ) * cos(t);
+float s = sin(i * delta ) * cos(t);
+
+Si on multiplie par cos(t), la position des objets varie entre -Pos et +Pos. 
