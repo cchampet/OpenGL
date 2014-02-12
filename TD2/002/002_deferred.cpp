@@ -232,6 +232,7 @@ int main( int argc, char **argv )
     float nbCubes = 100.f;
     float cubesPerCircle = 7.f;
     float spaceBetweenCubes = 1.f;
+    float cubesRotation = 1.f;
 
     // Load images and upload textures
     GLuint textures[3];
@@ -282,6 +283,7 @@ int main( int argc, char **argv )
     GLuint gbuffer_nbCubesLocation = glGetUniformLocation(gbuffer_shader.program, "NbCubes");
     GLuint gbuffer_cubesPerCircleLocation = glGetUniformLocation(gbuffer_shader.program, "CubesPerCircle");
     GLuint gbuffer_spaceBetweenCircleLocation = glGetUniformLocation(gbuffer_shader.program, "SpaceBetweenCircle");
+    GLuint gbuffer_cubesRotationLocation = glGetUniformLocation(gbuffer_shader.program, "CubesRotation");
     GLuint gbuffer_diffuseLocation = glGetUniformLocation(gbuffer_shader.program, "Diffuse");
     GLuint gbuffer_specLocation = glGetUniformLocation(gbuffer_shader.program, "Spec");
 
@@ -361,11 +363,11 @@ int main( int argc, char **argv )
     float cube_vertices[] = {-0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5 };
     float cube_normals[] = {0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, };
     
-    // Plane
+    // Plane 
     int   plane_triangleCount = 2;
     int   plane_triangleList[] = {0, 1, 2, 2, 1, 3}; 
     float plane_uvs[] = {0.f, 0.f, 0.f, 10.f, 10.f, 0.f, 10.f, 10.f};
-    float plane_vertices[] = {-50.0, -1.0, 50.0, 50.0, -1.0, 50.0, -50.0, -1.0, -50.0, 50.0, -1.0, -50.0};
+    float plane_vertices[] = {-50.0, -2.0, 50.0, 50.0, -2.0, 50.0, -50.0, -2.0, -50.0, 50.0, -2.0, -50.0};
     float plane_normals[] = {0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
     
     // Quad
@@ -568,6 +570,7 @@ int main( int argc, char **argv )
         glUniform1f(gbuffer_nbCubesLocation, nbCubes);
         glUniform1f(gbuffer_cubesPerCircleLocation, cubesPerCircle);
         glUniform1f(gbuffer_spaceBetweenCircleLocation, spaceBetweenCubes);
+        glUniform1f(gbuffer_cubesRotationLocation, cubesRotation);
         glUniform1i(gbuffer_diffuseLocation, 0);
         glUniform1i(gbuffer_specLocation, 1);
 
@@ -797,8 +800,9 @@ int main( int argc, char **argv )
 
         // Cubes parameters
         imguiSlider("NbCubes", &nbCubes, 0.0, 500.0, 1.0);
-        imguiSlider("Cubes per circle", &cubesPerCircle, 0.0, 10.0, 1.0);
+        imguiSlider("Cubes per circle", &cubesPerCircle, 1.0, 10.0, 1.0);
         imguiSlider("Space between cubes", &spaceBetweenCubes, 0.0, 5.0, 0.1);
+        imguiSlider("Rotation of cubes", &cubesRotation, 0.0, 1.0, 1.0);
         
         // Sun parameters
         if(typeLight == 1.){
