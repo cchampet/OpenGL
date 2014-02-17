@@ -1,0 +1,14 @@
+// TD - Shadows
+
+Technique la plus simple : 
+Pour chaque point, on trace le rayon allant du point à la source de lumière et on regarde s'il est intersecté par un objet de la scène. Si oui, on n'illumine pas le point. On fait la même chose pour toutes les lumières. 
+Peu utilisé en temps réel car trop lourd. 
+
+Technique du shadow volume.
+A la mode avant, un peu désuée aujourd'hui. Projection de surface sur le sol... Nécessite des modèles particuliers.
+
+Technique des shadow map.
+Beaucoup moins bien que ci-dessus, mais temps réel !
+Techniques multi-pass (cf deferred shading).
+1ere passe : on rend la profondeur (en rendant la scène depuis la lumière)
+2eme passe : on rend la scène de façon "classique", avec pour chaque point 3D, passer de l'espace 
