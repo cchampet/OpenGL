@@ -30,6 +30,8 @@ uniform mat4  InverseViewProjection;
 uniform mat4  LigthToShadowMap;
 uniform float Time;
 uniform float ShadowBias;
+uniform float ShadowSamples;
+uniform float ShadowSpread;
 
 out vec4 Color;
 
@@ -76,28 +78,47 @@ void main(void)
 
 	vec3 cspotlight1 = spotLight(LightColor, LightIntensity, LightDirection, LightPosition, n, position, diffuse, spec, CameraPosition );
 
-	//Color = vec4(cspotlight1, 1.0);
-	
-	//Color = vec4(lightSpacePosition.z, 0, 0, 1);
-	//Color = lightDepth;
+	// Poisson disk
+	vec2 poissonDisk[16] = vec2[](
+        vec2( -0.94201624, -0.39906216 ),
+        vec2( 0.94558609, -0.76890725 ),
+        vec2( -0.094184101, -0.92938870 ),
+        vec2( 0.34495938, 0.29387760 ),
+        vec2( -0.91588581, 0.45771432 ),
+        vec2( -0.81544232, -0.87912464 ),
+        vec2( -0.38277543, 0.27676845 ),
+        vec2( 0.97484398, 0.75648379 ),
+        vec2( 0.44323325, -0.97511554 ),
+        vec2( 0.53742981, -0.47373420 ),
+        vec2( -0.26496911, -0.41893023 ),
+        vec2( 0.79197514, 0.19090188 ),
+        vec2( -0.24188840, 0.99706507 ),
+        vec2( -0.81409955, 0.91437590 ),
+        vec2( 0.19984126, 0.78641367 ),
+        vec2( 0.14383161, -0.14100790 )
+	);
 
+	float visibility = 1.0;
+	float visibilityOffset = 1.0 / ShadowSamples;
+	
+	for(int i = 0; i < 16; i++) {
+	  	if(texture(ShadowMap, lightSpacePosition.xy + poissonDisk[i]/ShadowSpread).r  + ShadowBias < lightSpacePosition.z) {
+		    visibility-=visibilityOffset;
+		}
+	}
+		
 	Color = vec4(0, 0, 0, 0);
 	if(lightSpacePosition.z < shadowPixel.x + ShadowBias) {
-		if (wlightSpacePosition.w > 0.0  && 
+		// En dehors du champs de la lumière
+		if(wlightSpacePosition.w > 0.0  && 
 			lightSpacePosition.x > 0.0 && 
 			lightSpacePosition.x < 1.0 && 
 			lightSpacePosition.y > 0.0 && 
 			lightSpacePosition.y < 1.0 )
 		{
-			Color = vec4(cspotlight1, 1.0);
-		}
-		else{
-			Color = vec4(1, 0, 0, 1);
+			Color = vec4(cspotlight1 * visibility, 1.0);
 		}
 	}
-
-
-	//Color = vec4(lightSpacePosition.z, 0, 0, 1) - lightDepth;
 
 }
 

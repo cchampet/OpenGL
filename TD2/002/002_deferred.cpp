@@ -606,7 +606,7 @@ int main( int argc, char **argv )
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         /////////////////////////////////////////////////////////////////
-        // Compute all light and render the merge into the main window //
+        // Compute all lights and render the merge into the main window //
         /////////////////////////////////////////////////////////////////
 
         // Reset Viewport

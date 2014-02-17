@@ -280,6 +280,9 @@ int main( int argc, char **argv )
     GLuint lighting_lightColorLocation = glGetUniformLocation(lighting_shader.program, "LightColor");
     GLuint lighting_lightIntensityLocation = glGetUniformLocation(lighting_shader.program, "LightIntensity");
     GLuint lighting_shadowBiasLocation = glGetUniformLocation(lighting_shader.program, "ShadowBias");
+    GLuint lighting_shadowSamplesLocation = glGetUniformLocation(lighting_shader.program, "ShadowSamples");
+    GLuint lighting_shadowSpreadLocation = glGetUniformLocation(lighting_shader.program, "ShadowSpread");
+
 
 
     /* --------------------------------------------------------------------------------------------- */
@@ -546,9 +549,6 @@ int main( int argc, char **argv )
 
             // Compute light positions
             // TO DO : several lights, each sent to the shadow shader
-            //for(unsigned int i = 0; i < numLights; ++i){
-            //
-            //}
             glm::vec3 lightPosition(5.f, 5.f, 5.f);
             glm::vec3 lightTarget(0.f, 0.f, 0.f);
             glm::vec3 lightUp(0.f, 1.f, 0.f);
@@ -573,14 +573,11 @@ int main( int argc, char **argv )
         // Unbind framebuffer
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-
-
         /* --------------------------------------------------------------------------------------------- */
         /* ------------------------------ Remplissage du Shadow Frame Buffer --------------------------- */
         /* --------------------------------------------------------------------------------------------- */
 
         glBindFramebuffer(GL_FRAMEBUFFER, gbufferFbo[1]);
-
             // Viewport 
             glViewport(0, 0, width, height);
 
@@ -603,8 +600,6 @@ int main( int argc, char **argv )
             glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 4);
             glBindVertexArray(vao[1]);
             glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-
-
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         /* --------------------------------------------------------------------------------------------- */
@@ -655,6 +650,8 @@ int main( int argc, char **argv )
         glUniform3fv(lighting_lightColorLocation, 1, lightColor);
         glUniform1f(lighting_lightIntensityLocation, lightIntensity);
         glUniform1f(lighting_shadowBiasLocation, shadowBias);
+        glUniform1f(lighting_shadowSamplesLocation, shadowSamples);
+        glUniform1f(lighting_shadowSpreadLocation, shadowSampleSpread);
 
         // Draw quad
         glBindVertexArray(vao[2]);
