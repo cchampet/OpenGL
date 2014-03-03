@@ -27,15 +27,15 @@ void main ()
 {
 	mat3 I;
 	vec3 average = vec3(0);
-    for (int i=0; i<3; i++) {
-	    for (int j=0; j<3; j++) {
+    for (float i = 0; i < SampleCount/2.0; i++) {
+	    for (float j = 0; j < SampleCount/2.0; j++) {
 	    	// On récupère la couleur d'un pixel précis dans Texture1
 	        vec3 sample  = texelFetch(Texture1, ivec2(gl_FragCoord) + ivec2(i-1,j-1), 0 ).rgb;
 	        average += sample; 
 	    }
 	}
 
-	average /= 9;
+	average /= SampleCount;
 
     OutColor = vec4(average, 1.0);
 }

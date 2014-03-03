@@ -738,6 +738,7 @@ int main( int argc, char **argv )
 
         // Upload uniforms
         glUniform1i(blur_tex1Location, 0);
+        glUniform1i(blur_samplesLocation, static_cast<int>(blurSamples));
 
         // Bind textures we want to render
         glActiveTexture(GL_TEXTURE0);
@@ -791,6 +792,7 @@ int main( int argc, char **argv )
         //
         // Display main screen 
         //
+
         glViewport( 0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -801,6 +803,7 @@ int main( int argc, char **argv )
         //
         // Display miniatures (à la noix) 
         //
+
         // Diffuse
         glViewport( 0, 0, width/4, height/4  );
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);        
