@@ -432,8 +432,8 @@ int main( int argc, char **argv )
 
     // Create color texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -441,8 +441,8 @@ int main( int argc, char **argv )
 
     // Create normal texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -450,7 +450,8 @@ int main( int argc, char **argv )
 
     // Create depth texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -478,12 +479,13 @@ int main( int argc, char **argv )
     /* ----------------------------------- Manage FXBuffer -------------------------------------- */
     /* --------------------------------------------------------------------------------------------- */
     GLuint fxBufferFbo;
-    GLuint fxBufferTextures[2];
-    glGenTextures(2, fxBufferTextures);
+    GLuint fxBufferTextures[4];
+    glGenTextures(4, fxBufferTextures);
 
     // Create first ping-pong texture
     glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -491,7 +493,26 @@ int main( int argc, char **argv )
 
     // Create second ping-pong texture
     glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Create texture => Coc
+    glBindTexture(GL_TEXTURE_2D, fxBufferTextures[2]);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Create texture => Blur
+    glBindTexture(GL_TEXTURE_2D, fxBufferTextures[3]);
+    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -638,13 +659,10 @@ int main( int argc, char **argv )
         // Start FX 
         glBindFramebuffer(GL_FRAMEBUFFER, fxBufferFbo);
         
-       
         //
         // Lighting pass
         //
-
-        // We draw the renderer in fxBufferTexture[0]
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[0], 0);     
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[0], 0);
 
         // Clear the front buffer
         glViewport( 0, 0, width, height );
@@ -699,11 +717,9 @@ int main( int argc, char **argv )
         glDisable(GL_BLEND);
 
         //
-        // Coc pass
+        // COC
         //
-
-        // We draw the renderer in fxBufferTexture[0]
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[1], 0);     
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[2], 0);
 
         // Clear the front buffer
         glViewport( 0, 0, width, height );
@@ -720,9 +736,6 @@ int main( int argc, char **argv )
         glUniform1f(coc_farPlaneLocation, farPlane);
 
         // Bind textures we want to render
-        // glActiveTexture(GL_TEXTURE0);
-        // glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]); 
-
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);        
 
@@ -731,65 +744,87 @@ int main( int argc, char **argv )
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
 
-        // //
-        // // Sobel pass
-        // //
+        //
+        // Sobel pass
+        //
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[1], 0);     
 
-        // // We draw the renderer in fxBufferTexture[0]
-        // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[1], 0);     
+        // Clear the front buffer
+        glViewport( 0, 0, width, height );
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // // Clear the front buffer
-        // glViewport( 0, 0, width, height );
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Bind lighting shader
+        glUseProgram(sobel_shader.program);
 
-        // // Bind lighting shader
-        // glUseProgram(sobel_shader.program);
+        // Upload uniforms
+        glUniform1i(sobel_tex1Location, 0);
+        glUniform1f(sobel_sobelLocation, sobelCoef);
 
-        // // Upload uniforms
-        // glUniform1i(sobel_tex1Location, 0);
-        // glUniform1f(sobel_sobelLocation, sobelCoef);
+        // Bind textures we want to render
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]); 
 
-        // // Bind textures we want to render
-        // glActiveTexture(GL_TEXTURE0);
-        // glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]); 
+        // Draw scene
+        glBindVertexArray(vao[2]);
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
-        // // Draw scene
-        // glBindVertexArray(vao[2]);
-        // glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+        //
+        // BLUR
+        //
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[3], 0);     
 
-        // //
-        // // BLUUUR
-        // //
+        // Clear the front buffer
+        glViewport(0, 0, width, height);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //  // We draw the renderer in fxBufferTexture[1]
-        // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[0], 0);     
+        // Bind lighting shader
+        glUseProgram(blur_shader.program);
 
-        // // Clear the front buffer
-        // glViewport(0, 0, width, height);
-        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // Upload uniforms
+        glUniform1i(blur_tex1Location, 0);
+        glUniform1i(blur_samplesLocation, static_cast<int>(blurSamples));
 
-        // // Bind lighting shader
-        // glUseProgram(blur_shader.program);
+        // Bind textures we want to render
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
 
-        // // Upload uniforms
-        // glUniform1i(blur_tex1Location, 0);
-        // glUniform1i(blur_samplesLocation, static_cast<int>(blurSamples));
+        // Draw scene
+        glBindVertexArray(vao[2]);
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
-        // // Bind textures we want to render
-        // glActiveTexture(GL_TEXTURE0);
-        // glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
+        //
+        // DOF
+        //
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[0], 0);     
 
-        // // Draw scene
-        // glBindVertexArray(vao[2]);
-        // glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+        // Clear the front buffer
+        glViewport(0, 0, width, height);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // Bind lighting shader
+        glUseProgram(dof_shader.program);
+
+        // Upload uniforms
+        glUniform1i(dof_colorLocation, 0);
+        glUniform1i(dof_blurLocation, 1);
+        glUniform1i(dof_cocLocation, 2);
+
+        // Bind textures we want to render
+        glActiveTexture(GL_TEXTURE0);//color
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
+        glActiveTexture(GL_TEXTURE1);//blur
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[3]);
+        glActiveTexture(GL_TEXTURE2);//coc
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[2]);
+
+        // Draw scene
+        glBindVertexArray(vao[2]);
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
         //
         // Gamma pass
         //
-
-        // We draw the renderer in fxBufferTexture[1]
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[0], 0);     
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[1], 0);     
 
         // Clear the front buffer
         glViewport( 0, 0, width, height );
@@ -804,7 +839,7 @@ int main( int argc, char **argv )
 
         // Bind textures we want to render
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]);
 
         // Draw scene
         glBindVertexArray(vao[2]);
@@ -816,22 +851,16 @@ int main( int argc, char **argv )
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         //
-        // Blit (?)
-        //
-
-        glUseProgram(blit_shader.program);
-        glUniform1i(blit_tex1Location, 0);
-        // use only unit 0
-        glActiveTexture(GL_TEXTURE0);
-
-        //
         // Display main screen 
         //
-
         glViewport( 0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]);
+        glUseProgram(blit_shader.program);
+        glUniform1i(blit_tex1Location, 0);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
@@ -840,23 +869,28 @@ int main( int argc, char **argv )
         //
 
         // Diffuse
-        glViewport( 0, 0, width/4, height/4  );
+        glViewport( 0, 0, width/5, height/5  );
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);        
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
         // Specular
-        glViewport( width/4, 0, width/4, height/4  );
+        glViewport( width/5, 0, width/5, height/5  );
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);        
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
         // Depth
-        glViewport( width/4 * 2, 0, width/4, height/4  );
+        glViewport( width/5 * 2, 0, width/5, height/5  );
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);        
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-        // Previous effect
-        glViewport( width/4 * 3, 0, width/4, height/4  );
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]);
+        // Coc
+        glViewport( width/5 * 3, 0, width/5, height/5  );
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[2]);
+        glBindVertexArray(vao[2]);
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+        // Blur
+        glViewport( width/5 * 4, 0, width/5, height/5  );
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[3]);
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 #if 1
@@ -878,7 +912,7 @@ int main( int argc, char **argv )
         imguiBeginFrame(mousex, mousey, mbut, mscroll);
         int logScroll = 0;
         char lineBuffer[512];
-        imguiBeginScrollArea("001", width - 210, height - 310, 200, 300, &logScroll);
+        imguiBeginScrollArea("004 - Post-Processing", width - 210, height - 350, 200, 300, &logScroll);
         sprintf(lineBuffer, "FPS %f", fps);
         imguiLabel(lineBuffer);
         imguiSlider("Lights", &numLights, 0.0, 100.0, 1.0);
@@ -897,8 +931,7 @@ int main( int argc, char **argv )
         
         // Check for errors
         GLenum err = glGetError();
-        if(err != GL_NO_ERROR)
-        {
+        if(err != GL_NO_ERROR){
             fprintf(stderr, "OpenGL Error : %s\n", gluErrorString(err));
             
         }
@@ -906,7 +939,10 @@ int main( int argc, char **argv )
         // Swap buffers
         glfwSwapBuffers();
 
-    } // Check if the ESC key was pressed or the window was closed
+        double newTime = glfwGetTime();
+        fps = 1.f/ (newTime - t);
+    } 
+    // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
            glfwGetWindowParam( GLFW_OPENED ) );
 

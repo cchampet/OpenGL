@@ -824,8 +824,7 @@ int main( int argc, char **argv )
         
         // Check for errors
         GLenum err = glGetError();
-        if(err != GL_NO_ERROR)
-        {
+        if(err != GL_NO_ERROR){
             fprintf(stderr, "OpenGL Error : %s\n", gluErrorString(err));
             
         }
@@ -835,10 +834,11 @@ int main( int argc, char **argv )
 
         double newTime = glfwGetTime();
         fps = 1.f/ (newTime - t);
-    } // Check if the ESC key was pressed or the window was closed
+
+    } 
+    // Check if the ESC key was pressed or the window was closed
     while( glfwGetKey( GLFW_KEY_ESC ) != GLFW_PRESS &&
            glfwGetWindowParam( GLFW_OPENED ) );
-
 
     // Clean UI
     imguiRenderGLDestroy();

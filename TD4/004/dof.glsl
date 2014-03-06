@@ -25,7 +25,8 @@ out vec4  OutColor;
 
 void main(void)
 {
-    OutColor = vec4(1.0, 0.0, 1.0, 1.0);
+	float blurCoef = texture(CoC, uv).r;
+    OutColor = vec4(mix(texture(Color, uv).rgb, texture(Blur, uv).rgb, blurCoef), 1.0);
 }
 
 #endif

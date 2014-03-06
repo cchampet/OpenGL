@@ -29,7 +29,7 @@ void main ()
 	vec3 average = vec3(0);
     for (float i = 0; i < SampleCount/2.0; i++) {
 	    for (float j = 0; j < SampleCount/2.0; j++) {
-	    	// On récupère la couleur d'un pixel précis dans Texture1
+	    	// get color of fragment in Texture1
 	        vec3 sample  = texelFetch(Texture1, ivec2(gl_FragCoord) + ivec2(i-1,j-1), 0 ).rgb;
 	        average += sample; 
 	    }
@@ -40,4 +40,3 @@ void main ()
     OutColor = vec4(average, 1.0);
 }
 #endif
-
