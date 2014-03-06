@@ -315,6 +315,8 @@ int main( int argc, char **argv )
     GLuint coc_depthLocation = glGetUniformLocation(coc_shader.program, "Depth");
     GLuint coc_screenToViewLocation = glGetUniformLocation(coc_shader.program, "ScreenToView");
     GLuint coc_focusLocation = glGetUniformLocation(coc_shader.program, "Focus");
+    GLuint coc_nearPlaneLocation = glGetUniformLocation(coc_shader.program, "Near");
+    GLuint coc_farPlaneLocation = glGetUniformLocation(coc_shader.program, "Far");
 
     // Load dof shader
     ShaderGLSL dof_shader;
@@ -697,7 +699,7 @@ int main( int argc, char **argv )
         glDisable(GL_BLEND);
 
         //
-        // Sobel pass
+        // Coc pass
         //
 
         // We draw the renderer in fxBufferTexture[0]
@@ -708,45 +710,78 @@ int main( int argc, char **argv )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Bind lighting shader
-        glUseProgram(sobel_shader.program);
+        glUseProgram(coc_shader.program);
 
         // Upload uniforms
-        glUniform1i(sobel_tex1Location, 0);
-        glUniform1f(sobel_sobelLocation, sobelCoef);
+        glUniform1i(coc_depthLocation, 2);
+        glUniformMatrix4fv(coc_screenToViewLocation, 1, 0, glm::value_ptr(screenToView));
+        glUniform1f(coc_focusLocation, focusPlane);
+        glUniform1f(coc_nearPlaneLocation, nearPlane);
+        glUniform1f(coc_farPlaneLocation, farPlane);
 
         // Bind textures we want to render
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]); 
+        // glActiveTexture(GL_TEXTURE0);
+        // glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]); 
+
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);        
 
         // Draw scene
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
-        //
-        // BLUUUR
-        //
 
-         // We draw the renderer in fxBufferTexture[1]
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[0], 0);     
+        // //
+        // // Sobel pass
+        // //
 
-        // Clear the front buffer
-        glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // // We draw the renderer in fxBufferTexture[0]
+        // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[1], 0);     
 
-        // Bind lighting shader
-        glUseProgram(blur_shader.program);
+        // // Clear the front buffer
+        // glViewport( 0, 0, width, height );
+        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Upload uniforms
-        glUniform1i(blur_tex1Location, 0);
-        glUniform1i(blur_samplesLocation, static_cast<int>(blurSamples));
+        // // Bind lighting shader
+        // glUseProgram(sobel_shader.program);
 
-        // Bind textures we want to render
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
+        // // Upload uniforms
+        // glUniform1i(sobel_tex1Location, 0);
+        // glUniform1f(sobel_sobelLocation, sobelCoef);
 
-        // Draw scene
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+        // // Bind textures we want to render
+        // glActiveTexture(GL_TEXTURE0);
+        // glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]); 
+
+        // // Draw scene
+        // glBindVertexArray(vao[2]);
+        // glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+
+        // //
+        // // BLUUUR
+        // //
+
+        //  // We draw the renderer in fxBufferTexture[1]
+        // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[0], 0);     
+
+        // // Clear the front buffer
+        // glViewport(0, 0, width, height);
+        // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // // Bind lighting shader
+        // glUseProgram(blur_shader.program);
+
+        // // Upload uniforms
+        // glUniform1i(blur_tex1Location, 0);
+        // glUniform1i(blur_samplesLocation, static_cast<int>(blurSamples));
+
+        // // Bind textures we want to render
+        // glActiveTexture(GL_TEXTURE0);
+        // glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
+
+        // // Draw scene
+        // glBindVertexArray(vao[2]);
+        // glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
 
         //
@@ -754,7 +789,7 @@ int main( int argc, char **argv )
         //
 
         // We draw the renderer in fxBufferTexture[1]
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[1], 0);     
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[0], 0);     
 
         // Clear the front buffer
         glViewport( 0, 0, width, height );
@@ -769,7 +804,7 @@ int main( int argc, char **argv )
 
         // Bind textures we want to render
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]);
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
 
         // Draw scene
         glBindVertexArray(vao[2]);
@@ -796,7 +831,7 @@ int main( int argc, char **argv )
         glViewport( 0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]);
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
