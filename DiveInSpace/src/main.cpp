@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <string>
-#include <iostream>
-
 #include "glew/glew.h"
 #ifdef __APPLE__
 #include <OpenGL/gl3.h>
@@ -25,6 +19,7 @@
 #include "glm/gtc/type_ptr.hpp" // glm::value_ptr
 
 #include "Camera.h"
+#include "Shader.h"
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -48,20 +43,7 @@
 extern const unsigned char DroidSans_ttf[];
 extern const unsigned int DroidSans_ttf_len;    
 
-struct ShaderGLSL
-{
-    enum ShaderType
-    {
-        VERTEX_SHADER = 1,
-        FRAGMENT_SHADER = 2,
-        GEOMETRY_SHADER = 4
-    };
-    GLuint program;
-};
 
-int compile_and_link_shader(ShaderGLSL & shader, int typeMask, const char * sourceBuffer, int bufferSize);
-int destroy_shader(ShaderGLSL & shader);
-int load_shader_from_file(ShaderGLSL & shader, const char * path, int typemask);
 
 struct GUIStates
 {
@@ -198,10 +180,10 @@ int main( int argc, char **argv )
 
     // Try to load and compile shader
     int status;
-    ShaderGLSL gbuffer_shader;
+    Shader gbuffer_shader;
     const char * shaderFileGBuffer = "shaders/gbuffer.glsl";
-    //int status = load_shader_from_file(gbuffer_shader, shaderFileGBuffer, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER | ShaderGLSL::GEOMETRY_SHADER);
-    status = load_shader_from_file(gbuffer_shader, shaderFileGBuffer, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    //int status = load_shader_from_file(gbuffer_shader, shaderFileGBuffer, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER | Shader::GEOMETRY_SHADER);
+    status = gbuffer_shader.load_shader_from_file(shaderFileGBuffer, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
     if ( status == -1 )
     {
         fprintf(stderr, "Error on loading  %s\n", shaderFileGBuffer);
@@ -217,10 +199,10 @@ int main( int argc, char **argv )
     GLuint gbuffer_specLocation = glGetUniformLocation(gbuffer_shader.program, "Spec");
 
     // Load Blit shader
-    ShaderGLSL blit_shader;
+    Shader blit_shader;
     const char * shaderFileBlit = "shaders/blit.glsl";
-    //int status = load_shader_from_file(blit_shader, shaderFileBlit, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER | ShaderGLSL::GEOMETRY_SHADER);
-    status = load_shader_from_file(blit_shader, shaderFileBlit, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    //int status = load_shader_from_file(blit_shader, shaderFileBlit, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER | Shader::GEOMETRY_SHADER);
+    status = blit_shader.load_shader_from_file(shaderFileBlit, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
     if ( status == -1 )
     {
         fprintf(stderr, "Error on loading  %s\n", shaderFileBlit);
@@ -230,10 +212,10 @@ int main( int argc, char **argv )
     GLuint blit_tex1Location = glGetUniformLocation(blit_shader.program, "Texture1");
 
     // Load light accumulation shader
-    ShaderGLSL lighting_shader;
+    Shader lighting_shader;
     const char * shaderFileLighting = "shaders/light.glsl";
-    //int status = load_shader_from_file(lighting_shader, shaderFileLighting, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER | ShaderGLSL::GEOMETRY_SHADER);
-    status = load_shader_from_file(lighting_shader, shaderFileLighting, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    //int status = load_shader_from_file(lighting_shader, shaderFileLighting, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER | Shader::GEOMETRY_SHADER);
+    status = lighting_shader.load_shader_from_file(shaderFileLighting, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
     if ( status == -1 )
     {
         fprintf(stderr, "Error on loading  %s\n", shaderFileLighting);
@@ -250,9 +232,9 @@ int main( int argc, char **argv )
     GLuint lighting_lightIntensityLocation = glGetUniformLocation(lighting_shader.program, "LightIntensity");
 
     // Load gamma shader
-    ShaderGLSL gamma_shader;
+    Shader gamma_shader;
     const char * shaderFilegamma = "shaders/gamma.glsl";
-    status = load_shader_from_file(gamma_shader, shaderFilegamma, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    status = gamma_shader.load_shader_from_file(shaderFilegamma, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
     if ( status == -1 )
     {
         fprintf(stderr, "Error on loading  %s\n", shaderFilegamma);
@@ -263,9 +245,9 @@ int main( int argc, char **argv )
     GLuint gamma_gammaLocation = glGetUniformLocation(gamma_shader.program, "Gamma");
 
     // Load sobel shader
-    ShaderGLSL sobel_shader;
+    Shader sobel_shader;
     const char * shaderFilesobel = "shaders/sobel.glsl";
-    status = load_shader_from_file(sobel_shader, shaderFilesobel, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    status = sobel_shader.load_shader_from_file(shaderFilesobel, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
     if ( status == -1 )
     {
         fprintf(stderr, "Error on loading  %s\n", shaderFilesobel);
@@ -276,9 +258,9 @@ int main( int argc, char **argv )
     GLuint sobel_sobelLocation = glGetUniformLocation(sobel_shader.program, "SobelCoef");
 
     // Load blur shader
-    ShaderGLSL blur_shader;
+    Shader blur_shader;
     const char * shaderFileblur = "shaders/blur.glsl";
-    status = load_shader_from_file(blur_shader, shaderFileblur, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    status = blur_shader.load_shader_from_file(shaderFileblur, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
     if ( status == -1 )
     {
         fprintf(stderr, "Error on loading  %s\n", shaderFileblur);
@@ -290,9 +272,9 @@ int main( int argc, char **argv )
     GLuint blur_samplesLocation = glGetUniformLocation(blur_shader.program, "SampleCount");
 
     // Load coc shader
-    ShaderGLSL coc_shader;
+    Shader coc_shader;
     const char * shaderFilecoc = "shaders/coc.glsl";
-    status = load_shader_from_file(coc_shader, shaderFilecoc, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    status = coc_shader.load_shader_from_file(shaderFilecoc, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
     if ( status == -1 )
     {
         fprintf(stderr, "Error on loading  %s\n", shaderFilecoc);
@@ -306,9 +288,9 @@ int main( int argc, char **argv )
     GLuint coc_farPlaneLocation = glGetUniformLocation(coc_shader.program, "Far");
 
     // Load dof shader
-    ShaderGLSL dof_shader;
+    Shader dof_shader;
     const char * shaderFiledof = "shaders/dof.glsl";
-    status = load_shader_from_file(dof_shader, shaderFiledof, ShaderGLSL::VERTEX_SHADER | ShaderGLSL::FRAGMENT_SHADER);
+    status = dof_shader.load_shader_from_file(shaderFiledof, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
     if ( status == -1 )
     {
         fprintf(stderr, "Error on loading  %s\n", shaderFiledof);
@@ -940,189 +922,4 @@ int main( int argc, char **argv )
     glfwTerminate();
 
     exit( EXIT_SUCCESS );
-}
-
-
-
-
-int  compile_and_link_shader(ShaderGLSL & shader, int typeMask, const char * sourceBuffer, int bufferSize)
-{
-    // Create program object
-    shader.program = glCreateProgram();
-    
-    //Handle Vertex Shader
-    GLuint vertexShaderObject ;
-    if (typeMask & ShaderGLSL::VERTEX_SHADER)
-    {
-        // Create shader object for vertex shader
-        vertexShaderObject = glCreateShader(GL_VERTEX_SHADER);
-        // Add #define VERTEX to buffer
-        const char * sc[3] = { "#version 150\n", "#define VERTEX\n", sourceBuffer};
-        glShaderSource(vertexShaderObject, 
-                       3, 
-                       sc,
-                       NULL);
-        // Compile shader
-        glCompileShader(vertexShaderObject);
-
-        // Get error log size and print it eventually
-        int logLength;
-        glGetShaderiv(vertexShaderObject, GL_INFO_LOG_LENGTH, &logLength);
-        if (logLength > 1)
-        {
-            char * log = new char[logLength];
-            glGetShaderInfoLog(vertexShaderObject, logLength, &logLength, log);
-            fprintf(stderr, "Error in compiling vertex shader : %s", log);
-            fprintf(stderr, "%s\n%s\n%s", sc[0], sc[1], sc[2]);
-            delete[] log;
-        }
-        // If an error happend quit
-        int status;
-        glGetShaderiv(vertexShaderObject, GL_COMPILE_STATUS, &status);
-        if (status == GL_FALSE)
-            return -1;          
-
-        //Attach shader to program
-        glAttachShader(shader.program, vertexShaderObject);
-    }
-
-    // Handle Geometry shader
-    GLuint geometryShaderObject ;
-    if (typeMask & ShaderGLSL::GEOMETRY_SHADER)
-    {
-        // Create shader object for Geometry shader
-        geometryShaderObject = glCreateShader(GL_GEOMETRY_SHADER);
-        // Add #define Geometry to buffer
-        const char * sc[3] = { "#version 150\n", "#define GEOMETRY\n", sourceBuffer};
-        glShaderSource(geometryShaderObject, 
-                       3, 
-                       sc,
-                       NULL);
-        // Compile shader
-        glCompileShader(geometryShaderObject);
-
-        // Get error log size and print it eventually
-        int logLength;
-        glGetShaderiv(geometryShaderObject, GL_INFO_LOG_LENGTH, &logLength);
-        if (logLength > 1)
-        {
-            char * log = new char[logLength];
-            glGetShaderInfoLog(geometryShaderObject, logLength, &logLength, log);
-            fprintf(stderr, "Error in compiling Geometry shader : %s \n", log);
-            fprintf(stderr, "%s\n%s\n%s", sc[0], sc[1], sc[2]);
-            delete[] log;
-        }
-        // If an error happend quit
-        int status;
-        glGetShaderiv(geometryShaderObject, GL_COMPILE_STATUS, &status);
-        if (status == GL_FALSE)
-            return -1;          
-
-        //Attach shader to program
-        glAttachShader(shader.program, geometryShaderObject);
-    }
-
-
-    // Handle Fragment shader
-    GLuint fragmentShaderObject ;
-    if (typeMask && ShaderGLSL::FRAGMENT_SHADER)
-    {
-        // Create shader object for fragment shader
-        fragmentShaderObject = glCreateShader(GL_FRAGMENT_SHADER);
-        // Add #define fragment to buffer
-        const char * sc[3] = { "#version 150\n", "#define FRAGMENT\n", sourceBuffer};
-        glShaderSource(fragmentShaderObject, 
-                       3, 
-                       sc,
-                       NULL);
-        // Compile shader
-        glCompileShader(fragmentShaderObject);
-
-        // Get error log size and print it eventually
-        int logLength;
-        glGetShaderiv(fragmentShaderObject, GL_INFO_LOG_LENGTH, &logLength);
-        if (logLength > 1)
-        {
-            char * log = new char[logLength];
-            glGetShaderInfoLog(fragmentShaderObject, logLength, &logLength, log);
-            fprintf(stderr, "Error in compiling fragment shader : %s \n", log);
-            fprintf(stderr, "%s\n%s\n%s", sc[0], sc[1], sc[2]);
-            delete[] log;
-        }
-        // If an error happend quit
-        int status;
-        glGetShaderiv(fragmentShaderObject, GL_COMPILE_STATUS, &status);
-        if (status == GL_FALSE)
-            return -1;          
-
-        //Attach shader to program
-        glAttachShader(shader.program, fragmentShaderObject);
-    }
-
-
-    // Bind attribute location
-    glBindAttribLocation(shader.program,  0,  "VertexPosition");
-    glBindAttribLocation(shader.program,  1,  "VertexNormal");
-    glBindAttribLocation(shader.program,  2,  "VertexTexCoord");
-    glBindFragDataLocation(shader.program, 0, "Color");
-    glBindFragDataLocation(shader.program, 1, "Normal");
-
-    // Link attached shaders
-    glLinkProgram(shader.program);
-
-    // Clean
-    if (typeMask & ShaderGLSL::VERTEX_SHADER)
-    {
-        glDeleteShader(vertexShaderObject);
-    }
-    if (typeMask && ShaderGLSL::GEOMETRY_SHADER)
-    {
-        glDeleteShader(fragmentShaderObject);
-    }
-    if (typeMask && ShaderGLSL::FRAGMENT_SHADER)
-    {
-        glDeleteShader(fragmentShaderObject);
-    }
-
-    // Get link error log size and print it eventually
-    int logLength;
-    glGetProgramiv(shader.program, GL_INFO_LOG_LENGTH, &logLength);
-    if (logLength > 1)
-    {
-        char * log = new char[logLength];
-        glGetProgramInfoLog(shader.program, logLength, &logLength, log);
-        fprintf(stderr, "Error in linking shaders : %s \n", log);
-        delete[] log;
-    }
-    int status;
-    glGetProgramiv(shader.program, GL_LINK_STATUS, &status);        
-    if (status == GL_FALSE)
-        return -1;
-
-
-    return 0;
-}
-
-int  destroy_shader(ShaderGLSL & shader)
-{
-    glDeleteProgram(shader.program);
-    shader.program = 0;
-    return 0;
-}
-
-int load_shader_from_file(ShaderGLSL & shader, const char * path, int typemask)
-{
-    int status;
-    FILE * shaderFileDesc = fopen( path, "rb" );
-    if (!shaderFileDesc)
-        return -1;
-    fseek ( shaderFileDesc , 0 , SEEK_END );
-    long fileSize = ftell ( shaderFileDesc );
-    rewind ( shaderFileDesc );
-    char * buffer = new char[fileSize + 1];
-    fread( buffer, 1, fileSize, shaderFileDesc );
-    buffer[fileSize] = '\0';
-    status = compile_and_link_shader( shader, typemask, buffer, fileSize );
-    delete[] buffer;
-    return status;
 }
