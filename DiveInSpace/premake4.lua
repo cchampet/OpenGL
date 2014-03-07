@@ -6,7 +6,7 @@ solution "DiveInSpace - OpenGL project - IMAC3 2014"
    project "DiveInSpace"
       kind "ConsoleApp"
       language "C++"
-      files { "src/main.cpp"}
+      files { "src/main.cpp", "src/Camera.cpp"}
       includedirs { "lib/glfw/include", "src", "common", "lib/" }
       links {"glfw", "glew", "stb", "imgui"}
       defines { "GLEW_STATIC" }
