@@ -20,6 +20,7 @@
 
 #include "Camera.h"
 #include "Shader.h"
+#include "ShaderManager.h"
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -141,6 +142,9 @@ int main( int argc, char **argv )
     GUIStates guiStates;
     init_gui_states(guiStates);
 
+    // Init shader structures
+    ShaderManager shaderManager;
+
     // GUI
     float numLights = 10.f;
 
@@ -177,129 +181,60 @@ int main( int argc, char **argv )
     /* --------------------------------------------------------------------------------------------- */
     /* ------------------------------------------ Shaders ------------------------------------------ */
     /* --------------------------------------------------------------------------------------------- */
-
-    // Try to load and compile shader
-    int status;
-    Shader gbuffer_shader;
-    const char * shaderFileGBuffer = "shaders/gbuffer.glsl";
-    //int status = load_shader_from_file(gbuffer_shader, shaderFileGBuffer, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER | Shader::GEOMETRY_SHADER);
-    status = gbuffer_shader.load_shader_from_file(shaderFileGBuffer, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
-    if ( status == -1 )
-    {
-        fprintf(stderr, "Error on loading  %s\n", shaderFileGBuffer);
-        exit( EXIT_FAILURE );
-    }    
-
+    shaderManager.addShader("shaders/gbuffer.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER);
     // Compute locations for gbuffer_shader
-    GLuint gbuffer_projectionLocation = glGetUniformLocation(gbuffer_shader.program, "Projection");
-    GLuint gbuffer_viewLocation = glGetUniformLocation(gbuffer_shader.program, "View");
-    GLuint gbuffer_objectLocation = glGetUniformLocation(gbuffer_shader.program, "Object");
-    GLuint gbuffer_timeLocation = glGetUniformLocation(gbuffer_shader.program, "Time");
-    GLuint gbuffer_diffuseLocation = glGetUniformLocation(gbuffer_shader.program, "Diffuse");
-    GLuint gbuffer_specLocation = glGetUniformLocation(gbuffer_shader.program, "Spec");
+    GLuint gbuffer_projectionLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "Projection");
+    GLuint gbuffer_viewLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "View");
+    GLuint gbuffer_objectLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "Object");
+    GLuint gbuffer_timeLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "Time");
+    GLuint gbuffer_diffuseLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "Diffuse");
+    GLuint gbuffer_specLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "Spec");
 
-    // Load Blit shader
-    Shader blit_shader;
-    const char * shaderFileBlit = "shaders/blit.glsl";
-    //int status = load_shader_from_file(blit_shader, shaderFileBlit, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER | Shader::GEOMETRY_SHADER);
-    status = blit_shader.load_shader_from_file(shaderFileBlit, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
-    if ( status == -1 )
-    {
-        fprintf(stderr, "Error on loading  %s\n", shaderFileBlit);
-        exit( EXIT_FAILURE );
-    }    
+    shaderManager.addShader("shaders/blit.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLIT);
     // Compute locations for blit_shader
-    GLuint blit_tex1Location = glGetUniformLocation(blit_shader.program, "Texture1");
+    GLuint blit_tex1Location = glGetUniformLocation(shaderManager.getShader(ShaderManager::BLIT).program, "Texture1");
 
-    // Load light accumulation shader
-    Shader lighting_shader;
-    const char * shaderFileLighting = "shaders/light.glsl";
-    //int status = load_shader_from_file(lighting_shader, shaderFileLighting, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER | Shader::GEOMETRY_SHADER);
-    status = lighting_shader.load_shader_from_file(shaderFileLighting, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
-    if ( status == -1 )
-    {
-        fprintf(stderr, "Error on loading  %s\n", shaderFileLighting);
-        exit( EXIT_FAILURE );
-    }    
+    shaderManager.addShader("shaders/light.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::LIGHT);
     // Compute locations for lighting_shader
-    GLuint lighting_materialLocation = glGetUniformLocation(lighting_shader.program, "Material");
-    GLuint lighting_normalLocation = glGetUniformLocation(lighting_shader.program, "Normal");
-    GLuint lighting_depthLocation = glGetUniformLocation(lighting_shader.program, "Depth");
-    GLuint lighting_inverseViewProjectionLocation = glGetUniformLocation(lighting_shader.program, "InverseViewProjection");
-    GLuint lighting_cameraPositionLocation = glGetUniformLocation(lighting_shader.program, "CameraPosition");
-    GLuint lighting_lightPositionLocation = glGetUniformLocation(lighting_shader.program, "LightPosition");
-    GLuint lighting_lightColorLocation = glGetUniformLocation(lighting_shader.program, "LightColor");
-    GLuint lighting_lightIntensityLocation = glGetUniformLocation(lighting_shader.program, "LightIntensity");
+    GLuint lighting_materialLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "Material");
+    GLuint lighting_normalLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "Normal");
+    GLuint lighting_depthLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "Depth");
+    GLuint lighting_inverseViewProjectionLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "InverseViewProjection");
+    GLuint lighting_cameraPositionLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "CameraPosition");
+    GLuint lighting_lightPositionLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "LightPosition");
+    GLuint lighting_lightColorLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "LightColor");
+    GLuint lighting_lightIntensityLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "LightIntensity");
 
-    // Load gamma shader
-    Shader gamma_shader;
-    const char * shaderFilegamma = "shaders/gamma.glsl";
-    status = gamma_shader.load_shader_from_file(shaderFilegamma, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
-    if ( status == -1 )
-    {
-        fprintf(stderr, "Error on loading  %s\n", shaderFilegamma);
-        exit( EXIT_FAILURE );
-    }    
+    shaderManager.addShader("shaders/gamma.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GAMMA);
     // Compute locations for gamma_shader
-    GLuint gamma_tex1Location = glGetUniformLocation(gamma_shader.program, "Texture1");
-    GLuint gamma_gammaLocation = glGetUniformLocation(gamma_shader.program, "Gamma");
+    GLuint gamma_tex1Location = glGetUniformLocation(shaderManager.getShader(ShaderManager::GAMMA).program, "Texture1");
+    GLuint gamma_gammaLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GAMMA).program, "Gamma");
 
-    // Load sobel shader
-    Shader sobel_shader;
-    const char * shaderFilesobel = "shaders/sobel.glsl";
-    status = sobel_shader.load_shader_from_file(shaderFilesobel, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
-    if ( status == -1 )
-    {
-        fprintf(stderr, "Error on loading  %s\n", shaderFilesobel);
-        exit( EXIT_FAILURE );
-    }    
+
+    shaderManager.addShader("shaders/sobel.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::SOBEL);
     // Compute locations for sobel_shader
-    GLuint sobel_tex1Location = glGetUniformLocation(sobel_shader.program, "Texture1");
-    GLuint sobel_sobelLocation = glGetUniformLocation(sobel_shader.program, "SobelCoef");
+    GLuint sobel_tex1Location = glGetUniformLocation(shaderManager.getShader(ShaderManager::SOBEL).program, "Texture1");
+    GLuint sobel_sobelLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::SOBEL).program, "SobelCoef");
 
-    // Load blur shader
-    Shader blur_shader;
-    const char * shaderFileblur = "shaders/blur.glsl";
-    status = blur_shader.load_shader_from_file(shaderFileblur, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
-    if ( status == -1 )
-    {
-        fprintf(stderr, "Error on loading  %s\n", shaderFileblur);
-        exit( EXIT_FAILURE );
-    }    
+    shaderManager.addShader("shaders/blur.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLUR);
     // Compute locations for blur_shader
-    GLuint blur_tex1Location = glGetUniformLocation(blur_shader.program, "Texture1");
-    GLuint blur_directionLocation = glGetUniformLocation(blur_shader.program, "Direction");
-    GLuint blur_samplesLocation = glGetUniformLocation(blur_shader.program, "SampleCount");
+    GLuint blur_tex1Location = glGetUniformLocation(shaderManager.getShader(ShaderManager::BLUR).program, "Texture1");
+    GLuint blur_directionLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::BLUR).program, "Direction");
+    GLuint blur_samplesLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::BLUR).program, "SampleCount");
 
-    // Load coc shader
-    Shader coc_shader;
-    const char * shaderFilecoc = "shaders/coc.glsl";
-    status = coc_shader.load_shader_from_file(shaderFilecoc, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
-    if ( status == -1 )
-    {
-        fprintf(stderr, "Error on loading  %s\n", shaderFilecoc);
-        exit( EXIT_FAILURE );
-    }    
+    shaderManager.addShader("shaders/coc.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::COC);
     // Compute locations for coc_shader
-    GLuint coc_depthLocation = glGetUniformLocation(coc_shader.program, "Depth");
-    GLuint coc_screenToViewLocation = glGetUniformLocation(coc_shader.program, "ScreenToView");
-    GLuint coc_focusLocation = glGetUniformLocation(coc_shader.program, "Focus");
-    GLuint coc_nearPlaneLocation = glGetUniformLocation(coc_shader.program, "Near");
-    GLuint coc_farPlaneLocation = glGetUniformLocation(coc_shader.program, "Far");
+    GLuint coc_depthLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::COC).program, "Depth");
+    GLuint coc_screenToViewLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::COC).program, "ScreenToView");
+    GLuint coc_focusLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::COC).program, "Focus");
+    GLuint coc_nearPlaneLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::COC).program, "Near");
+    GLuint coc_farPlaneLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::COC).program, "Far");
 
-    // Load dof shader
-    Shader dof_shader;
-    const char * shaderFiledof = "shaders/dof.glsl";
-    status = dof_shader.load_shader_from_file(shaderFiledof, Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER);
-    if ( status == -1 )
-    {
-        fprintf(stderr, "Error on loading  %s\n", shaderFiledof);
-        exit( EXIT_FAILURE );
-    }    
+    shaderManager.addShader("shaders/dof.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::DOF);
     // Compute locations for dof_shader
-    GLuint dof_colorLocation = glGetUniformLocation(dof_shader.program, "Color");
-    GLuint dof_blurLocation = glGetUniformLocation(dof_shader.program, "Blur");
-    GLuint dof_cocLocation = glGetUniformLocation(dof_shader.program, "CoC");
+    GLuint dof_colorLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::DOF).program, "Color");
+    GLuint dof_blurLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::DOF).program, "Blur");
+    GLuint dof_cocLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::DOF).program, "CoC");
 
 
     /* --------------------------------------------------------------------------------------------- */
@@ -595,7 +530,7 @@ int main( int argc, char **argv )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Bind gbuffer shader
-        glUseProgram(gbuffer_shader.program);
+        glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER).program);
 
         // Upload uniforms
         glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
@@ -638,7 +573,7 @@ int main( int argc, char **argv )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Bind lighting shader
-        glUseProgram(lighting_shader.program);
+        glUseProgram(shaderManager.getShader(ShaderManager::LIGHT).program);
 
         // Upload uniforms
         glUniform1i(lighting_materialLocation, 0);
@@ -695,7 +630,7 @@ int main( int argc, char **argv )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Bind lighting shader
-        glUseProgram(coc_shader.program);
+        glUseProgram(shaderManager.getShader(ShaderManager::COC).program);
 
         // Upload uniforms
         glUniform1i(coc_depthLocation, 2);
@@ -723,7 +658,7 @@ int main( int argc, char **argv )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Bind lighting shader
-        glUseProgram(sobel_shader.program);
+        glUseProgram(shaderManager.getShader(ShaderManager::SOBEL).program);
 
         // Upload uniforms
         glUniform1i(sobel_tex1Location, 0);
@@ -747,7 +682,7 @@ int main( int argc, char **argv )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Bind lighting shader
-        glUseProgram(blur_shader.program);
+        glUseProgram(shaderManager.getShader(ShaderManager::BLUR).program);
 
         // Upload uniforms
         glUniform1i(blur_tex1Location, 0);
@@ -771,7 +706,7 @@ int main( int argc, char **argv )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Bind lighting shader
-        glUseProgram(dof_shader.program);
+        glUseProgram(shaderManager.getShader(ShaderManager::DOF).program);
 
         // Upload uniforms
         glUniform1i(dof_colorLocation, 0);
@@ -800,7 +735,7 @@ int main( int argc, char **argv )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Bind lighting shader
-        glUseProgram(gamma_shader.program);
+        glUseProgram(shaderManager.getShader(ShaderManager::GAMMA).program);
 
         // Upload uniforms
         glUniform1i(gamma_tex1Location, 0);
@@ -825,7 +760,7 @@ int main( int argc, char **argv )
         glViewport( 0, 0, width, height);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glUseProgram(blit_shader.program);
+        glUseProgram(shaderManager.getShader(ShaderManager::BLIT).program);
         glUniform1i(blit_tex1Location, 0);
 
         glActiveTexture(GL_TEXTURE0);

@@ -17,7 +17,7 @@ struct Shader
     int compile_and_link_shader(int typeMask, const char * sourceBuffer, int bufferSize);
 	int destroy_shader();
 	int load_shader_from_file(const char * path, int typemask);
-
+    
     enum ShaderType
     {
         VERTEX_SHADER = 1,
