@@ -21,6 +21,8 @@
 #include "Camera.h"
 #include "Shader.h"
 #include "ShaderManager.h"
+#include "ImGui.h"
+#include "LightManager.h"
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -39,43 +41,6 @@
         __func__, __FILE__, __LINE__, __VA_ARGS__)
 #endif
 #endif
-
-// Font buffers
-extern const unsigned char DroidSans_ttf[];
-extern const unsigned int DroidSans_ttf_len;    
-
-
-
-struct GUIStates
-{
-    bool panLock;
-    bool turnLock;
-    bool zoomLock;
-    int lockPositionX;
-    int lockPositionY;
-    int camera;
-    double time;
-    bool playing;
-    static const float MOUSE_PAN_SPEED;
-    static const float MOUSE_ZOOM_SPEED;
-    static const float MOUSE_TURN_SPEED;
-};
-const float GUIStates::MOUSE_PAN_SPEED = 0.001f;
-const float GUIStates::MOUSE_ZOOM_SPEED = 0.05f;
-const float GUIStates::MOUSE_TURN_SPEED = 0.005f;
-
-
-void init_gui_states(GUIStates & guiStates)
-{
-    guiStates.panLock = false;
-    guiStates.turnLock = false;
-    guiStates.zoomLock = false;
-    guiStates.lockPositionX = 0;
-    guiStates.lockPositionY = 0;
-    guiStates.camera = 0;
-    guiStates.time = 0.0;
-    guiStates.playing = false;
-}
 
 int main( int argc, char **argv )
 {
@@ -130,23 +95,16 @@ int main( int argc, char **argv )
     GLenum glerr = GL_NO_ERROR;
     glerr = glGetError();
 
-    if (!imguiRenderGLInit(DroidSans_ttf, DroidSans_ttf_len))
-    {
-        fprintf(stderr, "Could not init GUI renderer.\n");
-        exit(EXIT_FAILURE);
-    }
-
     // Init viewer structures
     Camera camera;
     camera.camera_defaults();
+    init_imgui();
     GUIStates guiStates;
     init_gui_states(guiStates);
 
     // Init shader structures
     ShaderManager shaderManager;
-
-    // GUI
-    float numLights = 10.f;
+    LightManager lightManager(10.f);
 
     // Load images and upload textures
     GLuint textures[3];
@@ -240,8 +198,6 @@ int main( int argc, char **argv )
     /* --------------------------------------------------------------------------------------------- */
     /* ------------------------------------------ Geometry ----------------------------------------- */
     /* --------------------------------------------------------------------------------------------- */
-    
-
     // Load geometry
     int   cube_triangleCount = 12;
     int   cube_triangleList[] = {0, 1, 2, 2, 1, 3, 4, 5, 6, 6, 5, 7, 8, 9, 10, 10, 9, 11, 12, 13, 14, 14, 13, 15, 16, 17, 18, 19, 17, 20, 21, 22, 23, 24, 25, 26, };
@@ -600,18 +556,14 @@ int main( int argc, char **argv )
         glBlendFunc(GL_ONE, GL_ONE);
 
         // Deferred lights
-        for (int i = 0; i < (int) numLights; ++i)
+        for (int i = 0; i < (int) lightManager.getNbLights(); ++i)
         {
             float tl = t * i;
 
             //Update light uniforms
-            float lightPosition[3] = { sinf(tl) * 10.f, -0.5f, cosf(tl) * 10.f};
-            float lightColor[3] = {sinf(tl) *  1.f, 1.f - cosf(tl), -sinf(tl)};
-            float lightIntensity = 10.0;
-
-            glUniform3fv(lighting_lightPositionLocation, 1, lightPosition);
-            glUniform3fv(lighting_lightColorLocation, 1, lightColor);
-            glUniform1f(lighting_lightIntensityLocation, lightIntensity);
+            glUniform3fv(lighting_lightPositionLocation, 1, lightManager.getCustomPositionOfLight(tl));
+            glUniform3fv(lighting_lightColorLocation, 1, lightManager.getCustomColorOfLight(tl));
+            glUniform1f(lighting_lightIntensityLocation, lightManager.getIntensityOfLights());
 
             // Draw quad
             glBindVertexArray(vao[2]);
@@ -819,7 +771,7 @@ int main( int argc, char **argv )
         imguiBeginScrollArea("Dive In Space", width - 210, height - 350, 200, 300, &logScroll);
         sprintf(lineBuffer, "FPS %f", fps);
         imguiLabel(lineBuffer);
-        imguiSlider("Lights", &numLights, 0.0, 100.0, 1.0);
+        imguiSlider("Lights", lightManager.getNbLightsAdress(), 0.0, 100.0, 1.0);
         imguiSlider("Gamma", &gamma, 0.0, 3.0, 0.1);
         imguiSlider("Sobel", &sobelCoef, 0.0, 1.0, 1.0);
         imguiSlider("Blur Samples", &blurSamples, 1.0, 100.0, 1.0);
