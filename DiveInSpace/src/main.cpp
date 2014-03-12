@@ -18,9 +18,9 @@
 #include "glm/gtc/matrix_transform.hpp" // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include "glm/gtc/type_ptr.hpp" // glm::value_ptr
 
+#include "ShaderManager.h"
 #include "Camera.h"
 #include "Shader.h"
-#include "ShaderManager.h"
 #include "ImGui.h"
 #include "LightManager.h"
 #include "Geometry.h"
@@ -119,59 +119,13 @@ int main( int argc, char **argv )
     /* ------------------------------------------ Shaders ------------------------------------------ */
     /* --------------------------------------------------------------------------------------------- */
     shaderManager.addShader("shaders/gbuffer.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER);
-    // Compute locations for gbuffer_shader
-    GLuint gbuffer_projectionLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "Projection");
-    GLuint gbuffer_viewLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "View");
-    GLuint gbuffer_objectLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "Object");
-    GLuint gbuffer_timeLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "Time");
-    GLuint gbuffer_diffuseLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "Diffuse");
-    GLuint gbuffer_specLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GBUFFER).program, "Spec");
-
     shaderManager.addShader("shaders/blit.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLIT);
-    // Compute locations for blit_shader
-    GLuint blit_tex1Location = glGetUniformLocation(shaderManager.getShader(ShaderManager::BLIT).program, "Texture1");
-
     shaderManager.addShader("shaders/light.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::LIGHT);
-    // Compute locations for lighting_shader
-    GLuint lighting_materialLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "Material");
-    GLuint lighting_normalLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "Normal");
-    GLuint lighting_depthLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "Depth");
-    GLuint lighting_inverseViewProjectionLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "InverseViewProjection");
-    GLuint lighting_cameraPositionLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "CameraPosition");
-    GLuint lighting_lightPositionLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "LightPosition");
-    GLuint lighting_lightColorLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "LightColor");
-    GLuint lighting_lightIntensityLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::LIGHT).program, "LightIntensity");
-
     shaderManager.addShader("shaders/gamma.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GAMMA);
-    // Compute locations for gamma_shader
-    GLuint gamma_tex1Location = glGetUniformLocation(shaderManager.getShader(ShaderManager::GAMMA).program, "Texture1");
-    GLuint gamma_gammaLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::GAMMA).program, "Gamma");
-
-
     shaderManager.addShader("shaders/sobel.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::SOBEL);
-    // Compute locations for sobel_shader
-    GLuint sobel_tex1Location = glGetUniformLocation(shaderManager.getShader(ShaderManager::SOBEL).program, "Texture1");
-    GLuint sobel_sobelLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::SOBEL).program, "SobelCoef");
-
     shaderManager.addShader("shaders/blur.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLUR);
-    // Compute locations for blur_shader
-    GLuint blur_tex1Location = glGetUniformLocation(shaderManager.getShader(ShaderManager::BLUR).program, "Texture1");
-    GLuint blur_directionLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::BLUR).program, "Direction");
-    GLuint blur_samplesLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::BLUR).program, "SampleCount");
-
     shaderManager.addShader("shaders/coc.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::COC);
-    // Compute locations for coc_shader
-    GLuint coc_depthLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::COC).program, "Depth");
-    GLuint coc_screenToViewLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::COC).program, "ScreenToView");
-    GLuint coc_focusLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::COC).program, "Focus");
-    GLuint coc_nearPlaneLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::COC).program, "Near");
-    GLuint coc_farPlaneLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::COC).program, "Far");
-
     shaderManager.addShader("shaders/dof.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::DOF);
-    // Compute locations for dof_shader
-    GLuint dof_colorLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::DOF).program, "Color");
-    GLuint dof_blurLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::DOF).program, "Blur");
-    GLuint dof_cocLocation = glGetUniformLocation(shaderManager.getShader(ShaderManager::DOF).program, "CoC");
 
 
     /* --------------------------------------------------------------------------------------------- */
@@ -278,7 +232,7 @@ int main( int argc, char **argv )
     /* --------------------------------------------------------------------------------------------- */
     GLuint fxBufferFbo;
     GLuint fxBufferTextures[4];
-    
+
     textureManager.loadFxTextures(fxBufferTextures, 4, width, height);
 
     // Create Framebuffer Object
@@ -290,15 +244,6 @@ int main( int argc, char **argv )
         fprintf(stderr, "Error on building framebuffer\n");
         exit( EXIT_FAILURE );
     }
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    // Settings
-    float blurSamples = 2.0;
-    float focusPlane = 5.0;
-    float nearPlane = 1.0;
-    float farPlane = 50.0;
-    float gamma = 1.0;
-    float sobelCoef = 1.0;
 
     do
     {
@@ -364,12 +309,7 @@ int main( int argc, char **argv )
         }
   
         // Get camera matrices
-        glm::mat4 projection = glm::perspective(45.0f, widthf / heightf, 0.1f, 100.f); 
-        glm::mat4 worldToView = glm::lookAt(camera.m_eye, camera.m_o, camera.m_up);
-        glm::mat4 objectToWorld;
-        glm::mat4 worldToScreen = projection * worldToView;
-        glm::mat4 screenToWorld = glm::transpose(glm::inverse(worldToScreen));
-        glm::mat4 screenToView = glm::inverse(projection);
+        shaderManager.getCameraMatrices(widthf, heightf, camera.m_eye, camera.m_o, camera.m_up);
 
 
         /* --------------------------------------------------------------------------------------------- */
@@ -380,7 +320,7 @@ int main( int argc, char **argv )
         glDrawBuffers(2, gbufferDrawBuffers);
 
         // Viewport 
-        glViewport( 0, 0, width, height  );
+        glViewport(0, 0, width, height );
 
         // Default states
         glEnable(GL_DEPTH_TEST);
@@ -392,13 +332,7 @@ int main( int argc, char **argv )
         glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER).program);
 
         // Upload uniforms
-        glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(projection));
-        glUniformMatrix4fv(gbuffer_viewLocation, 1, 0, glm::value_ptr(worldToView));
-        glUniformMatrix4fv(gbuffer_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
-        glUniform1f(gbuffer_timeLocation, t);
-        glUniform1i(gbuffer_diffuseLocation, 0);
-        glUniform1i(gbuffer_specLocation, 1);
-
+        shaderManager.uploadUniforms(ShaderManager::GBUFFER, camera.m_eye, t);
         // Bind textures
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textures[0]);
@@ -419,6 +353,7 @@ int main( int argc, char **argv )
         /* -------------------------------------- Rendu/Affichage -------------------------------------- */
         /* --------------------------------------------------------------------------------------------- */
 
+       //shaderManager.renderLighting(fxBufferFbo, fxBufferTextures, width, height, &lightManager);
         // Start FX 
         glBindFramebuffer(GL_FRAMEBUFFER, fxBufferFbo);
         
@@ -435,11 +370,7 @@ int main( int argc, char **argv )
         glUseProgram(shaderManager.getShader(ShaderManager::LIGHT).program);
 
         // Upload uniforms
-        glUniform1i(lighting_materialLocation, 0);
-        glUniform1i(lighting_normalLocation, 1);
-        glUniform1i(lighting_depthLocation, 2);
-        glUniform3fv(lighting_cameraPositionLocation, 1, glm::value_ptr(camera.m_eye));
-        glUniformMatrix4fv(lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+        shaderManager.uploadUniforms(ShaderManager::LIGHT, camera.m_eye, t);
 
         // Bind textures we want to render
         // Bind color to unit 0
@@ -463,10 +394,7 @@ int main( int argc, char **argv )
         {
             float tl = t * i;
 
-            //Update light uniforms
-            glUniform3fv(lighting_lightPositionLocation, 1, lightManager.getCustomPositionOfLight(tl));
-            glUniform3fv(lighting_lightColorLocation, 1, lightManager.getCustomColorOfLight(tl));
-            glUniform1f(lighting_lightIntensityLocation, lightManager.getIntensityOfLights());
+            shaderManager.updateLightingUniforms(&lightManager, tl);
 
             // Draw quad
             glBindVertexArray(vao[2]);
@@ -475,9 +403,10 @@ int main( int argc, char **argv )
 
         glDisable(GL_BLEND);
 
-        //
-        // COC
-        //
+        // //
+        // // COC
+        // //
+        //renderTextureWithShader(ShaderManager::COC, width, height, gbufferTextures, vao, 2);
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[2], 0);
 
         // Clear the front buffer
@@ -488,11 +417,7 @@ int main( int argc, char **argv )
         glUseProgram(shaderManager.getShader(ShaderManager::COC).program);
 
         // Upload uniforms
-        glUniform1i(coc_depthLocation, 2);
-        glUniformMatrix4fv(coc_screenToViewLocation, 1, 0, glm::value_ptr(screenToView));
-        glUniform1f(coc_focusLocation, focusPlane);
-        glUniform1f(coc_nearPlaneLocation, nearPlane);
-        glUniform1f(coc_farPlaneLocation, farPlane);
+        shaderManager.uploadUniforms(ShaderManager::COC, camera.m_eye, t);
 
         // Bind textures we want to render
         glActiveTexture(GL_TEXTURE2);
@@ -503,107 +428,26 @@ int main( int argc, char **argv )
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
 
-        //
-        // Sobel pass
-        //
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[1], 0);     
+        // //
+        // // Sobel pass
+        // //
+        shaderManager.renderTextureWithShader(ShaderManager::SOBEL, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
 
-        // Clear the front buffer
-        glViewport( 0, 0, width, height );
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // //
+        // // BLUR
+        // //
 
-        // Bind lighting shader
-        glUseProgram(shaderManager.getShader(ShaderManager::SOBEL).program);
+        shaderManager.renderTextureWithShader(ShaderManager::BLUR, width, height, fxBufferTextures, vao, 3, 1, camera.m_eye, t);
 
-        // Upload uniforms
-        glUniform1i(sobel_tex1Location, 0);
-        glUniform1f(sobel_sobelLocation, sobelCoef);
+        // //
+        // // DOF
+        // //
+        shaderManager.renderTextureWithShader(ShaderManager::DOF, width, height, fxBufferTextures, vao, 0, 1, camera.m_eye, t);
 
-        // Bind textures we want to render
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]); 
-
-        // Draw scene
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-
-        //
-        // BLUR
-        //
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[3], 0);     
-
-        // Clear the front buffer
-        glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Bind lighting shader
-        glUseProgram(shaderManager.getShader(ShaderManager::BLUR).program);
-
-        // Upload uniforms
-        glUniform1i(blur_tex1Location, 0);
-        glUniform1i(blur_samplesLocation, static_cast<int>(blurSamples));
-
-        // Bind textures we want to render
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
-
-        // Draw scene
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-
-        //
-        // DOF
-        //
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[0], 0);     
-
-        // Clear the front buffer
-        glViewport(0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Bind lighting shader
-        glUseProgram(shaderManager.getShader(ShaderManager::DOF).program);
-
-        // Upload uniforms
-        glUniform1i(dof_colorLocation, 0);
-        glUniform1i(dof_blurLocation, 1);
-        glUniform1i(dof_cocLocation, 2);
-
-        // Bind textures we want to render
-        glActiveTexture(GL_TEXTURE0);//color
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
-        glActiveTexture(GL_TEXTURE1);//blur
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[3]);
-        glActiveTexture(GL_TEXTURE2);//coc
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[2]);
-
-        // Draw scene
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-
-        //
-        // Gamma pass
-        //
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[1], 0);     
-
-        // Clear the front buffer
-        glViewport( 0, 0, width, height );
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Bind lighting shader
-        glUseProgram(shaderManager.getShader(ShaderManager::GAMMA).program);
-
-        // Upload uniforms
-        glUniform1i(gamma_tex1Location, 0);
-        glUniform1f(gamma_gammaLocation, gamma);
-
-        // Bind textures we want to render
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]);
-
-        // Draw scene
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-
+        // //
+        // // Gamma pass
+        // //
+        shaderManager.renderTextureWithShader(ShaderManager::GAMMA, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
    
 
         // Unbind framebuffer : now that we render all the textures, we can debind the fxBuffer
@@ -616,10 +460,11 @@ int main( int argc, char **argv )
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(shaderManager.getShader(ShaderManager::BLIT).program);
-        glUniform1i(blit_tex1Location, 0);
+        //glUniform1i(blit_tex1Location, 0);
+        shaderManager.uploadUniforms(ShaderManager::BLIT, camera.m_eye, t);
 
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
+        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]);
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
@@ -628,27 +473,27 @@ int main( int argc, char **argv )
         //
 
         // Diffuse
-        glViewport( 0, 0, width/5, height/5  );
+        glViewport(0, 0, width/5, height/5);
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);        
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
         // Specular
-        glViewport( width/5, 0, width/5, height/5  );
+        glViewport(width/5, 0, width/5, height/5);
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);        
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
         // Depth
-        glViewport( width/5 * 2, 0, width/5, height/5  );
+        glViewport(width/5 * 2, 0, width/5, height/5);
         glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);        
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
         // Coc
-        glViewport( width/5 * 3, 0, width/5, height/5  );
+        glViewport(width/5 * 3, 0, width/5, height/5);
         glBindTexture(GL_TEXTURE_2D, fxBufferTextures[2]);
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
         // Blur
-        glViewport( width/5 * 4, 0, width/5, height/5  );
+        glViewport(width/5 * 4, 0, width/5, height/5);
         glBindTexture(GL_TEXTURE_2D, fxBufferTextures[3]);
         glBindVertexArray(vao[2]);
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
@@ -675,12 +520,12 @@ int main( int argc, char **argv )
         sprintf(lineBuffer, "FPS %f", fps);
         imguiLabel(lineBuffer);
         imguiSlider("Lights", lightManager.getNbLightsAdress(), 0.0, 100.0, 1.0);
-        imguiSlider("Gamma", &gamma, 0.0, 3.0, 0.1);
-        imguiSlider("Sobel", &sobelCoef, 0.0, 1.0, 1.0);
-        imguiSlider("Blur Samples", &blurSamples, 1.0, 100.0, 1.0);
-        imguiSlider("Focus plane", &focusPlane, 1.0, 100.0, 1.0);
-        imguiSlider("Near plane", &nearPlane, 1.0, 100.0, 1.0);
-        imguiSlider("Far plane", &farPlane, 1.0, 100.0, 1.0);
+        imguiSlider("Gamma", shaderManager.getGamma(), 0.0, 3.0, 0.1);
+        imguiSlider("Sobel", shaderManager.getSobelCoeff(), 0.0, 1.0, 1.0);
+        imguiSlider("Blur Samples", shaderManager.getBlurSamples(), 1.0, 100.0, 1.0);
+        imguiSlider("Focus plane", shaderManager.getFocusPlane(), 1.0, 100.0, 1.0);
+        imguiSlider("Near plane", shaderManager.getNearPlane(), 1.0, 100.0, 1.0);
+        imguiSlider("Far plane", shaderManager.getFarPlane(), 1.0, 100.0, 1.0);
         imguiEndScrollArea();
         imguiEndFrame();
         imguiRenderGLDraw(width, height); 
