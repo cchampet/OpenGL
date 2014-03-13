@@ -15,6 +15,7 @@ struct LightManager
 	float getNbLights() const {return m_nbLights;}
 	float* getNbLightsAdress() {return &m_nbLights;} //useful for GUI
 
+	float* getCenterPosition();
 	float* getRedColor();
 
 	/**

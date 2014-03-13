@@ -21,7 +21,8 @@ struct ShaderManager
 		SOBEL,
 		BLUR,
 		COC,
-		DOF
+		DOF,
+		EXPLOSION
 	};
 
     void addShader(const char* shaderFile, int typemask, ListShaderType shaderType);

@@ -22,6 +22,13 @@ float* LightManager::getCustomColorOfLight(float i){
 	return m_tmpColor;
 }
 
+float* LightManager::getCenterPosition() {
+	m_tmpPos[0] = 0.f;
+	m_tmpPos[1] = 0.f;
+	m_tmpPos[2] = 0.f;
+	return m_tmpPos;
+}
+
 float* LightManager::getRedColor() {
 	m_tmpColor[0] = 1.f;
 	m_tmpColor[1] = 0.f;
