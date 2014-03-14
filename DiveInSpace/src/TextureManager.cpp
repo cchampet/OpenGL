@@ -2,7 +2,6 @@
 #include <stdio.h> 
 #include "stb/stb_image.h"
 #include "Geometry.h"
-#include <iostream>
 
 void TextureManager::loadTextures(GLuint* tab, size_t size) {
 
@@ -173,6 +172,9 @@ void TextureManager::fillFrameBufferHal(GLuint fbo, GLuint* drawBuffers, int wid
     // Render vaos
     glBindVertexArray(vao[1]); //plane
     glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+    glBindVertexArray(vao[3]); //sphere
+    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
+    //glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 
     // Unbind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

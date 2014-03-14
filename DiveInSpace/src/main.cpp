@@ -133,12 +133,12 @@ int main( int argc, char **argv )
     /* ------------------------------------------ Geometry ----------------------------------------- */
     /* --------------------------------------------------------------------------------------------- */
     // Vertex Array Object
-    GLuint vao[3];
-    glGenVertexArrays(3, vao);
+    GLuint vao[4];
+    glGenVertexArrays(4, vao);
 
     // Vertex Buffer Objects
-    GLuint vbo[12];
-    glGenBuffers(12, vbo);
+    GLuint vbo[14];
+    glGenBuffers(14, vbo);
 
     // Cube
     glBindVertexArray(vao[0]);
@@ -192,6 +192,81 @@ int main( int argc, char **argv )
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+
+    // Sphere
+    // Fill sphere data
+    int tt;
+    // Construit l'ensemble des vertex
+    std::vector<glm::vec3> spherePositions;
+    std::vector<glm::vec3> sphereNormals;
+    std::vector<glm::vec2> sphereUv;
+    int sphere_nb_vertices = 0;
+    for(GLsizei j = 0; j <= discLong; ++j) {
+        GLfloat cosTheta = cos(-M_PI / 2 + j * dTheta);
+        GLfloat sinTheta = sin(-M_PI / 2 + j * dTheta);
+        for(GLsizei i = 0; i <= discLat; ++i) {
+            sphereUv.push_back(glm::vec2(i * rcpLat, 1.f - j * rcpLong));
+            glm::vec3 normal(sin(i * dPhi) * cosTheta, sinTheta, cos(i * dPhi) * cosTheta);
+            sphereNormals.push_back(normal);
+            spherePositions.push_back(sphere_radius * normal);
+            sphere_nb_vertices++;
+        }
+    }
+
+    float sphere_vertices[sphere_nb_vertices*3];
+    float sphere_uv[sphere_nb_vertices*2];
+    float sphere_normals[sphere_nb_vertices*3];
+    int sphere_triangleList[discLong * discLat * 6];
+
+    tt = 0;
+    int uu = 0;
+    for(GLsizei i = 0; i < spherePositions.size(); ++i){
+        sphere_vertices[tt] = spherePositions[i].x;
+        sphere_normals[tt] = sphereNormals[i].x; tt++;
+        sphere_uv[uu] = sphereUv[i].x; uu++;
+
+        sphere_vertices[tt] = spherePositions[i].y; 
+        sphere_normals[tt] = sphereNormals[i].y; tt++;
+        sphere_uv[uu] = sphereUv[i].y; uu++;
+
+        sphere_vertices[tt] = spherePositions[i].z; 
+        sphere_normals[tt] = sphereNormals[i].z; tt++;
+    }
+
+    // Fill sphere index
+    tt = 0;
+    for(GLsizei j = 0; j < discLong; ++j) {
+        GLsizei offset = j * (discLat + 1);
+        for(GLsizei i = 0; i < discLat; ++i) {
+            
+            sphere_triangleList[tt] = offset + i;                       tt++;
+            sphere_triangleList[tt] = offset + (i + 1);                 tt++;
+            sphere_triangleList[tt] = offset + discLat + 1 + (i + 1);   tt++;
+
+            sphere_triangleList[tt] = offset + i;                       tt++;
+            sphere_triangleList[tt] = offset + discLat + 1 + (i + 1);   tt++;
+            sphere_triangleList[tt] = offset + i + discLat + 1;         tt++;
+        }
+    }
+    glBindVertexArray(vao[3]);
+    // Bind indices and upload data
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[10]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(sphere_triangleList), sphere_triangleList, GL_STATIC_DRAW);
+    // Bind vertices and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[11]);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sphere_vertices), sphere_vertices, GL_STATIC_DRAW);
+    // Bind normals and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[12]);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sphere_normals), sphere_normals, GL_STATIC_DRAW);
+    // Bind uv coords and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[13]);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(sphere_uv), sphere_uv, GL_STATIC_DRAW);
 
     // Unbind everything. Potentially illegal on some implementations
     glBindVertexArray(0);
