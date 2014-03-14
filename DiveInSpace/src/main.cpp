@@ -29,6 +29,10 @@
 #include "Geometry.h"
 #include "TextureManager.h"
 
+
+#define MODE_HAL    0
+#define MODE_TRAVEL 1
+
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
 #endif
@@ -110,7 +114,12 @@ int main( int argc, char **argv )
     // Init shader structures
     ShaderManager shaderManager;
     LightManager lightManager;
-    lightManager.createHalLights();
+    #if MODE_HAL == 1
+        lightManager.createHalLights();
+    #endif
+    #if MODE_TRAVEL == 1
+        lightManager.createTravelLights();
+    #endif
 
     TextureManager textureManager;
 
@@ -394,9 +403,12 @@ int main( int argc, char **argv )
         /* --------------------------------------------------------------------------------------------- */
         /* ----------------------------------- Remplissage Frame Buffer -------------------------------- */
         /* --------------------------------------------------------------------------------------------- */
-        //textureManager.fillFrameBufferTD(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
-        textureManager.fillFrameBufferHal(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
-
+        #if MODE_HAL == 1
+            textureManager.fillFrameBufferHal(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
+        #endif
+        #if MODE_TRAVEL == 1
+            textureManager.fillFrameBufferTravel(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
+        #endif
         /* --------------------------------------------------------------------------------------------- */
         /* -------------------------------------- Rendu/Affichage -------------------------------------- */
         /* --------------------------------------------------------------------------------------------- */
@@ -406,7 +418,9 @@ int main( int argc, char **argv )
         //
         glBindFramebuffer(GL_FRAMEBUFFER, fxBufferFbo);
             // Lighting
-            lightManager.updateHalLights(t);
+            #if MODE_HAL == 1
+                lightManager.updateHalLights(t);
+            #endif
             shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
 
             // Explosion pass

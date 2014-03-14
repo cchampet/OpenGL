@@ -168,6 +168,14 @@ public:
 		setPLIntensity(0, 5*cos(t));
 	}
 
+	void createTravelLights(){
+		// Ambiante white light, to see the sphere
+		addDirLight(glm::vec3(0.f, -10.f, -15.f), 
+					glm::vec3(0.2f, 0.2f, 1.f), 
+					glm::vec3(0.2f, 0.2f, 0.2f), 
+					1);
+	}
+
 
 private:
 	std::vector<PointLight> m_pointLights;

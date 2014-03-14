@@ -70,7 +70,6 @@ void TextureManager::loadFxTextures(GLuint* fxBufferTextures, size_t size, int w
 
     // Create first ping-pong texture
     glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -79,7 +78,6 @@ void TextureManager::loadFxTextures(GLuint* fxBufferTextures, size_t size, int w
 
     // Create second ping-pong texture
     glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -88,7 +86,6 @@ void TextureManager::loadFxTextures(GLuint* fxBufferTextures, size_t size, int w
 
     // Create texture => Coc
     glBindTexture(GL_TEXTURE_2D, fxBufferTextures[2]);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -97,7 +94,6 @@ void TextureManager::loadFxTextures(GLuint* fxBufferTextures, size_t size, int w
 
     // Create texture => Blur
     glBindTexture(GL_TEXTURE_2D, fxBufferTextures[3]);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -105,7 +101,7 @@ void TextureManager::loadFxTextures(GLuint* fxBufferTextures, size_t size, int w
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-void TextureManager::fillFrameBufferTD(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
+void TextureManager::fillFrameBufferTravel(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glDrawBuffers(2, drawBuffers);
