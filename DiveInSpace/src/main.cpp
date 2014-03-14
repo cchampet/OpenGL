@@ -320,96 +320,39 @@ int main( int argc, char **argv )
         /* -------------------------------------- Rendu/Affichage -------------------------------------- */
         /* --------------------------------------------------------------------------------------------- */
         
+        //
         // Start FX 
+        //
         glBindFramebuffer(GL_FRAMEBUFFER, fxBufferFbo);
-        
+            // Lighting
+            //shaderManager.renderLightingTD(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
+            shaderManager.renderLightingHall(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
+
+            // Explosion pass
+            //shaderManager.renderTextureWithShader(ShaderManager::EXPLOSION, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
+
+            // COC
+            shaderManager.computeCoc(width, height, gbufferTextures[2], fxBufferTextures[2], vao, camera.m_eye, t);
+
+            // Sobel pass
+            shaderManager.renderTextureWithShader(ShaderManager::SOBEL, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
+
+            // BLUR
+            shaderManager.renderTextureWithShader(ShaderManager::BLUR, width, height, fxBufferTextures, vao, 3, 1, camera.m_eye, t);
+
+            // DOF
+            shaderManager.renderTextureWithShader(ShaderManager::DOF, width, height, fxBufferTextures, vao, 0, 1, camera.m_eye, t);   
+
+            // Gamma pass
+            shaderManager.renderTextureWithShader(ShaderManager::GAMMA, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
         //
-        // Lighting pass
-        //
-        //shaderManager.renderLighting(fxBufferFbo, fxBufferTextures, width, height, &lightManager);
-        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, fxBufferTextures[0], 0);
-
-        // Clear the front buffer
-        glViewport( 0, 0, width, height );
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Bind lighting shader
-        glUseProgram(shaderManager.getShader(ShaderManager::LIGHT).program);
-
-        // Upload uniforms
-        shaderManager.uploadUniforms(ShaderManager::LIGHT, camera.m_eye, t);
-
-        // Bind textures we want to render
-        // Bind color to unit 0
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);        
-        // Bind normal to unit 1
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);    
-        // Bind depth to unit 2
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);        
-
-        // Blit above the rest
-        glDisable(GL_DEPTH_TEST);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_ONE, GL_ONE);
-
-        // Deferred lights
-        for (int i = 0; i < (int) lightManager.getNbLights(); ++i)
-        {
-            float tl = t * i;
-            shaderManager.updateLightingUniforms(&lightManager, tl);
-
-            // Draw quad
-            glBindVertexArray(vao[2]);
-            glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-        }
-
-        glDisable(GL_BLEND);
-
-        //
-        // Explosion pass
-        //
-        //shaderManager.renderTextureWithShader(ShaderManager::EXPLOSION, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
-
-        //
-        // COC
-        //
-        shaderManager.computeCoc(width, height, gbufferTextures[2], fxBufferTextures[2], vao, camera.m_eye, t);
-
-        //
-        // Sobel pass
-        //
-        shaderManager.renderTextureWithShader(ShaderManager::SOBEL, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
-
-        //
-        // BLUR
-        //
-        shaderManager.renderTextureWithShader(ShaderManager::BLUR, width, height, fxBufferTextures, vao, 3, 1, camera.m_eye, t);
-
-        //
-        // DOF
-        //
-        shaderManager.renderTextureWithShader(ShaderManager::DOF, width, height, fxBufferTextures, vao, 0, 1, camera.m_eye, t);   
-
-        //
-        // Gamma pass
-        //
-        shaderManager.renderTextureWithShader(ShaderManager::GAMMA, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
-   
-
         // Unbind framebuffer : now that we render all the textures, we can debind the fxBuffer
+        //
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        //
         // Display main screen 
-        //
         textureManager.renderMainScreen(shaderManager, width, height, fxBufferTextures[1], vao, camera.m_eye, t);
-        //
         // Display debug (pas à la noix non non non !)
-        //
         textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
 #if 1
         // Draw UI

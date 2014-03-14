@@ -165,12 +165,16 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
     }
 }
 
-void ShaderManager::updateLightingUniforms(LightManager* lightManager, double tl) {
-    //Update light uniforms
+void ShaderManager::updateLightingUniformsTD(LightManager* lightManager, double tl) {
     glUniform3fv(lighting_lightPositionLocation, 1, lightManager->getCustomPositionOfLight(tl));
     glUniform3fv(lighting_lightColorLocation, 1, lightManager->getCustomColorOfLight(tl));
     glUniform1f(lighting_lightIntensityLocation, lightManager->getIntensityOfLights());
+}
 
+void ShaderManager::updateLightingUniformsHall(LightManager* lightManager, double i) {
+    glUniform3fv(lighting_lightPositionLocation, 1, lightManager->getCustomPositionOfLight(i));
+    glUniform3fv(lighting_lightColorLocation, 1, lightManager->getRedColor());
+    glUniform1f(lighting_lightIntensityLocation, lightManager->getIntensityOfLights());
 }
 
 void ShaderManager::renderTextureWithShader(ListShaderType shaderType, int width, int height, GLuint* bufferTexture, GLuint* vao, int ping, int pong, glm::vec3 cameraEye, double t) {
@@ -210,6 +214,93 @@ void ShaderManager::renderTextureWithShader(ListShaderType shaderType, int width
     // Draw scene
     glBindVertexArray(vao[2]);
     glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+}
+
+void ShaderManager::renderLightingTD(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t){
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, textureToWrite, 0);
+
+    // Clear the front buffer
+    glViewport( 0, 0, width, height );
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Bind lighting shader
+    glUseProgram(shaderManager.getShader(ShaderManager::LIGHT).program);
+
+    // Upload uniforms
+    shaderManager.uploadUniforms(ShaderManager::LIGHT, cameraEye, t);
+
+    // Bind textures we want to render
+    // Bind color to unit 0
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texturesToRead[0]);        
+    // Bind normal to unit 1
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texturesToRead[1]);    
+    // Bind depth to unit 2
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, texturesToRead[2]);        
+
+    // Blit above the rest
+    glDisable(GL_DEPTH_TEST);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    // Deferred lights
+    for (int i = 0; i < (int) lightManager.getNbLights(); ++i)
+    {
+        float tl = t * i;
+        shaderManager.updateLightingUniformsTD(&lightManager, tl);
+
+        // Draw quad
+        glBindVertexArray(vao[2]);
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+    }
+
+    glDisable(GL_BLEND);
+}
+
+void ShaderManager::renderLightingHall(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t){
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, textureToWrite, 0);
+
+    // Clear the front buffer
+    glViewport( 0, 0, width, height );
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Bind lighting shader
+    glUseProgram(shaderManager.getShader(ShaderManager::LIGHT).program);
+
+    // Upload uniforms
+    shaderManager.uploadUniforms(ShaderManager::LIGHT, cameraEye, t);
+
+    // Bind textures we want to render
+    // Bind color to unit 0
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texturesToRead[0]);        
+    // Bind normal to unit 1
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, texturesToRead[1]);    
+    // Bind depth to unit 2
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, texturesToRead[2]);        
+
+    // Blit above the rest
+    glDisable(GL_DEPTH_TEST);
+
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+
+    // Deferred lights
+    for (int i = 0; i < (int) lightManager.getNbLights(); ++i)
+    {
+        shaderManager.updateLightingUniformsHall(&lightManager, i);
+
+        // Draw quad
+        glBindVertexArray(vao[2]);
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+    }
+
+    glDisable(GL_BLEND);
 }
 
 void ShaderManager::computeCoc(int width, int height, GLuint bufferTextureToRead, GLuint bufferTextureToWrite, GLuint* vao, glm::vec3 cameraEye, double t){

@@ -49,9 +49,12 @@ struct ShaderManager
 
 
 	void uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEye, double t);
-    void updateLightingUniforms(LightManager* lightManager, double t);
+    void updateLightingUniformsTD(LightManager* lightManager, double t);
+    void updateLightingUniformsHall(LightManager* lightManager, double t);
 
 	void renderTextureWithShader(ListShaderType shaderType, int width, int height, GLuint* bufferTexture, GLuint* vao, int ping, int pong, glm::vec3 cameraEye, double t);
+    void renderLightingTD(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t);
+    void renderLightingHall(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t);
     void computeCoc(int width, int height, GLuint bufferTextureToRead, GLuint bufferTextureToWrite, GLuint* vao, glm::vec3 cameraEye, double t);
 
 	// Getters & Setters
