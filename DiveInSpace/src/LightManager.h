@@ -140,6 +140,35 @@ public:
 	bool getSPLCollapse(size_t i) const { return m_spotLight[i].guicollapse; }
 
 
+	//
+	// Manage specific scenes
+	//
+	void createHalLights(){
+		// Ambiante white light, to see the sphere
+		addDirLight(glm::vec3(0.f, -10.f, -15.f), 
+					glm::vec3(1.f, 1.f, 1.f), 
+					glm::vec3(0.2f, 0.2f, 0.2f), 
+					1);
+		//red spot
+		addSpotLight(glm::vec3(10, 3, 30), //pos
+                    glm::vec3(0, 0, -1), //dir
+                    glm::vec3(1, 0, 0), //diff
+                    glm::vec3(1, 0.5f, 0.5f), //spec
+                    2.f, //ext angle
+                    0.1f, //int angle
+                    2.f); //intensity
+		addPointLight(
+			glm::vec3(-1, -0.5f, 11), 
+			glm::vec3(0.5f, 1, 0.2f), //diff
+            glm::vec3(0.2f, 0.f, 0.f), //spec
+			1.f);
+	}
+
+	void updateHalLights(double t){
+		setPLIntensity(0, 5*cos(t));
+	}
+
+
 private:
 	std::vector<PointLight> m_pointLights;
 	std::vector<DirLight> m_dirLights;

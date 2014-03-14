@@ -11,7 +11,7 @@ ShaderManager::ShaderManager() {
     nearPlane = 1.0;
     farPlane = 50.0;
     gamma = 1.0;
-    sobelCoef = 1.0;
+    sobelCoef = 0.0;
 
 }
 
@@ -223,7 +223,7 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
     }
 }
 
-void ShaderManager::updateDirLightUniforms(LightManager& lightManager) {
+void ShaderManager::renderDirLighting(LightManager& lightManager) {
     for (unsigned int i = 0; i < lightManager.getNumDirLight(); ++i)
     {
         glm::vec3 dir = lightManager.getDLDirection(i);
@@ -236,11 +236,12 @@ void ShaderManager::updateDirLightUniforms(LightManager& lightManager) {
         glUniform3fv(dirLight_lightDiffuseColorLocation, 1, lightDiffuseColor);
         glUniform3fv(dirLight_lightSpecularColorLocation, 1, lightSpecColor);
         glUniform1f(dirLight_lightIntensityLocation, lightManager.getDLIntensity(i));
+        
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
     }
 }
 
-void ShaderManager::updatePointLightUniforms(LightManager& lightManager) {
+void ShaderManager::renderPointLighting(LightManager& lightManager) {
     for (unsigned int i = 0; i < lightManager.getNumPointLight(); ++i)
     {
         glm::vec3 pos = lightManager.getPLPosition(i);
@@ -253,11 +254,12 @@ void ShaderManager::updatePointLightUniforms(LightManager& lightManager) {
         glUniform3fv(pointLight_lightDiffuseColorLocation, 1, lightDiffuseColor);
         glUniform3fv(pointLight_lightSpecularColorLocation, 1, lightSpecColor);
         glUniform1f(pointLight_lightIntensityLocation, lightManager.getPLIntensity(i));
+        
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
     }
 }
 
-void ShaderManager::updateSpotLightUniforms(LightManager& lightManager) {
+void ShaderManager::renderSpotLighting(LightManager& lightManager) {
     for (unsigned int i = 0; i < lightManager.getNumSpotLight(); ++i)
     {
         glm::vec3 pos = lightManager.getSPLPosition(i);
@@ -275,6 +277,7 @@ void ShaderManager::updateSpotLightUniforms(LightManager& lightManager) {
         glUniform1f(spotLight_lightIntensityLocation, lightManager.getSPLIntensity(i));
         glUniform1f(spotLight_lightExternalAngleLocation, lightManager.getSPLExternalAngle(i));
         glUniform1f(spotLight_lightInternalAngleLocation, lightManager.getSPLInternalAngle(i));
+        
         glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
     }
 }
@@ -344,17 +347,17 @@ void ShaderManager::renderLighting(ShaderManager& shaderManager, LightManager& l
     // Bind dir_light_shader shader
     glUseProgram(shaderManager.getShader(ShaderManager::DIR_LIGHT).program);
     shaderManager.uploadUniforms(ShaderManager::DIR_LIGHT, cameraEye, t);
-    updateDirLightUniforms(lightManager);
+    renderDirLighting(lightManager);
     
     // Bind point_light_shader shader
     glUseProgram(shaderManager.getShader(ShaderManager::POINT_LIGHT).program);
     shaderManager.uploadUniforms(ShaderManager::POINT_LIGHT, cameraEye, t);
-    updatePointLightUniforms(lightManager);
+    renderPointLighting(lightManager);
 
     // Bind spot_light_shader shader
     glUseProgram(shaderManager.getShader(ShaderManager::SPOT_LIGHT).program);
     shaderManager.uploadUniforms(ShaderManager::SPOT_LIGHT, cameraEye, t);
-    updateSpotLightUniforms(lightManager);
+    renderSpotLighting(lightManager);
 
     glDisable(GL_BLEND);
 }

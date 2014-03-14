@@ -51,12 +51,14 @@ struct ShaderManager
 
 
 	void uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEye, double t);
-    void updateDirLightUniforms(LightManager& lightManager);
-    void updatePointLightUniforms(LightManager& lightManager);
-    void updateSpotLightUniforms(LightManager& lightManager);
 
 	void renderTextureWithShader(ListShaderType shaderType, int width, int height, GLuint* bufferTexture, GLuint* vao, int ping, int pong, glm::vec3 cameraEye, double t);
+    
     void renderLighting(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t);
+    void renderDirLighting(LightManager& lightManager);
+    void renderPointLighting(LightManager& lightManager);
+    void renderSpotLighting(LightManager& lightManager);
+
     void computeCoc(int width, int height, GLuint bufferTextureToRead, GLuint bufferTextureToWrite, GLuint* vao, glm::vec3 cameraEye, double t);
 
 	// Getters & Setters

@@ -76,7 +76,7 @@ void drawGUI(int width, int height, ShaderManager& shaderManager, LightManager& 
         imguiEndScrollArea();
 
         int logScroll_2 = 1;
-        imguiBeginScrollArea("Lights", 10, height - 500, 200, 450, &logScroll_2);
+        imguiBeginScrollArea("Lights", 10, height - 750, 200, 700, &logScroll_2);
             sprintf(lineBuffer, "%d PointLights", lightManager.getNumPointLight());
             imguiLabel(lineBuffer);
             int button_addPL = imguiButton("Add PointLight");

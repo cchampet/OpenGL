@@ -12,7 +12,7 @@ void TextureManager::loadTextures(GLuint* tab, size_t size) {
     int comp; 
 
 	// Diffuse texture
-    unsigned char * diffuse = stbi_load("textures/spnza_bricks_a_diff.tga", &x, &y, &comp, 3);
+    unsigned char * diffuse = stbi_load("textures/robot_diffuse.jpg", &x, &y, &comp, 3);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tab[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, diffuse);
@@ -23,7 +23,7 @@ void TextureManager::loadTextures(GLuint* tab, size_t size) {
     fprintf(stderr, "Diffuse %dx%d:%d\n", x, y, comp);
 
     // Specular texture
-    unsigned char * spec = stbi_load("textures/spnza_bricks_a_spec.tga", &x, &y, &comp, 1);
+    unsigned char * spec = stbi_load("textures/robot_spec.jpg", &x, &y, &comp, 1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, tab[1]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, x, y, 0, GL_RED, GL_UNSIGNED_BYTE, spec);
@@ -32,7 +32,6 @@ void TextureManager::loadTextures(GLuint* tab, size_t size) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     fprintf(stderr, "Spec %dx%d:%d\n", x, y, comp);
-
 }
 
 void TextureManager::loadBufferTextures(GLuint* gbufferTextures, size_t size, int width, int height) {
@@ -41,7 +40,6 @@ void TextureManager::loadBufferTextures(GLuint* gbufferTextures, size_t size, in
 
 	// Create color texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -50,7 +48,6 @@ void TextureManager::loadBufferTextures(GLuint* gbufferTextures, size_t size, in
 
     // Create normal texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, width, height, 0, GL_RGBA, GL_FLOAT, 0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -59,7 +56,6 @@ void TextureManager::loadBufferTextures(GLuint* gbufferTextures, size_t size, in
 
     // Create depth texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);
-    //glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -170,8 +166,6 @@ void TextureManager::fillFrameBufferHal(GLuint fbo, GLuint* drawBuffers, int wid
     glBindTexture(GL_TEXTURE_2D, bufferTextures[1]);
 
     // Render vaos
-    glBindVertexArray(vao[1]); //plane
-    glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
     glBindVertexArray(vao[3]); //sphere
     glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
 

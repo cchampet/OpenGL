@@ -110,6 +110,7 @@ int main( int argc, char **argv )
     // Init shader structures
     ShaderManager shaderManager;
     LightManager lightManager;
+    lightManager.createHalLights();
 
     TextureManager textureManager;
 
@@ -405,6 +406,7 @@ int main( int argc, char **argv )
         //
         glBindFramebuffer(GL_FRAMEBUFFER, fxBufferFbo);
             // Lighting
+            lightManager.updateHalLights(t);
             shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
 
             // Explosion pass

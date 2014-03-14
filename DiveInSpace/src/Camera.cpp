@@ -13,6 +13,7 @@ void Camera::camera_defaults()
     m_phi = 3.14/2.f;
     m_theta = 3.14/2.f;
     m_radius = 10.f;
+    camera_zoom(5);
     camera_compute();
 }
 
