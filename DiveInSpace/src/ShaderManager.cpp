@@ -43,15 +43,52 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
 
             break;
 
-        case LIGHT:
-            lighting_materialLocation = glGetUniformLocation(shader.program, "Material");
-            lighting_normalLocation = glGetUniformLocation(shader.program, "Normal");
-            lighting_depthLocation = glGetUniformLocation(shader.program, "Depth");
-            lighting_inverseViewProjectionLocation = glGetUniformLocation(shader.program, "InverseViewProjection");
-            lighting_cameraPositionLocation = glGetUniformLocation(shader.program, "CameraPosition");
-            lighting_lightPositionLocation = glGetUniformLocation(shader.program, "LightPosition");
-            lighting_lightColorLocation = glGetUniformLocation(shader.program, "LightColor");
-            lighting_lightIntensityLocation = glGetUniformLocation(shader.program, "LightIntensity");
+        case DIR_LIGHT:
+            dirLight_materialLocation = glGetUniformLocation(shader.program, "Material");
+            dirLight_normalLocation = glGetUniformLocation(shader.program, "Normal");
+            dirLight_depthLocation = glGetUniformLocation(shader.program, "Depth");
+            dirLight_timeLocation = glGetUniformLocation(shader.program, "Time");
+            dirLight_inverseViewProjectionLocation = glGetUniformLocation(shader.program, "InverseViewProjection");
+            dirLight_cameraPositionLocation = glGetUniformLocation(shader.program, "CameraPosition");
+            dirLight_lightDirectionLocation = glGetUniformLocation(shader.program, "LightDirection");
+            dirLight_lightDiffuseColorLocation = glGetUniformLocation(shader.program, "LightDiffuseColor");
+            dirLight_lightSpecularColorLocation = glGetUniformLocation(shader.program, "LightSpecularColor");
+            dirLight_lightIntensityLocation = glGetUniformLocation(shader.program, "LightIntensity");
+            dirLight_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            
+            break;
+
+        case POINT_LIGHT:
+            pointLight_materialLocation = glGetUniformLocation(shader.program, "Material");
+            pointLight_normalLocation = glGetUniformLocation(shader.program, "Normal");
+            pointLight_depthLocation = glGetUniformLocation(shader.program, "Depth");
+            pointLight_timeLocation = glGetUniformLocation(shader.program, "Time");
+            pointLight_inverseViewProjectionLocation = glGetUniformLocation(shader.program, "InverseViewProjection");
+            pointLight_cameraPositionLocation = glGetUniformLocation(shader.program, "CameraPosition");
+            pointLight_lightPositionLocation = glGetUniformLocation(shader.program, "LightPosition");
+            pointLight_lightDiffuseColorLocation = glGetUniformLocation(shader.program, "LightDiffuseColor");
+            pointLight_lightSpecularColorLocation = glGetUniformLocation(shader.program, "LightSpecularColor");
+            pointLight_lightIntensityLocation = glGetUniformLocation(shader.program, "LightIntensity");
+            pointLight_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            
+            break;
+
+        case SPOT_LIGHT:
+            spotLight_materialLocation = glGetUniformLocation(shader.program, "Material");
+            spotLight_normalLocation = glGetUniformLocation(shader.program, "Normal");
+            spotLight_depthLocation = glGetUniformLocation(shader.program, "Depth");
+            spotLight_timeLocation = glGetUniformLocation(shader.program, "Time");
+            spotLight_inverseViewProjectionLocation = glGetUniformLocation(shader.program, "InverseViewProjection");
+            spotLight_cameraPositionLocation = glGetUniformLocation(shader.program, "CameraPosition");
+            spotLight_lightPositionLocation = glGetUniformLocation(shader.program, "LightPosition");
+            spotLight_lightDirectionLocation = glGetUniformLocation(shader.program, "LightDirection");
+            spotLight_lightDiffuseColorLocation = glGetUniformLocation(shader.program, "LightDiffuseColor");
+            spotLight_lightSpecularColorLocation = glGetUniformLocation(shader.program, "LightSpecularColor");
+            spotLight_lightIntensityLocation = glGetUniformLocation(shader.program, "LightIntensity");
+            spotLight_lightExternalAngleLocation = glGetUniformLocation(shader.program, "LightExternalAngle");
+            spotLight_lightInternalAngleLocation = glGetUniformLocation(shader.program, "LightInternalAngle");
+            spotLight_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            
             break;
 
         case GAMMA:
@@ -115,12 +152,33 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
 
             break;
 
-        case LIGHT:
-            glUniform1i(lighting_materialLocation, 0);
-            glUniform1i(lighting_normalLocation, 1);
-            glUniform1i(lighting_depthLocation, 2);
-            glUniform3fv(lighting_cameraPositionLocation, 1, glm::value_ptr(cameraEye));
-            glUniformMatrix4fv(lighting_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+        case DIR_LIGHT:
+            glUniform1i(dirLight_materialLocation, 0);
+            glUniform1i(dirLight_normalLocation, 1);
+            glUniform1i(dirLight_depthLocation, 2);
+            glUniform3fv(dirLight_cameraPositionLocation, 1, glm::value_ptr(cameraEye));
+            glUniformMatrix4fv(dirLight_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+            glUniform1f(dirLight_timeLocation, t);
+
+            break;
+
+        case POINT_LIGHT:
+            glUniform1i(pointLight_materialLocation, 0);
+            glUniform1i(pointLight_normalLocation, 1);
+            glUniform1i(pointLight_depthLocation, 2);
+            glUniform3fv(pointLight_cameraPositionLocation, 1, glm::value_ptr(cameraEye));
+            glUniformMatrix4fv(pointLight_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+            glUniform1f(pointLight_timeLocation, t);
+
+            break;
+
+        case SPOT_LIGHT:
+            glUniform1i(spotLight_materialLocation, 0);
+            glUniform1i(spotLight_normalLocation, 1);
+            glUniform1i(spotLight_depthLocation, 2);
+            glUniform3fv(spotLight_cameraPositionLocation, 1, glm::value_ptr(cameraEye));
+            glUniformMatrix4fv(spotLight_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
+            glUniform1f(spotLight_timeLocation, t);
 
             break;
 
@@ -165,22 +223,59 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
     }
 }
 
-void ShaderManager::updateLightingUniformsTD(LightManager* lightManager, double tl) {
-    glUniform3fv(lighting_lightPositionLocation, 1, lightManager->getCustomPositionOfLight(tl));
-    glUniform3fv(lighting_lightColorLocation, 1, lightManager->getCustomColorOfLight(tl));
-    glUniform1f(lighting_lightIntensityLocation, lightManager->getIntensityOfLights());
+void ShaderManager::updateDirLightUniforms(LightManager& lightManager) {
+    for (unsigned int i = 0; i < lightManager.getNumDirLight(); ++i)
+    {
+        glm::vec3 dir = lightManager.getDLDirection(i);
+        glm::vec3 diff = lightManager.getDLDiffuse(i);
+        glm::vec3 spec = lightManager.getDLSpec(i);
+        float lightDirection[3] = {dir.x, dir.y, dir.z};
+        float lightDiffuseColor[3] = {diff.r, diff.g, diff.b};
+        float lightSpecColor[3] = {spec.r, spec.g, spec.b};
+        glUniform3fv(dirLight_lightDirectionLocation, 1, lightDirection);
+        glUniform3fv(dirLight_lightDiffuseColorLocation, 1, lightDiffuseColor);
+        glUniform3fv(dirLight_lightSpecularColorLocation, 1, lightSpecColor);
+        glUniform1f(dirLight_lightIntensityLocation, lightManager.getDLIntensity(i));
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+    }
 }
 
-void ShaderManager::updateLightingUniformsHal(LightManager* lightManager, int i, double t) {
-    if(i == 0){
-        glUniform3fv(lighting_lightPositionLocation, 1, lightManager->getCenterPosition());
-        glUniform3fv(lighting_lightColorLocation, 1, lightManager->getRedColor());
-        glUniform1f(lighting_lightIntensityLocation, lightManager->getVariableIntensity(10*cos(t)));
+void ShaderManager::updatePointLightUniforms(LightManager& lightManager) {
+    for (unsigned int i = 0; i < lightManager.getNumPointLight(); ++i)
+    {
+        glm::vec3 pos = lightManager.getPLPosition(i);
+        glm::vec3 diff = lightManager.getPLDiffuse(i);
+        glm::vec3 spec = lightManager.getPLSpec(i);
+        float lightPosition[3] = {pos.x, pos.y, pos.z};
+        float lightDiffuseColor[3] = {diff.r, diff.g, diff.b};
+        float lightSpecColor[3] = {spec.r, spec.g, spec.b};
+        glUniform3fv(pointLight_lightPositionLocation, 1, lightPosition);
+        glUniform3fv(pointLight_lightDiffuseColorLocation, 1, lightDiffuseColor);
+        glUniform3fv(pointLight_lightSpecularColorLocation, 1, lightSpecColor);
+        glUniform1f(pointLight_lightIntensityLocation, lightManager.getPLIntensity(i));
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
     }
-    else{
-        glUniform3fv(lighting_lightPositionLocation, 1, lightManager->getCustomPositionOfLight(i));
-        glUniform3fv(lighting_lightColorLocation, 1, lightManager->getOrangeColor());
-        glUniform1f(lighting_lightIntensityLocation, lightManager->getIntensityOfLights());
+}
+
+void ShaderManager::updateSpotLightUniforms(LightManager& lightManager) {
+    for (unsigned int i = 0; i < lightManager.getNumSpotLight(); ++i)
+    {
+        glm::vec3 pos = lightManager.getSPLPosition(i);
+        glm::vec3 dir = lightManager.getSPLDirection(i);
+        glm::vec3 diff = lightManager.getSPLDiffuse(i);
+        glm::vec3 spec = lightManager.getSPLSpec(i);
+        float lightPosition[3] = {pos.x, pos.y, pos.z};
+        float lightDirection[3] = {dir.x, dir.y, dir.z};
+        float lightDiffuseColor[3] = {diff.r, diff.g, diff.b};
+        float lightSpecColor[3] = {spec.r, spec.g, spec.b};
+        glUniform3fv(spotLight_lightPositionLocation, 1, lightPosition);
+        glUniform3fv(spotLight_lightDirectionLocation, 1, lightDirection);
+        glUniform3fv(spotLight_lightDiffuseColorLocation, 1, lightDiffuseColor);
+        glUniform3fv(spotLight_lightSpecularColorLocation, 1, lightSpecColor);
+        glUniform1f(spotLight_lightIntensityLocation, lightManager.getSPLIntensity(i));
+        glUniform1f(spotLight_lightExternalAngleLocation, lightManager.getSPLExternalAngle(i));
+        glUniform1f(spotLight_lightInternalAngleLocation, lightManager.getSPLInternalAngle(i));
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
     }
 }
 
@@ -211,7 +306,6 @@ void ShaderManager::renderTextureWithShader(ListShaderType shaderType, int width
 
         default:
             break;
-
     }    
 
     // Bind textures we want to render
@@ -223,19 +317,16 @@ void ShaderManager::renderTextureWithShader(ListShaderType shaderType, int width
     glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 }
 
-void ShaderManager::renderLightingTD(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t){
+void ShaderManager::renderLighting(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t){
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, textureToWrite, 0);
 
     // Clear the front buffer
     glViewport( 0, 0, width, height );
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Bind lighting shader
-    glUseProgram(shaderManager.getShader(ShaderManager::LIGHT).program);
-
-    // Upload uniforms
-    shaderManager.uploadUniforms(ShaderManager::LIGHT, cameraEye, t);
-
+    glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
+    
     // Bind textures we want to render
     // Bind color to unit 0
     glActiveTexture(GL_TEXTURE0);
@@ -247,65 +338,23 @@ void ShaderManager::renderLightingTD(ShaderManager& shaderManager, LightManager&
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, texturesToRead[2]);        
 
-    // Blit above the rest
-    glDisable(GL_DEPTH_TEST);
+    // Deferred lights on quad
+    glBindVertexArray(vao[2]);
 
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE);
+    // Bind dir_light_shader shader
+    glUseProgram(shaderManager.getShader(ShaderManager::DIR_LIGHT).program);
+    shaderManager.uploadUniforms(ShaderManager::DIR_LIGHT, cameraEye, t);
+    updateDirLightUniforms(lightManager);
+    
+    // Bind point_light_shader shader
+    glUseProgram(shaderManager.getShader(ShaderManager::POINT_LIGHT).program);
+    shaderManager.uploadUniforms(ShaderManager::POINT_LIGHT, cameraEye, t);
+    updatePointLightUniforms(lightManager);
 
-    // Deferred lights
-    for (int i = 0; i < (int) lightManager.getNbLights(); ++i)
-    {
-        float tl = t * i;
-        shaderManager.updateLightingUniformsTD(&lightManager, tl);
-
-        // Draw quad
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-    }
-
-    glDisable(GL_BLEND);
-}
-
-void ShaderManager::renderLightingHal(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t){
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, textureToWrite, 0);
-
-    // Clear the front buffer
-    glViewport( 0, 0, width, height );
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Bind lighting shader
-    glUseProgram(shaderManager.getShader(ShaderManager::LIGHT).program);
-
-    // Upload uniforms
-    shaderManager.uploadUniforms(ShaderManager::LIGHT, cameraEye, t);
-
-    // Bind textures we want to render
-    // Bind color to unit 0
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texturesToRead[0]);        
-    // Bind normal to unit 1
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texturesToRead[1]);    
-    // Bind depth to unit 2
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, texturesToRead[2]);        
-
-    // Blit above the rest
-    glDisable(GL_DEPTH_TEST);
-
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_ONE, GL_ONE);
-
-    // Deferred lights
-    for (int i = 0; i < (int) lightManager.getNbLights(); ++i)
-    {
-        shaderManager.updateLightingUniformsHal(&lightManager, i, t);
-
-        // Draw quad
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-    }
+    // Bind spot_light_shader shader
+    glUseProgram(shaderManager.getShader(ShaderManager::SPOT_LIGHT).program);
+    shaderManager.uploadUniforms(ShaderManager::SPOT_LIGHT, cameraEye, t);
+    updateSpotLightUniforms(lightManager);
 
     glDisable(GL_BLEND);
 }

@@ -39,7 +39,7 @@ const float quad_vertices[] =  {-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0};
 //
 // Load sphere
 //
-const GLfloat sphere_radius = 1;
+const GLfloat sphere_radius = 10;
 const GLsizei discLat = 20;
 const GLsizei discLong = 20;
 const GLfloat rcpLat = 1.f / discLat;

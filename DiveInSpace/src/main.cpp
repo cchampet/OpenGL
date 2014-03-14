@@ -18,6 +18,9 @@
 #include "glm/gtc/matrix_transform.hpp" // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include "glm/gtc/type_ptr.hpp" // glm::value_ptr
 
+#include <time.h>
+#include <sstream>
+
 #include "ShaderManager.h"
 #include "Camera.h"
 #include "Shader.h"
@@ -106,7 +109,7 @@ int main( int argc, char **argv )
 
     // Init shader structures
     ShaderManager shaderManager;
-    LightManager lightManager(5.f);
+    LightManager lightManager;
 
     TextureManager textureManager;
 
@@ -120,7 +123,9 @@ int main( int argc, char **argv )
     /* --------------------------------------------------------------------------------------------- */
     shaderManager.addShader("shaders/gbuffer.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER);
     shaderManager.addShader("shaders/blit.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLIT);
-    shaderManager.addShader("shaders/light.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::LIGHT);
+    shaderManager.addShader("shaders/dirLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::DIR_LIGHT);
+    shaderManager.addShader("shaders/pointLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::POINT_LIGHT);
+    shaderManager.addShader("shaders/spotLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::SPOT_LIGHT);
     shaderManager.addShader("shaders/gamma.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GAMMA);
     shaderManager.addShader("shaders/sobel.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::SOBEL);
     shaderManager.addShader("shaders/blur.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLUR);
@@ -220,7 +225,7 @@ int main( int argc, char **argv )
 
     tt = 0;
     int uu = 0;
-    for(GLsizei i = 0; i < spherePositions.size(); ++i){
+    for(size_t i = 0; i < spherePositions.size(); ++i){
         sphere_vertices[tt] = spherePositions[i].x;
         sphere_normals[tt] = sphereNormals[i].x; tt++;
         sphere_uv[uu] = sphereUv[i].x; uu++;
@@ -400,8 +405,7 @@ int main( int argc, char **argv )
         //
         glBindFramebuffer(GL_FRAMEBUFFER, fxBufferFbo);
             // Lighting
-            //shaderManager.renderLightingTD(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
-            shaderManager.renderLightingHal(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
+            shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
 
             // Explosion pass
             //shaderManager.renderTextureWithShader(ShaderManager::EXPLOSION, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
@@ -449,16 +453,201 @@ int main( int argc, char **argv )
         int logScroll = 0;
         char lineBuffer[512];
         imguiBeginScrollArea("Dive In Space", width - 210, height - 350, 200, 300, &logScroll);
-        sprintf(lineBuffer, "FPS %f", fps);
-        imguiLabel(lineBuffer);
-        imguiSlider("Lights", lightManager.getNbLightsAdress(), 0.0, 100.0, 1.0);
-        imguiSlider("Gamma", shaderManager.getGamma(), 0.0, 3.0, 0.1);
-        imguiSlider("Sobel", shaderManager.getSobelCoeff(), 0.0, 1.0, 1.0);
-        imguiSlider("Blur Samples", shaderManager.getBlurSamples(), 1.0, 100.0, 1.0);
-        imguiSlider("Focus plane", shaderManager.getFocusPlane(), 1.0, 100.0, 1.0);
-        imguiSlider("Near plane", shaderManager.getNearPlane(), 1.0, 100.0, 1.0);
-        imguiSlider("Far plane", shaderManager.getFarPlane(), 1.0, 100.0, 1.0);
+            sprintf(lineBuffer, "FPS %f", fps);
+            imguiLabel(lineBuffer);
+            imguiSlider("Gamma", shaderManager.getGamma(), 0.0, 3.0, 0.1);
+            imguiSlider("Sobel", shaderManager.getSobelCoeff(), 0.0, 1.0, 1.0);
+            imguiSlider("Blur Samples", shaderManager.getBlurSamples(), 1.0, 100.0, 1.0);
+            imguiSlider("Focus plane", shaderManager.getFocusPlane(), 1.0, 100.0, 1.0);
+            imguiSlider("Near plane", shaderManager.getNearPlane(), 1.0, 100.0, 1.0);
+            imguiSlider("Far plane", shaderManager.getFarPlane(), 1.0, 100.0, 1.0);
         imguiEndScrollArea();
+
+        imguiBeginScrollArea("Lights", 0, height - 350, 200, 300, &logScroll);
+            sprintf(lineBuffer, "%d PointLights", lightManager.getNumPointLight());
+            imguiLabel(lineBuffer);
+            int button_addPL = imguiButton("Add PointLight");
+            if(button_addPL)
+            {
+                unsigned int nbL = lightManager.getNumPointLight();
+                srand(time(NULL));
+                lightManager.addPointLight( glm::vec3(0, 15, 5),
+                                            glm::vec3(cos(nbL), sin(nbL), 1),
+                                            glm::vec3(1, 1, 1),
+                                            5.f);
+            }
+
+            for (unsigned int i = 0; i < lightManager.getNumPointLight(); ++i)
+            {
+                std::ostringstream ss;
+                ss << (i+1);
+                std::string s(ss.str());
+                int toggle = imguiCollapse("Point Light", s.c_str(), lightManager.getPLCollapse(i));
+                if(lightManager.getPLCollapse(i))
+                {
+                    imguiIndent();
+                        float intens = lightManager.getPLIntensity(i);
+                        imguiSlider("Intensity", &intens, 0, 10, 0.1); lightManager.setPLIntensity(i, intens);
+                        imguiLabel("Position :");
+                        imguiIndent();
+                            glm::vec3 pos = lightManager.getPLPosition(i);
+                            imguiSlider("x", &pos.x, -30, 30, 0.1);
+                            imguiSlider("y", &pos.y, -30, 30, 0.1);
+                            imguiSlider("z", &pos.z, -30, 30, 0.1);
+                            lightManager.setPLPosition(i, pos);
+                        imguiUnindent();
+                        imguiLabel("Diffuse :");
+                        imguiIndent();
+                            glm::vec3 diff = lightManager.getPLDiffuse(i);
+                            imguiSlider("r", &diff.x, 0, 1, 0.01);
+                            imguiSlider("g", &diff.y, 0, 1, 0.01);
+                            imguiSlider("b", &diff.z, 0, 1, 0.01);
+                            lightManager.setPLDiffuse(i, diff);
+                        imguiUnindent();
+                        imguiLabel("Specular :");
+                        imguiIndent();
+                            glm::vec3 spec = lightManager.getPLSpec(i);
+                            imguiSlider("r", &spec.x, 0, 1, 0.01);
+                            imguiSlider("g", &spec.y, 0, 1, 0.01);
+                            imguiSlider("b", &spec.z, 0, 1, 0.01);
+                            lightManager.setPLSpec(i, spec);
+                        imguiUnindent();
+                        int removeLight = imguiButton("Remove"); 
+                        if(removeLight)
+                            lightManager.removePointLight(i);
+                    imguiUnindent();
+                }
+                if(toggle) { lightManager.setPLCollapse(i, !lightManager.getPLCollapse(i)); }
+            }
+
+            imguiSeparatorLine();
+
+            sprintf(lineBuffer, "%d DirLights", lightManager.getNumDirLight());
+            imguiLabel(lineBuffer);
+            int button_addDL = imguiButton("Add DirLight");
+            if(button_addDL)
+            {
+                lightManager.addDirLight( glm::vec3(0.5, -0.5, -0.5),
+                                            glm::vec3(1, 1, 1),
+                                            glm::vec3(1, 1, 0.5),
+                                            0.6f);
+            }
+
+            for (unsigned int i = 0; i < lightManager.getNumDirLight(); ++i)
+            {
+                std::ostringstream ss;
+                ss << (i+1);
+                std::string s(ss.str());
+                int toggle = imguiCollapse("Dir Light", s.c_str(), lightManager.getDLCollapse(i));
+                if(lightManager.getDLCollapse(i))
+                {
+                    imguiIndent();
+                        float intens = lightManager.getDLIntensity(i);
+                        imguiSlider("Intensity", &intens, 0, 10, 0.1); lightManager.setDLIntensity(i, intens);
+                        imguiLabel("Direction :");
+                        imguiIndent();
+                            glm::vec3 dir = lightManager.getDLDirection(i);
+                            imguiSlider("x", &dir.x, -30, 30, 0.1);
+                            imguiSlider("y", &dir.y, -30, 30, 0.1);
+                            imguiSlider("z", &dir.z, -30, 30, 0.1);
+                            lightManager.setDLDirection(i, dir);
+                        imguiUnindent();
+                        imguiLabel("Diffuse :");
+                        imguiIndent();
+                            glm::vec3 diff = lightManager.getDLDiffuse(i);
+                            imguiSlider("r", &diff.x, 0, 1, 0.01);
+                            imguiSlider("g", &diff.y, 0, 1, 0.01);
+                            imguiSlider("b", &diff.z, 0, 1, 0.01);
+                            lightManager.setDLDiffuse(i, diff);
+                        imguiUnindent();
+                        imguiLabel("Specular :");
+                        imguiIndent();
+                            glm::vec3 spec = lightManager.getDLSpec(i);
+                            imguiSlider("r", &spec.x, 0, 1, 0.01);
+                            imguiSlider("g", &spec.y, 0, 1, 0.01);
+                            imguiSlider("b", &spec.z, 0, 1, 0.01);
+                            lightManager.setDLSpec(i, spec);
+                        imguiUnindent();
+                        int removeLight = imguiButton("Remove"); 
+                        if(removeLight)
+                            lightManager.removeDirLight(i);
+                    imguiUnindent();
+                }
+                if(toggle) { lightManager.setDLCollapse(i, !lightManager.getDLCollapse(i)); }
+            }
+
+            imguiSeparatorLine();
+
+            sprintf(lineBuffer, "%d SpotLights", lightManager.getNumSpotLight());
+            imguiLabel(lineBuffer);
+            int button_addSPL = imguiButton("Add SpotLight");
+            if(button_addSPL)
+            {
+                lightManager.addSpotLight( glm::vec3(5, 5, 5),
+                                            glm::vec3(-1, -1, -1),
+                                            glm::vec3(1, 1, 0),
+                                            glm::vec3(1, 0, 1),
+                                            2.f,
+                                            1.f,
+                                            1.f);
+            }
+
+            for (unsigned int i = 0; i < lightManager.getNumSpotLight(); ++i)
+            {
+                std::ostringstream ss;
+                ss << (i+1);
+                std::string s(ss.str());
+                int toggle = imguiCollapse("Spot Light", s.c_str(), lightManager.getSPLCollapse(i));
+                if(lightManager.getSPLCollapse(i))
+                {
+                    imguiIndent();
+                        float intens = lightManager.getSPLIntensity(i);
+                        imguiSlider("Intensity", &intens, 0, 10, 0.1); lightManager.setSPLIntensity(i, intens);
+                        imguiLabel("Position :");
+                        imguiIndent();
+                            glm::vec3 pos = lightManager.getSPLPosition(i);
+                            imguiSlider("x", &pos.x, -30, 30, 0.1);
+                            imguiSlider("y", &pos.y, -30, 30, 0.1);
+                            imguiSlider("z", &pos.z, -30, 30, 0.1);
+                            lightManager.setSPLPosition(i, pos);
+                        imguiUnindent();
+                        imguiLabel("Direction :");
+                        imguiIndent();
+                            glm::vec3 dir = lightManager.getSPLDirection(i);
+                            imguiSlider("x", &dir.x, -1, 1, 0.01);
+                            imguiSlider("y", &dir.y, -1, 1, 0.01);
+                            imguiSlider("z", &dir.z, -1, 1, 0.01);
+                            lightManager.setSPLDirection(i, dir);
+                        imguiUnindent();
+                        imguiLabel("Diffuse :");
+                        imguiIndent();
+                            glm::vec3 diff = lightManager.getSPLDiffuse(i);
+                            imguiSlider("r", &diff.x, 0, 1, 0.01);
+                            imguiSlider("g", &diff.y, 0, 1, 0.01);
+                            imguiSlider("b", &diff.z, 0, 1, 0.01);
+                            lightManager.setSPLDiffuse(i, diff);
+                        imguiUnindent();
+                        imguiLabel("Specular :");
+                        imguiIndent();
+                            glm::vec3 spec = lightManager.getSPLSpec(i);
+                            imguiSlider("r", &spec.x, 0, 1, 0.01);
+                            imguiSlider("g", &spec.y, 0, 1, 0.01);
+                            imguiSlider("b", &spec.z, 0, 1, 0.01);
+                            lightManager.setSPLSpec(i, spec);
+                        imguiUnindent();
+                        float extangle = lightManager.getSPLExternalAngle(i);
+                        imguiSlider("External angle", &extangle, 0, 2, 0.01); lightManager.setSPLExternalAngle(i, extangle);
+                        float intangle = lightManager.getSPLInternalAngle(i);
+                        imguiSlider("Internal angle", &intangle, 0, 2, 0.01); lightManager.setSPLInternalAngle(i, intangle);
+                        int removeLight = imguiButton("Remove"); 
+                        if(removeLight)
+                            lightManager.removeSpotLight(i);
+                    imguiUnindent();
+                }
+                if(toggle) { lightManager.setSPLCollapse(i, !lightManager.getSPLCollapse(i)); }
+            }
+        imguiEndScrollArea();
+
         imguiEndFrame();
         imguiRenderGLDraw(width, height); 
 

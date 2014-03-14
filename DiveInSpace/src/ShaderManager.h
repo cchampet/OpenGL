@@ -34,7 +34,9 @@ struct ShaderManager
 	enum ListShaderType{
 		GBUFFER,
 		BLIT,
-		LIGHT,
+		DIR_LIGHT,
+        POINT_LIGHT,
+        SPOT_LIGHT,
 		GAMMA,
 		SOBEL,
 		BLUR,
@@ -49,12 +51,12 @@ struct ShaderManager
 
 
 	void uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEye, double t);
-    void updateLightingUniformsTD(LightManager* lightManager, double t);
-    void updateLightingUniformsHal(LightManager* lightManager, int i, double t);
+    void updateDirLightUniforms(LightManager& lightManager);
+    void updatePointLightUniforms(LightManager& lightManager);
+    void updateSpotLightUniforms(LightManager& lightManager);
 
 	void renderTextureWithShader(ListShaderType shaderType, int width, int height, GLuint* bufferTexture, GLuint* vao, int ping, int pong, glm::vec3 cameraEye, double t);
-    void renderLightingTD(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t);
-    void renderLightingHal(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t);
+    void renderLighting(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t);
     void computeCoc(int width, int height, GLuint bufferTextureToRead, GLuint bufferTextureToWrite, GLuint* vao, glm::vec3 cameraEye, double t);
 
 	// Getters & Setters
@@ -107,15 +109,47 @@ private:
     // Location for blit_shader
     GLuint blit_tex1Location;
 
-    // Location for lighting_shader
-    GLuint lighting_materialLocation; 
-    GLuint lighting_normalLocation; 
-    GLuint lighting_depthLocation; 
-    GLuint lighting_inverseViewProjectionLocation; 
-    GLuint lighting_cameraPositionLocation; 
-    GLuint lighting_lightPositionLocation; 
-    GLuint lighting_lightColorLocation; 
-    GLuint lighting_lightIntensityLocation;
+    // Location for dirLight shader
+    GLuint dirLight_materialLocation; 
+    GLuint dirLight_normalLocation; 
+    GLuint dirLight_depthLocation; 
+    GLuint dirLight_inverseViewProjectionLocation; 
+    GLuint dirLight_cameraPositionLocation; 
+    GLuint dirLight_lightDirectionLocation; 
+    GLuint dirLight_lightDiffuseColorLocation; 
+    GLuint dirLight_lightSpecularColorLocation; 
+    GLuint dirLight_lightIntensityLocation;
+    GLuint dirLight_timeLocation;
+    GLuint dirLight_projectionLocation;
+
+    // Location for pointLight shader
+    GLuint pointLight_materialLocation; 
+    GLuint pointLight_normalLocation; 
+    GLuint pointLight_depthLocation; 
+    GLuint pointLight_inverseViewProjectionLocation; 
+    GLuint pointLight_cameraPositionLocation; 
+    GLuint pointLight_lightPositionLocation; 
+    GLuint pointLight_lightDiffuseColorLocation; 
+    GLuint pointLight_lightSpecularColorLocation; 
+    GLuint pointLight_lightIntensityLocation;
+    GLuint pointLight_timeLocation;
+    GLuint pointLight_projectionLocation;
+
+    // Location for spotLight shader
+    GLuint spotLight_materialLocation; 
+    GLuint spotLight_normalLocation; 
+    GLuint spotLight_depthLocation; 
+    GLuint spotLight_inverseViewProjectionLocation; 
+    GLuint spotLight_cameraPositionLocation; 
+    GLuint spotLight_lightPositionLocation; 
+    GLuint spotLight_lightDiffuseColorLocation; 
+    GLuint spotLight_lightSpecularColorLocation; 
+    GLuint spotLight_lightIntensityLocation;
+    GLuint spotLight_lightDirectionLocation;
+    GLuint spotLight_lightExternalAngleLocation;
+    GLuint spotLight_lightInternalAngleLocation;
+    GLuint spotLight_timeLocation;
+    GLuint spotLight_projectionLocation;
 
     // Location for gamma_shader
     GLuint gamma_tex1Location;
