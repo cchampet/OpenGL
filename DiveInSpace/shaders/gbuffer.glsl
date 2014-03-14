@@ -1,4 +1,5 @@
 #if defined(VERTEX)
+
 uniform mat4 Projection;
 uniform mat4 View;
 uniform mat4 Object;
@@ -25,6 +26,7 @@ void main(void)
 #endif
 
 #if defined(FRAGMENT)
+
 uniform vec3 CameraPosition;
 uniform float Time;
 

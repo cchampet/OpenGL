@@ -313,39 +313,8 @@ int main( int argc, char **argv )
         /* --------------------------------------------------------------------------------------------- */
         /* ----------------------------------- Remplissage Frame Buffer -------------------------------- */
         /* --------------------------------------------------------------------------------------------- */
-       
-        glBindFramebuffer(GL_FRAMEBUFFER, gbufferFbo);
-        glDrawBuffers(2, gbufferDrawBuffers);
-
-        // Viewport 
-        glViewport(0, 0, width, height );
-
-        // Default states
-        glEnable(GL_DEPTH_TEST);
-
-        // Clear the front buffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // Bind gbuffer shader
-        glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER).program);
-
-        // Upload uniforms
-        shaderManager.uploadUniforms(ShaderManager::GBUFFER, camera.m_eye, t);
-        // Bind textures
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textures[0]);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, textures[1]);
-
-        // Render vaos
-        glBindVertexArray(vao[0]);
-        glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 32);
-        glBindVertexArray(vao[1]);
-        glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-
-        // Unbind framebuffer
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
+        //textureManager.fillFrameBufferTD(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
+        textureManager.fillFrameBufferHall(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
 
         /* --------------------------------------------------------------------------------------------- */
         /* -------------------------------------- Rendu/Affichage -------------------------------------- */

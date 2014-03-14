@@ -17,10 +17,11 @@ struct TextureManager
 {
 
 	void loadTextures(GLuint* tab, size_t size);
-
 	void loadBufferTextures(GLuint* gbufferTextures, size_t size, int width, int height);
-
 	void loadFxTextures(GLuint* fxBufferTextures, size_t size, int width, int height);
+
+	void fillFrameBufferTD(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t);
+	void fillFrameBufferHall(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t);
 
 	void renderMainScreen(ShaderManager& shaderManager, int width, int height, GLuint bufferTexture, GLuint* vao, glm::vec3 cameraEye, double t);
 	void renderDebugScreens(size_t nbMiniatures, int width, int height, GLuint* bufferTexture, GLuint* vao);
