@@ -1,8 +1,8 @@
 #include "TextureManager.h"
 #include <stdio.h> 
 #include "stb/stb_image.h"
-
-
+#include "Geometry.h"
+#include <iostream>
 
 void TextureManager::loadTextures(GLuint* tab, size_t size) {
 
@@ -70,7 +70,8 @@ void TextureManager::loadBufferTextures(GLuint* gbufferTextures, size_t size, in
 
 
 void TextureManager::loadFxTextures(GLuint* fxBufferTextures, size_t size, int width, int height) {
-	 glGenTextures(size, fxBufferTextures);
+	
+    glGenTextures(size, fxBufferTextures);
 
     // Create first ping-pong texture
     glBindTexture(GL_TEXTURE_2D, fxBufferTextures[0]);
@@ -107,4 +108,31 @@ void TextureManager::loadFxTextures(GLuint* fxBufferTextures, size_t size, int w
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+}
+
+void TextureManager::renderMainScreen(ShaderManager& shaderManager, int width, int height, GLuint bufferTexture, GLuint* vao, glm::vec3 cameraEye, double t){
+    
+    glViewport( 0, 0, width, height);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    glUseProgram(shaderManager.getShader(ShaderManager::BLIT).program);
+    shaderManager.uploadUniforms(ShaderManager::BLIT, cameraEye, t);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, bufferTexture);
+    
+    glBindVertexArray(vao[2]);
+    glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+}
+
+void TextureManager::renderDebugScreens(size_t nbMiniatures, int width, int height, GLuint* bufferTexture, GLuint* vao){
+    
+    for(size_t i = 0; i < nbMiniatures; ++i){
+        
+        glViewport( i*(width/nbMiniatures), 0, width/nbMiniatures, height/nbMiniatures  );
+        glBindTexture(GL_TEXTURE_2D, bufferTexture[i]);        
+        
+        glBindVertexArray(vao[2]);
+        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+    }
 }

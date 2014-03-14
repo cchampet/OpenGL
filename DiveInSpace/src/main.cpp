@@ -437,36 +437,11 @@ int main( int argc, char **argv )
         //
         // Display main screen 
         //
-        glViewport( 0, 0, width, height);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        glUseProgram(shaderManager.getShader(ShaderManager::BLIT).program);
-        shaderManager.uploadUniforms(ShaderManager::BLIT, camera.m_eye, t);
-
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, fxBufferTextures[1]);
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-
+        textureManager.renderMainScreen(shaderManager, width, height, fxBufferTextures[1], vao, camera.m_eye, t);
         //
-        // Display miniatures (à la noix) 
+        // Display debug (pas à la noix non non non !)
         //
-
-        // Diffuse
-        glViewport( 0, 0, width/3, height/3  );
-        glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);        
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-        // Specular
-        glViewport( width/3, 0, width/3, height/3  );
-        glBindTexture(GL_TEXTURE_2D, gbufferTextures[1]);        
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
-        // Depth
-        glViewport( width/3 * 2, 0, width/3, height/3  );
-        glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);        
-        glBindVertexArray(vao[2]);
-        glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+        textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
 #if 1
         // Draw UI
         glDisable(GL_DEPTH_TEST);
