@@ -314,7 +314,7 @@ int main( int argc, char **argv )
         /* ----------------------------------- Remplissage Frame Buffer -------------------------------- */
         /* --------------------------------------------------------------------------------------------- */
         //textureManager.fillFrameBufferTD(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
-        textureManager.fillFrameBufferHall(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
+        textureManager.fillFrameBufferHal(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
 
         /* --------------------------------------------------------------------------------------------- */
         /* -------------------------------------- Rendu/Affichage -------------------------------------- */
@@ -326,7 +326,7 @@ int main( int argc, char **argv )
         glBindFramebuffer(GL_FRAMEBUFFER, fxBufferFbo);
             // Lighting
             //shaderManager.renderLightingTD(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
-            shaderManager.renderLightingHall(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
+            shaderManager.renderLightingHal(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
 
             // Explosion pass
             //shaderManager.renderTextureWithShader(ShaderManager::EXPLOSION, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);

@@ -5,7 +5,7 @@
 LightManager::LightManager(float nbLights){
 	m_nbLights = nbLights;
 
-	m_lightIntensity = 10.0;
+	m_lightIntensity = 1.0;
 }
 
 float* LightManager::getCustomPositionOfLight(float i){
@@ -33,5 +33,12 @@ float* LightManager::getRedColor() {
 	m_tmpColor[0] = 1.f;
 	m_tmpColor[1] = 0.f;
 	m_tmpColor[2] = 0.f;
+	return m_tmpColor;
+}
+
+float* LightManager::getOrangeColor() {
+	m_tmpColor[0] = 0.8f;
+	m_tmpColor[1] = 0.2f;
+	m_tmpColor[2] = 0.2f;
 	return m_tmpColor;
 }

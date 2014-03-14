@@ -12,11 +12,13 @@ struct LightManager
 	* Getters
 	*/
 	float getIntensityOfLights() const {return m_lightIntensity;}
+	float getVariableIntensity(double t) const {return m_lightIntensity*t;}
 	float getNbLights() const {return m_nbLights;}
 	float* getNbLightsAdress() {return &m_nbLights;} //useful for GUI
 
 	float* getCenterPosition();
 	float* getRedColor();
+	float* getOrangeColor();
 
 	/**
 	* Getters custom

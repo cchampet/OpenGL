@@ -145,7 +145,7 @@ void TextureManager::fillFrameBufferTD(GLuint fbo, GLuint* drawBuffers, int widt
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
-void TextureManager::fillFrameBufferHall(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
+void TextureManager::fillFrameBufferHal(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glDrawBuffers(2, drawBuffers);

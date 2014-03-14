@@ -171,10 +171,17 @@ void ShaderManager::updateLightingUniformsTD(LightManager* lightManager, double 
     glUniform1f(lighting_lightIntensityLocation, lightManager->getIntensityOfLights());
 }
 
-void ShaderManager::updateLightingUniformsHall(LightManager* lightManager, double i) {
-    glUniform3fv(lighting_lightPositionLocation, 1, lightManager->getCustomPositionOfLight(i));
-    glUniform3fv(lighting_lightColorLocation, 1, lightManager->getRedColor());
-    glUniform1f(lighting_lightIntensityLocation, lightManager->getIntensityOfLights());
+void ShaderManager::updateLightingUniformsHal(LightManager* lightManager, int i, double t) {
+    if(i == 0){
+        glUniform3fv(lighting_lightPositionLocation, 1, lightManager->getCenterPosition());
+        glUniform3fv(lighting_lightColorLocation, 1, lightManager->getRedColor());
+        glUniform1f(lighting_lightIntensityLocation, lightManager->getVariableIntensity(10*cos(t)));
+    }
+    else{
+        glUniform3fv(lighting_lightPositionLocation, 1, lightManager->getCustomPositionOfLight(i));
+        glUniform3fv(lighting_lightColorLocation, 1, lightManager->getOrangeColor());
+        glUniform1f(lighting_lightIntensityLocation, lightManager->getIntensityOfLights());
+    }
 }
 
 void ShaderManager::renderTextureWithShader(ListShaderType shaderType, int width, int height, GLuint* bufferTexture, GLuint* vao, int ping, int pong, glm::vec3 cameraEye, double t) {
@@ -260,7 +267,7 @@ void ShaderManager::renderLightingTD(ShaderManager& shaderManager, LightManager&
     glDisable(GL_BLEND);
 }
 
-void ShaderManager::renderLightingHall(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t){
+void ShaderManager::renderLightingHal(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t){
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, textureToWrite, 0);
 
     // Clear the front buffer
@@ -293,7 +300,7 @@ void ShaderManager::renderLightingHall(ShaderManager& shaderManager, LightManage
     // Deferred lights
     for (int i = 0; i < (int) lightManager.getNbLights(); ++i)
     {
-        shaderManager.updateLightingUniformsHall(&lightManager, i);
+        shaderManager.updateLightingUniformsHal(&lightManager, i, t);
 
         // Draw quad
         glBindVertexArray(vao[2]);
