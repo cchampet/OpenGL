@@ -31,7 +31,8 @@
 
 
 #define MODE_HAL    0
-#define MODE_TRAVEL 1
+#define MODE_TRAVEL 0
+#define MODE_HAL2   1
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -121,6 +122,10 @@ int main( int argc, char **argv )
         lightManager.createTravelLights();
     #endif
 
+    #if MODE_HAL2 == 1
+        lightManager.createHalLights2();
+    #endif
+
     TextureManager textureManager;
 
     // Load images and upload textures
@@ -148,12 +153,12 @@ int main( int argc, char **argv )
     /* ------------------------------------------ Geometry ----------------------------------------- */
     /* --------------------------------------------------------------------------------------------- */
     // Vertex Array Object
-    GLuint vao[4];
-    glGenVertexArrays(4, vao);
+    GLuint vao[5];
+    glGenVertexArrays(5, vao);
 
-    // Vertex Buffer Objects
-    GLuint vbo[14];
-    glGenBuffers(14, vbo);
+    // Vertex Buffer Objects]
+    GLuint vbo[17];
+    glGenBuffers(17, vbo);
 
     // Cube
     glBindVertexArray(vao[0]);
@@ -207,6 +212,7 @@ int main( int argc, char **argv )
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quad_vertices), quad_vertices, GL_STATIC_DRAW);
+
 
     // Sphere
     // Fill sphere data
@@ -282,6 +288,37 @@ int main( int argc, char **argv )
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
     glBufferData(GL_ARRAY_BUFFER, sizeof(sphere_uv), sphere_uv, GL_STATIC_DRAW);
+
+
+
+    /* --------------------------------------------- */
+    /* -------------------- HAL -------------------- */
+    /* --------------------------------------------- */
+
+    // Plane
+    glBindVertexArray(vao[4]);
+
+    // Bind indices and upload data
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[5]);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(hal_triangleList), hal_triangleList, GL_STATIC_DRAW);
+    
+    // Bind vertices and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[14]);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(hal_vertices), hal_vertices, GL_STATIC_DRAW);
+    
+    // Bind normals and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[15]);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(hal_normals), hal_normals, GL_STATIC_DRAW);
+    
+    // Bind uv coords and upload data
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[16]);
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(hal_uvs), hal_uvs, GL_STATIC_DRAW);
 
     // Unbind everything. Potentially illegal on some implementations
     glBindVertexArray(0);
@@ -409,6 +446,9 @@ int main( int argc, char **argv )
         #if MODE_TRAVEL == 1
             textureManager.fillFrameBufferTravel(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
         #endif
+        #if MODE_HAL2 == 1
+            textureManager.fillFrameBufferHal2(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
+        #endif
         /* --------------------------------------------------------------------------------------------- */
         /* -------------------------------------- Rendu/Affichage -------------------------------------- */
         /* --------------------------------------------------------------------------------------------- */
@@ -420,6 +460,10 @@ int main( int argc, char **argv )
             // Lighting
             #if MODE_HAL == 1
                 lightManager.updateHalLights(t);
+            #endif
+
+            #if MODE_HAL2 == 1
+                lightManager.updateHalLights2(t);
             #endif
             shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
 

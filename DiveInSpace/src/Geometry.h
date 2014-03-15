@@ -36,6 +36,16 @@ const int   quad_triangleCount = 2;
 const int   quad_triangleList[] = {0, 1, 2, 2, 1, 3}; 
 const float quad_vertices[] =  {-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0};
 
+
+//
+// Hal Plane
+//
+const int	hal_triangleCount = 2;
+const int   hal_triangleList[] = {0, 1, 2, 2, 1, 3}; 
+const float hal_uvs[] = {0.f, 0.f, 0.f, 10.f, 10.f, 0.f, 10.f, 10.f};
+const float hal_vertices[] = {-50.0, -50, -10.0, 50.0, -50.0, -10.0, -50.0, 50.0, -10.0, 50.0, 50.0, -10.0};
+const float hal_normals[] = {0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1};
+
 //
 // Load sphere
 //

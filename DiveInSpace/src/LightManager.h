@@ -164,9 +164,36 @@ public:
 			1.f);
 	}
 
+	void createHalLights2(){
+		// Core
+		addSpotLight(glm::vec3(0.f, 0.f, 0.f),	// Position
+					glm::vec3(0.f, 0.f, -1.f),	// Direction
+					glm::vec3(1.f, 0.3f, 0.f),	// Diffuse
+					glm::vec3(1.f, 0.f, 0.f), 	// Specular
+					0.2f,						// External angle
+					0.f,						// Internal angle
+					10.f);						// Intensity
+
+		// Halo
+		addSpotLight(glm::vec3(0.f, 0.f, 0.f),	// Position
+			glm::vec3(0.f, 0.f, -1.f),			// Direction
+			glm::vec3(1.f, 0.f, 0.f),			// Diffuse
+			glm::vec3(1.f, 0.f, 0.f),			// Specular
+			1.5f,								// External angle
+			0.4f,								// Internal angle
+			1.f);								// Intensity
+	}
+
 	void updateHalLights(double t){
 		setPLIntensity(0, 5*cos(t));
 	}
+
+	void updateHalLights2(double t){
+		// Between 0.5 and 1.5
+		setSPLExternalAngle(1, 1.7 + cos(t));
+	}
+
+
 
 	void createTravelLights(){
 		// Ambiante white light, to see the sphere
