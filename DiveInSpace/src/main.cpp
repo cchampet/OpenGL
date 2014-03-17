@@ -31,8 +31,8 @@
 
 
 #define MODE_HAL    0
-#define MODE_TRAVEL 0
 #define MODE_HAL2   1
+#define MODE_TRAVEL 0
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -118,6 +118,7 @@ int main( int argc, char **argv )
     #if MODE_HAL == 1
         lightManager.createHalLights();
     #endif
+    
     #if MODE_TRAVEL == 1
         lightManager.createTravelLights();
     #endif
@@ -157,8 +158,8 @@ int main( int argc, char **argv )
     glGenVertexArrays(5, vao);
 
     // Vertex Buffer Objects]
-    GLuint vbo[17];
-    glGenBuffers(17, vbo);
+    GLuint vbo[18];
+    glGenBuffers(18, vbo);
 
     // Cube
     glBindVertexArray(vao[0]);
@@ -299,23 +300,23 @@ int main( int argc, char **argv )
     glBindVertexArray(vao[4]);
 
     // Bind indices and upload data
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[5]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[14]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(hal_triangleList), hal_triangleList, GL_STATIC_DRAW);
     
     // Bind vertices and upload data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[14]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[15]);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
     glBufferData(GL_ARRAY_BUFFER, sizeof(hal_vertices), hal_vertices, GL_STATIC_DRAW);
     
     // Bind normals and upload data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[15]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[16]);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
     glBufferData(GL_ARRAY_BUFFER, sizeof(hal_normals), hal_normals, GL_STATIC_DRAW);
     
     // Bind uv coords and upload data
-    glBindBuffer(GL_ARRAY_BUFFER, vbo[16]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[17]);
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
     glBufferData(GL_ARRAY_BUFFER, sizeof(hal_uvs), hal_uvs, GL_STATIC_DRAW);
@@ -443,12 +444,15 @@ int main( int argc, char **argv )
         #if MODE_HAL == 1
             textureManager.fillFrameBufferHal(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
         #endif
+        
         #if MODE_TRAVEL == 1
             textureManager.fillFrameBufferTravel(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
         #endif
+        
         #if MODE_HAL2 == 1
             textureManager.fillFrameBufferHal2(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
         #endif
+        
         /* --------------------------------------------------------------------------------------------- */
         /* -------------------------------------- Rendu/Affichage -------------------------------------- */
         /* --------------------------------------------------------------------------------------------- */
@@ -457,6 +461,7 @@ int main( int argc, char **argv )
         // Start FX 
         //
         glBindFramebuffer(GL_FRAMEBUFFER, fxBufferFbo);
+            
             // Lighting
             #if MODE_HAL == 1
                 lightManager.updateHalLights(t);
@@ -465,6 +470,7 @@ int main( int argc, char **argv )
             #if MODE_HAL2 == 1
                 lightManager.updateHalLights2(t);
             #endif
+
             shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
 
             // Explosion pass
