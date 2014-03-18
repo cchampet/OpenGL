@@ -40,9 +40,20 @@ const int   quad_triangleCount = 2;
 const int   quad_triangleList[] = {0, 1, 2, 2, 1, 3}; 
 const float quad_vertices[] =  {-1.0, -1.0, 1.0, -1.0, -1.0, 1.0, 1.0, 1.0};
 
+//
+// Sphere => vao[3]
+//
+const GLfloat sphere_radius = 1;
+const GLsizei discLat = 20;
+const GLsizei discLong = 20;
+const GLfloat rcpLat = 1.f / discLat;
+const GLfloat rcpLong = 1.f / discLong;
+const GLfloat dPhi = 2 * M_PI * rcpLat;
+const GLfloat dTheta = M_PI * rcpLong;
+const int sphere_triangleCount = discLong * discLat * 2;
 
 //
-// Hal Plane => vao[3]]
+// Hal Plane => vao[4]
 //
 const int	plane_hal_triangleCount = 2;
 const int   plane_hal_triangleList[] = {0, 1, 2, 2, 1, 3}; 
@@ -53,18 +64,5 @@ const float plane_hal_vertices[] = {
 	-50.0, 50.0, -10.0, 
 	50.0, 50.0, -10.0};
 const float plane_hal_normals[] = {0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1};
-
-//
-// Sphere => vao[4]
-//
-const GLfloat sphere_radius = 0.2;
-const GLsizei discLat = 20;
-const GLsizei discLong = 20;
-const GLfloat rcpLat = 1.f / discLat;
-const GLfloat rcpLong = 1.f / discLong;
-const GLfloat dPhi = 2 * M_PI * rcpLat;
-const GLfloat dTheta = M_PI * rcpLong;
-
-const int sphere_triangleCount = discLong * discLat * 2;
 
 #endif

@@ -33,7 +33,8 @@ struct ShaderManager
 	*/
 	enum ListShaderType{
 		GBUFFER,
-        GBUFFER_TRAVEL,
+        GBUFFER_TRAVEL_1,
+        GBUFFER_TRAVEL_2,
 		BLIT,
 		DIR_LIGHT,
         POINT_LIGHT,
@@ -74,6 +75,7 @@ struct ShaderManager
 	inline float* getFarPlane() { return &farPlane;}
 	inline float* getGamma() { return &gamma;}
 	inline float* getSobelCoeff() { return &sobelCoef;}
+    inline float* getTranslateFactor() { return &translateFactor;}
 
 	inline void setBlurSamples(float blur) { blurSamples = blur;}
 	inline void setFocusPlane(float focus) { focusPlane = focus;}
@@ -81,6 +83,7 @@ struct ShaderManager
 	inline void setFarPlane(float far) { farPlane = far;}
 	inline void setGamma(float fGamma) { gamma = fGamma;}
 	inline void setSobelCoef(float sobel) { sobelCoef = sobel;}
+    inline void setTranslateFactor(float newFactor) { translateFactor = newFactor;}
 
 private:
 	
@@ -93,7 +96,7 @@ private:
 	float farPlane;
 	float gamma;
 	float sobelCoef;
-
+    float translateFactor;
 
     // Location for camera
     glm::mat4 projection;
@@ -111,14 +114,22 @@ private:
     GLuint gbuffer_diffuseLocation;
     GLuint gbuffer_specLocation;
 
-    // Location for gbufferTravel_shader
-    GLuint gbufferTravel_projectionLocation;
-    GLuint gbufferTravel_viewLocation; 
-    GLuint gbufferTravel_objectLocation;
-    GLuint gbufferTravel_timeLocation;  
-    GLuint gbufferTravel_diffuseLocation;
-    GLuint gbufferTravel_specLocation;
-    GLuint gbufferTravel_cameraPositionLocation;
+    // Location for gbufferTravel1_shader
+    GLuint gbufferTravel1_projectionLocation;
+    GLuint gbufferTravel1_viewLocation; 
+    GLuint gbufferTravel1_objectLocation;
+    GLuint gbufferTravel1_timeLocation;  
+    GLuint gbufferTravel1_diffuseLocation;
+    GLuint gbufferTravel1_specLocation;
+    GLuint gbufferTravel1_translateFactorLocation;
+
+    // Location for gbufferTravel2_shader
+    GLuint gbufferTravel2_projectionLocation;
+    GLuint gbufferTravel2_viewLocation; 
+    GLuint gbufferTravel2_objectLocation;
+    GLuint gbufferTravel2_timeLocation;  
+    GLuint gbufferTravel2_diffuseLocation;
+    GLuint gbufferTravel2_specLocation;
 
     // Location for blit_shader
     GLuint blit_tex1Location;

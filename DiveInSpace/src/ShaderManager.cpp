@@ -12,6 +12,7 @@ ShaderManager::ShaderManager() {
     farPlane = 50.0;
     gamma = 1.0;
     sobelCoef = 0.0;
+    translateFactor = 5.0;
 }
 
 void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderType shaderType){
@@ -37,14 +38,24 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
 
             break;
 
-        case GBUFFER_TRAVEL:
-            gbufferTravel_projectionLocation = glGetUniformLocation(shader.program, "Projection");
-            gbufferTravel_viewLocation = glGetUniformLocation(shader.program, "View");
-            gbufferTravel_objectLocation = glGetUniformLocation(shader.program, "Object");
-            gbufferTravel_timeLocation = glGetUniformLocation(shader.program, "Time");
-            gbufferTravel_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
-            gbufferTravel_specLocation = glGetUniformLocation(shader.program, "Spec");
-            gbufferTravel_cameraPositionLocation = glGetUniformLocation(shader.program, "CameraPosition");
+        case GBUFFER_TRAVEL_1:
+            gbufferTravel1_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            gbufferTravel1_viewLocation = glGetUniformLocation(shader.program, "View");
+            gbufferTravel1_objectLocation = glGetUniformLocation(shader.program, "Object");
+            gbufferTravel1_timeLocation = glGetUniformLocation(shader.program, "Time");
+            gbufferTravel1_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
+            gbufferTravel1_specLocation = glGetUniformLocation(shader.program, "Spec");
+            gbufferTravel1_translateFactorLocation = glGetUniformLocation(shader.program, "TranslateFactor");
+
+            break;
+
+        case GBUFFER_TRAVEL_2:
+            gbufferTravel2_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            gbufferTravel2_viewLocation = glGetUniformLocation(shader.program, "View");
+            gbufferTravel2_objectLocation = glGetUniformLocation(shader.program, "Object");
+            gbufferTravel2_timeLocation = glGetUniformLocation(shader.program, "Time");
+            gbufferTravel2_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
+            gbufferTravel2_specLocation = glGetUniformLocation(shader.program, "Spec");
 
             break;
 
@@ -169,14 +180,24 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
 
             break;
 
-        case GBUFFER_TRAVEL:
-            glUniformMatrix4fv(gbufferTravel_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
-            glUniformMatrix4fv(gbufferTravel_viewLocation, 1, 0, glm::value_ptr(worldToView));
-            glUniformMatrix4fv(gbufferTravel_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
-            glUniform1f(gbufferTravel_timeLocation, t);
-            glUniform1i(gbufferTravel_diffuseLocation, 0);
-            glUniform1i(gbufferTravel_specLocation, 1);
-            glUniform3fv(gbufferTravel_cameraPositionLocation, 1, glm::value_ptr(cameraEye));
+        case GBUFFER_TRAVEL_1:
+            glUniformMatrix4fv(gbufferTravel1_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
+            glUniformMatrix4fv(gbufferTravel1_viewLocation, 1, 0, glm::value_ptr(worldToView));
+            glUniformMatrix4fv(gbufferTravel1_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
+            glUniform1f(gbufferTravel1_timeLocation, t);
+            glUniform1i(gbufferTravel1_diffuseLocation, 0);
+            glUniform1i(gbufferTravel1_specLocation, 1);
+            glUniform1f(gbufferTravel1_translateFactorLocation, translateFactor);
+
+            break;
+
+        case GBUFFER_TRAVEL_2:
+            glUniformMatrix4fv(gbufferTravel2_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
+            glUniformMatrix4fv(gbufferTravel2_viewLocation, 1, 0, glm::value_ptr(worldToView));
+            glUniformMatrix4fv(gbufferTravel2_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
+            glUniform1f(gbufferTravel2_timeLocation, t);
+            glUniform1i(gbufferTravel2_diffuseLocation, 0);
+            glUniform1i(gbufferTravel2_specLocation, 1);
 
             break;
 

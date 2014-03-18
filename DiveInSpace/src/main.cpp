@@ -138,7 +138,8 @@ int main( int argc, char **argv )
     /* ------------------------------------------ Shaders ------------------------------------------ */
     /* --------------------------------------------------------------------------------------------- */
     shaderManager.addShader("shaders/gbuffer.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER);
-    shaderManager.addShader("shaders/gbuffer_travel.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL);
+    shaderManager.addShader("shaders/gbuffer_travel_1.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_1);
+    shaderManager.addShader("shaders/gbuffer_travel_2.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_2);
     shaderManager.addShader("shaders/blit.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLIT);
     //Light
     shaderManager.addShader("shaders/dirLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::DIR_LIGHT);

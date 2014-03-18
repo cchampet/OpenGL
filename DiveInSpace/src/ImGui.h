@@ -73,6 +73,7 @@ void drawGUI(int width, int height, ShaderManager& shaderManager, LightManager& 
             imguiSlider("Focus plane", shaderManager.getFocusPlane(), 1.0, 100.0, 1.0);
             imguiSlider("Near plane", shaderManager.getNearPlane(), 1.0, 100.0, 1.0);
             imguiSlider("Far plane", shaderManager.getFarPlane(), 1.0, 100.0, 1.0);
+            imguiSlider("TranslateFactor", shaderManager.getTranslateFactor(), -5.0, 5.0, 0.1);
         imguiEndScrollArea();
 
         int logScroll_2 = 1;

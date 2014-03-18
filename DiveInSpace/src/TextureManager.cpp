@@ -12,10 +12,10 @@ void TextureManager::loadTextures(GLuint* tab, size_t size) {
     int comp; 
 
 	// Diffuse texture
-    unsigned char * diffuse = stbi_load("textures/robot_diffuse.jpg", &x, &y, &comp, 3);
+    unsigned char * robotDiffuse = stbi_load("textures/robot_diffuse.jpg", &x, &y, &comp, 3);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, tab[0]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, diffuse);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, robotDiffuse);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -23,10 +23,10 @@ void TextureManager::loadTextures(GLuint* tab, size_t size) {
     fprintf(stderr, "Diffuse %dx%d:%d\n", x, y, comp);
 
     // Specular texture
-    unsigned char * spec = stbi_load("textures/robot_spec.jpg", &x, &y, &comp, 1);
+    unsigned char * robotSpec = stbi_load("textures/robot_spec.jpg", &x, &y, &comp, 1);
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, tab[1]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, x, y, 0, GL_RED, GL_UNSIGNED_BYTE, spec);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, x, y, 0, GL_RED, GL_UNSIGNED_BYTE, robotSpec);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -116,9 +116,9 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Bind gbuffer travel shader
-    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL).program);
+    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_1).program);
     // Upload uniforms
-    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL, cameraEye, t);
+    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_1, cameraEye, t);
     // Bind textures
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, bufferTextures[0]);
@@ -126,7 +126,20 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     glBindTexture(GL_TEXTURE_2D, bufferTextures[1]);
     // Render vaos
     glBindVertexArray(vao[3]); //sphere
-    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 5000); 
+    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 10000);
+
+    // Bind gbuffer travel shader
+    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_2).program);
+    // Upload uniforms
+    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_2, cameraEye, t);
+    // Bind textures
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, bufferTextures[0]);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, bufferTextures[1]);
+    // Render vaos
+    glBindVertexArray(vao[3]); //sphere
+    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
 
     // Unbind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
