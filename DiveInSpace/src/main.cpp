@@ -31,8 +31,8 @@
 
 
 #define MODE_HAL    0
-#define MODE_HAL2   1
-#define MODE_TRAVEL 0
+#define MODE_HAL2   0
+#define MODE_TRAVEL 1
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -138,16 +138,19 @@ int main( int argc, char **argv )
     /* ------------------------------------------ Shaders ------------------------------------------ */
     /* --------------------------------------------------------------------------------------------- */
     shaderManager.addShader("shaders/gbuffer.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER);
+    shaderManager.addShader("shaders/gbuffer_travel.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL);
     shaderManager.addShader("shaders/blit.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLIT);
+    //Light
     shaderManager.addShader("shaders/dirLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::DIR_LIGHT);
     shaderManager.addShader("shaders/pointLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::POINT_LIGHT);
     shaderManager.addShader("shaders/spotLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::SPOT_LIGHT);
+    //Post-processing
     shaderManager.addShader("shaders/gamma.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GAMMA);
     shaderManager.addShader("shaders/sobel.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::SOBEL);
     shaderManager.addShader("shaders/blur.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLUR);
     shaderManager.addShader("shaders/coc.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::COC);
     shaderManager.addShader("shaders/dof.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::DOF);
-
+    //Not working
     shaderManager.addShader("shaders/explosion.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::EXPLOSION);
 
     /* --------------------------------------------------------------------------------------------- */
@@ -359,14 +362,16 @@ int main( int argc, char **argv )
     /* --------------------------------------------------------------------------------------------- */
     GLuint fxBufferFbo;
     GLuint fxBufferTextures[4];
+    /**
+    * 0 / 1 => ping pong textures
+    * 2 => Coc
+    * 3 => Blur
+    */
     textureManager.loadFxTextures(fxBufferTextures, 4, width, height);
 
     // Create Framebuffer Object
     glGenFramebuffers(1, &fxBufferFbo);
-
-
-    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-    {
+    if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE){
         fprintf(stderr, "Error on building framebuffer\n");
         exit( EXIT_FAILURE );
     }
@@ -465,6 +470,10 @@ int main( int argc, char **argv )
             // Lighting
             #if MODE_HAL == 1
                 lightManager.updateHalLights(t);
+            #endif
+
+            #if MODE_TRAVEL == 1
+                //lightManager.updateTravelights(t);
             #endif
 
             #if MODE_HAL2 == 1

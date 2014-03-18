@@ -33,6 +33,7 @@ struct ShaderManager
 	*/
 	enum ListShaderType{
 		GBUFFER,
+        GBUFFER_TRAVEL,
 		BLIT,
 		DIR_LIGHT,
         POINT_LIGHT,
@@ -107,6 +108,15 @@ private:
     GLuint gbuffer_timeLocation;  
     GLuint gbuffer_diffuseLocation;
     GLuint gbuffer_specLocation;
+
+    // Location for gbufferTravel_shader
+    GLuint gbufferTravel_projectionLocation;
+    GLuint gbufferTravel_viewLocation; 
+    GLuint gbufferTravel_objectLocation;
+    GLuint gbufferTravel_timeLocation;  
+    GLuint gbufferTravel_diffuseLocation;
+    GLuint gbufferTravel_specLocation;
+    GLuint gbufferTravel_cameraPositionLocation;
 
     // Location for blit_shader
     GLuint blit_tex1Location;

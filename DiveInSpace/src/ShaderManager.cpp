@@ -38,6 +38,17 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
 
             break;
 
+        case GBUFFER_TRAVEL:
+            gbufferTravel_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            gbufferTravel_viewLocation = glGetUniformLocation(shader.program, "View");
+            gbufferTravel_objectLocation = glGetUniformLocation(shader.program, "Object");
+            gbufferTravel_timeLocation = glGetUniformLocation(shader.program, "Time");
+            gbufferTravel_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
+            gbufferTravel_specLocation = glGetUniformLocation(shader.program, "Spec");
+            gbufferTravel_cameraPositionLocation = glGetUniformLocation(shader.program, "CameraPosition");
+
+            break;
+
         case BLIT:
             blit_tex1Location = glGetUniformLocation(shader.program, "Texture1");
 
@@ -144,6 +155,17 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniform1f(gbuffer_timeLocation, t);
             glUniform1i(gbuffer_diffuseLocation, 0);
             glUniform1i(gbuffer_specLocation, 1);
+
+            break;
+
+        case GBUFFER_TRAVEL:
+            glUniformMatrix4fv(gbufferTravel_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
+            glUniformMatrix4fv(gbufferTravel_viewLocation, 1, 0, glm::value_ptr(worldToView));
+            glUniformMatrix4fv(gbufferTravel_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
+            glUniform1f(gbufferTravel_timeLocation, t);
+            glUniform1i(gbufferTravel_diffuseLocation, 0);
+            glUniform1i(gbufferTravel_specLocation, 1);
+            glUniform3fv(gbufferTravel_cameraPositionLocation, 1, glm::value_ptr(cameraEye));
 
             break;
 

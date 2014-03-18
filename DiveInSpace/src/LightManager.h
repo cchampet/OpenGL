@@ -184,6 +184,14 @@ public:
 			1.f);								// Intensity
 	}
 
+	void createTravelLights(){
+		// Ambiante white light, to see the sphere
+		addDirLight(glm::vec3(0.f, -10.f, -15.f), 
+					glm::vec3(0.2f, 0.2f, 1.f), 
+					glm::vec3(0.2f, 0.2f, 0.2f), 
+					5);
+	}
+
 	void updateHalLights(double t){
 		setPLIntensity(0, 5*cos(t));
 	}
@@ -193,14 +201,10 @@ public:
 		setSPLExternalAngle(1, 1.7 + cos(t));
 	}
 
-
-
-	void createTravelLights(){
-		// Ambiante white light, to see the sphere
-		addDirLight(glm::vec3(0.f, -10.f, -15.f), 
-					glm::vec3(0.2f, 0.2f, 1.f), 
-					glm::vec3(0.2f, 0.2f, 0.2f), 
-					1);
+	void updateTravelights(double t){
+		glm::vec3 oldColor = getDLDiffuse(0);
+		glm::vec3 newColor = glm::vec3((oldColor.r + cos(t))/2.f, (oldColor.g + sin(t))/2.f, 0.5f+(oldColor.b + cos(t))/2.f);
+		setDLDiffuse(0, newColor);
 	}
 
 

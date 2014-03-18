@@ -116,10 +116,10 @@ void TextureManager::fillFrameBufferTravel(GLuint fbo, GLuint* drawBuffers, int 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Bind gbuffer shader
-    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER).program);
+    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL).program);
 
     // Upload uniforms
-    shaderManager.uploadUniforms(ShaderManager::GBUFFER, cameraEye, t);
+    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL, cameraEye, t);
     // Bind textures
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, bufferTextures[0]);
@@ -128,9 +128,7 @@ void TextureManager::fillFrameBufferTravel(GLuint fbo, GLuint* drawBuffers, int 
 
     // Render vaos
     glBindVertexArray(vao[0]); //cube
-    glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 32);
-    glBindVertexArray(vao[1]); //plane
-    glDrawElements(GL_TRIANGLES, plane_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
+    glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 500);
 
     // Unbind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
