@@ -144,27 +144,6 @@ public:
 	// Manage specific scenes
 	//
 	void createHalLights(){
-		// Ambiante white light, to see the sphere
-		addDirLight(glm::vec3(0.f, -10.f, -15.f), //dir
-					glm::vec3(1.f, 1.f, 1.f),  //diff
-					glm::vec3(0.2f, 0.2f, 0.2f), //spec
-					1); //intensity
-		//red spot
-		addSpotLight(glm::vec3(10, 3, 30), //pos
-                    glm::vec3(0, 0, -1), //dir
-                    glm::vec3(1, 0, 0), //diff
-                    glm::vec3(1, 0.5f, 0.5f), //spec
-                    2.f, //ext angle
-                    0.1f, //int angle
-                    2.f); //intensity
-		addPointLight(
-			glm::vec3(-1, -0.5f, 11), 
-			glm::vec3(0.5f, 1, 0.2f), //diff
-            glm::vec3(0.2f, 0.f, 0.f), //spec
-			1.f);
-	}
-
-	void createHalLights2(){
 		// Core
 		addSpotLight(glm::vec3(0.f, 0.f, 0.f),	// Position
 					glm::vec3(0.f, 0.f, -1.f),	// Direction
@@ -184,7 +163,7 @@ public:
 			1.f);								// Intensity
 	}
 
-	void createTravelLights(){
+	void createTravel1Lights(){
 		// Ambiante white light, to see the sphere
 		addDirLight(glm::vec3(0.f, -10.f, -15.f), 
 					glm::vec3(0.2f, 0.2f, 1.f), 
@@ -197,15 +176,11 @@ public:
 	}
 
 	void updateHalLights(double t){
-		setPLIntensity(0, 5*cos(t));
-	}
-
-	void updateHalLights2(double t){
 		// Between 0.5 and 1.5
 		setSPLExternalAngle(1, 1.7 + cos(t));
 	}
 
-	void updateTravelights(double t){
+	void updateTravel1Lights(double t){
 		glm::vec3 oldColor = getDLDiffuse(0);
 		glm::vec3 newColor = glm::vec3((oldColor.r + cos(t))/2.f, (oldColor.g + sin(t))/2.f, 0.5f+(oldColor.b + cos(t))/2.f);
 		setDLDiffuse(0, newColor);

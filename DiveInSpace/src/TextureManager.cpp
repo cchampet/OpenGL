@@ -101,7 +101,7 @@ void TextureManager::loadFxTextures(GLuint* fxBufferTextures, size_t size, int w
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-void TextureManager::fillFrameBufferTravel(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
+void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glDrawBuffers(2, drawBuffers);
@@ -133,40 +133,6 @@ void TextureManager::fillFrameBufferTravel(GLuint fbo, GLuint* drawBuffers, int 
 }
 
 void TextureManager::fillFrameBufferHal(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
-
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-    glDrawBuffers(2, drawBuffers);
-
-    // Viewport 
-    glViewport(0, 0, width, height );
-
-    // Default states
-    glEnable(GL_DEPTH_TEST);
-
-    // Clear the front buffer
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    // Bind gbuffer shader
-    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER).program);
-
-    // Upload uniforms
-    shaderManager.uploadUniforms(ShaderManager::GBUFFER, cameraEye, t);
-    // Bind textures
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, bufferTextures[0]);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, bufferTextures[1]);
-
-    // Render vaos
-    glBindVertexArray(vao[3]); //sphere
-    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
-
-    // Unbind framebuffer
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-}
-
-
-void TextureManager::fillFrameBufferHal2(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
 
     glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glDrawBuffers(2, drawBuffers);

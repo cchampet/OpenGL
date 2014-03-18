@@ -35,6 +35,7 @@ vec4 getColor(vec2 seed)
    color.r = uDominantColor.r * rand(seed*134.23);
    color.g = uDominantColor.g * rand(seed*235.43);
    color.b = uDominantColor.b * rand(seed*-32.89);
+   color.a = 1.;
    
    return color;
 }
