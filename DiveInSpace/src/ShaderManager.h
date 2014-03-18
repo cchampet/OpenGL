@@ -43,7 +43,8 @@ struct ShaderManager
 		BLUR,
 		COC,
 		DOF,
-		EXPLOSION
+		EXPLOSION,
+        COLORSPACE
 	};
 
 	ShaderManager();
@@ -191,6 +192,10 @@ private:
     // Location for explosion_shader
     GLuint explosion_channelLocation;
     GLuint explosion_timeLocation;
+
+    // Location for colorspace shader
+    GLuint colorspace_resolutionLocation;
+    GLuint colorspace_timeLocation;
 
 
 };

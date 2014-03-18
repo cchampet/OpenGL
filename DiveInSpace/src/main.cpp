@@ -153,6 +153,7 @@ int main( int argc, char **argv )
     //Not working
     shaderManager.addShader("shaders/explosion.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::EXPLOSION);
 
+    shaderManager.addShader("shaders/colorSpace.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::COLORSPACE);
     /* --------------------------------------------------------------------------------------------- */
     /* ------------------------------------------ Geometry ----------------------------------------- */
     /* --------------------------------------------------------------------------------------------- */
@@ -485,20 +486,22 @@ int main( int argc, char **argv )
             // Explosion pass
             //shaderManager.renderTextureWithShader(ShaderManager::EXPLOSION, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
 
-            // COC
-            shaderManager.computeCoc(width, height, gbufferTextures[2], fxBufferTextures[2], vao, camera.m_eye, t);
+            // ColorSpace pass
+            shaderManager.renderTextureWithShader(ShaderManager::COLORSPACE, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
+            // // COC
+            // shaderManager.computeCoc(width, height, gbufferTextures[2], fxBufferTextures[2], vao, camera.m_eye, t);
 
-            // Sobel pass
-            shaderManager.renderTextureWithShader(ShaderManager::SOBEL, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
+            // // Sobel pass
+            // shaderManager.renderTextureWithShader(ShaderManager::SOBEL, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
 
-            // BLUR
-            shaderManager.renderTextureWithShader(ShaderManager::BLUR, width, height, fxBufferTextures, vao, 3, 1, camera.m_eye, t);
+            // // BLUR
+            // shaderManager.renderTextureWithShader(ShaderManager::BLUR, width, height, fxBufferTextures, vao, 3, 1, camera.m_eye, t);
 
-            // DOF
-            shaderManager.renderTextureWithShader(ShaderManager::DOF, width, height, fxBufferTextures, vao, 0, 1, camera.m_eye, t);   
+            // // DOF
+            // shaderManager.renderTextureWithShader(ShaderManager::DOF, width, height, fxBufferTextures, vao, 0, 1, camera.m_eye, t);   
 
-            // Gamma pass
-            shaderManager.renderTextureWithShader(ShaderManager::GAMMA, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
+            // // Gamma pass
+            // shaderManager.renderTextureWithShader(ShaderManager::GAMMA, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
         //
         // Unbind framebuffer : now that we render all the textures, we can debind the fxBuffer
         //
