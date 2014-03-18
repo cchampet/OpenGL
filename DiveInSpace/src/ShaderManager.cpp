@@ -141,6 +141,18 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
             explosion_timeLocation = glGetUniformLocation(shader.program, "Time");
 
             break;
+
+        case COLORSPACE:
+            colorspace_resolutionLocation = glGetUniformLocation(shader.program, "Resolution");
+            colorspace_timeLocation = glGetUniformLocation(shader.program, "Time");
+
+            break;
+
+        case STAR:
+            star_resolutionLocation = glGetUniformLocation(shader.program, "Resolution");
+            star_timeLocation = glGetUniformLocation(shader.program, "Time");
+
+            break;
     }
 }
 
@@ -236,11 +248,24 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
 
             break;
 
-         case  EXPLOSION:
+        case  EXPLOSION:
             glUniform1i(explosion_channelLocation, 0);
             glUniform1i(explosion_timeLocation, t);
 
             break;
+
+        case  COLORSPACE:
+            glUniform3fv(colorspace_resolutionLocation, 1, glm::value_ptr(glm::vec3(800, 800, 800)));
+            glUniform1f(colorspace_timeLocation, t);
+
+            break;
+
+        case  STAR:
+            glUniform3fv(star_resolutionLocation, 1, glm::value_ptr(glm::vec3(800, 800, 800)));
+            glUniform1f(star_timeLocation, t);
+
+            break;
+  
     }
 }
 
