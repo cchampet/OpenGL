@@ -6,13 +6,14 @@
 #include <cstdio> //fprintf
 
 ShaderManager::ShaderManager() {
-    blurSamples = 2.0;
+    blurSamples = 5.0;
     focusPlane = 5.0;
     nearPlane = 1.0;
     farPlane = 50.0;
-    gamma = 1.0;
+    gamma = 3.0;
     sobelCoef = 0.0;
-    translateFactor = 5.0;
+    translateFactor = 5.0; //for Travel_Planetes & Travel_Monolythe
+    bIsHalStop = false; //for Hal
 }
 
 void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderType shaderType){

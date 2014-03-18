@@ -177,8 +177,8 @@ public:
 	}
 
 	void updateHalLights(double t){
-		// Between 0.5 and 1.5
-		setSPLExternalAngle(1, 1.7 + cos(t));
+		// Between 0.9 and 1.5
+		setSPLExternalAngle(1, 1.2f + cos(t)/3.);
 	}
 
 	void updateTravel1Lights(double t){

@@ -76,6 +76,7 @@ struct ShaderManager
 	inline float* getGamma() { return &gamma;}
 	inline float* getSobelCoeff() { return &sobelCoef;}
     inline float* getTranslateFactor() { return &translateFactor;}
+    inline bool* isHalStop() { return &bIsHalStop;}
 
 	inline void setBlurSamples(float blur) { blurSamples = blur;}
 	inline void setFocusPlane(float focus) { focusPlane = focus;}
@@ -84,6 +85,7 @@ struct ShaderManager
 	inline void setGamma(float fGamma) { gamma = fGamma;}
 	inline void setSobelCoef(float sobel) { sobelCoef = sobel;}
     inline void setTranslateFactor(float newFactor) { translateFactor = newFactor;}
+    inline void setIsHalStop(bool flag) { bIsHalStop = flag;}
 
 private:
 	
@@ -97,6 +99,7 @@ private:
 	float gamma;
 	float sobelCoef;
     float translateFactor;
+    bool  bIsHalStop;
 
     // Location for camera
     glm::mat4 projection;

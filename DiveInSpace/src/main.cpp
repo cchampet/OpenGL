@@ -35,8 +35,8 @@
 * 0   => not activated
 * > 0 => activate the version of the scene (v1, v2...)
 */
-#define MODE_HAL    0
-#define MODE_TRAVEL 1
+#define MODE_HAL    1
+#define MODE_TRAVEL 0
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -435,6 +435,25 @@ int main( int argc, char **argv )
             guiStates.lockPositionX = mousex;
             guiStates.lockPositionY = mousey;
         }
+
+        //Manage camera with keyboard
+        int upPressed = glfwGetKey(GLFW_KEY_UP);
+        if (upPressed == GLFW_PRESS)
+        {
+            camera.camera_zoom(-0.05);
+        }
+        int downPressed = glfwGetKey(GLFW_KEY_DOWN);
+        if (downPressed == GLFW_PRESS)
+        {
+            camera.camera_zoom(0.05);
+        }
+
+        //Manage elements with keyboard
+        int spacePressed = glfwGetKey(GLFW_KEY_SPACE);
+        if (spacePressed == GLFW_PRESS)
+        {
+            shaderManager.setIsHalStop(true);
+        }
   
         // Get camera matrices
         shaderManager.getCameraMatrices(widthf, heightf, camera.m_eye, camera.m_o, camera.m_up);
@@ -462,7 +481,8 @@ int main( int argc, char **argv )
             
             // Lighting
             #if MODE_HAL == 1
-                lightManager.updateHalLights(t);
+                if(!(*(shaderManager.isHalStop())))
+                    lightManager.updateHalLights(t);
             #endif
 
             #if MODE_TRAVEL == 1
@@ -504,9 +524,9 @@ int main( int argc, char **argv )
         // Display main screen 
         textureManager.renderMainScreen(shaderManager, width, height, fxBufferTextures[1], vao, camera.m_eye, t);
         // Display debug (pas à la noix non non non !)
-        textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
+        //textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
 #if 1
-        drawGUI(width, height, shaderManager, lightManager, fps, leftButton);
+        //drawGUI(width, height, shaderManager, lightManager, fps, leftButton);
 #endif
         
         // Check for errors
