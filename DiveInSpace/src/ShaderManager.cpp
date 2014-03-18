@@ -12,7 +12,6 @@ ShaderManager::ShaderManager() {
     farPlane = 50.0;
     gamma = 1.0;
     sobelCoef = 0.0;
-
 }
 
 void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderType shaderType){

@@ -159,8 +159,7 @@ int main( int argc, char **argv )
     // Vertex Array Object
     GLuint vao[5];
     glGenVertexArrays(5, vao);
-
-    // Vertex Buffer Objects]
+    // Vertex Buffer Objects
     GLuint vbo[18];
     glGenBuffers(18, vbo);
 
@@ -185,7 +184,7 @@ int main( int argc, char **argv )
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
     glBufferData(GL_ARRAY_BUFFER, sizeof(cube_uvs), cube_uvs, GL_STATIC_DRAW);
 
-    // Plane
+    // Basic Plane
     glBindVertexArray(vao[1]);
     // Bind indices and upload data
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[4]);
@@ -219,9 +218,7 @@ int main( int argc, char **argv )
 
 
     // Sphere
-    // Fill sphere data
     int tt;
-    // Construit l'ensemble des vertex
     std::vector<glm::vec3> spherePositions;
     std::vector<glm::vec3> sphereNormals;
     std::vector<glm::vec2> sphereUv;
@@ -237,7 +234,6 @@ int main( int argc, char **argv )
             sphere_nb_vertices++;
         }
     }
-
     float sphere_vertices[sphere_nb_vertices*3];
     float sphere_uv[sphere_nb_vertices*2];
     float sphere_normals[sphere_nb_vertices*3];
@@ -257,7 +253,6 @@ int main( int argc, char **argv )
         sphere_vertices[tt] = spherePositions[i].z; 
         sphere_normals[tt] = sphereNormals[i].z; tt++;
     }
-
     // Fill sphere index
     tt = 0;
     for(GLsizei j = 0; j < discLong; ++j) {
@@ -293,37 +288,27 @@ int main( int argc, char **argv )
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
     glBufferData(GL_ARRAY_BUFFER, sizeof(sphere_uv), sphere_uv, GL_STATIC_DRAW);
 
-
-
-    /* --------------------------------------------- */
-    /* -------------------- HAL -------------------- */
-    /* --------------------------------------------- */
-
-    // Plane
+    // Hal Plane
     glBindVertexArray(vao[4]);
-
     // Bind indices and upload data
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo[14]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(hal_triangleList), hal_triangleList, GL_STATIC_DRAW);
-    
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(plane_hal_triangleList), plane_hal_triangleList, GL_STATIC_DRAW);
     // Bind vertices and upload data
     glBindBuffer(GL_ARRAY_BUFFER, vbo[15]);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(hal_vertices), hal_vertices, GL_STATIC_DRAW);
-    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(plane_hal_vertices), plane_hal_vertices, GL_STATIC_DRAW);
     // Bind normals and upload data
     glBindBuffer(GL_ARRAY_BUFFER, vbo[16]);
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*3, (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(hal_normals), hal_normals, GL_STATIC_DRAW);
-    
+    glBufferData(GL_ARRAY_BUFFER, sizeof(plane_hal_normals), plane_hal_normals, GL_STATIC_DRAW);
     // Bind uv coords and upload data
     glBindBuffer(GL_ARRAY_BUFFER, vbo[17]);
     glEnableVertexAttribArray(2);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT)*2, (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(hal_uvs), hal_uvs, GL_STATIC_DRAW);
-
+    glBufferData(GL_ARRAY_BUFFER, sizeof(plane_hal_uvs), plane_hal_uvs, GL_STATIC_DRAW);
+    
     // Unbind everything. Potentially illegal on some implementations
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -473,7 +458,9 @@ int main( int argc, char **argv )
             #endif
 
             #if MODE_TRAVEL == 1
-                //lightManager.updateTravelights(t);
+                lightManager.updateTravelights(t);
+                if(*shaderManager.getBlurSamples() < 20.f)
+                    shaderManager.setBlurSamples(*shaderManager.getBlurSamples()+0.01f);
             #endif
 
             #if MODE_HAL2 == 1

@@ -145,10 +145,10 @@ public:
 	//
 	void createHalLights(){
 		// Ambiante white light, to see the sphere
-		addDirLight(glm::vec3(0.f, -10.f, -15.f), 
-					glm::vec3(1.f, 1.f, 1.f), 
-					glm::vec3(0.2f, 0.2f, 0.2f), 
-					1);
+		addDirLight(glm::vec3(0.f, -10.f, -15.f), //dir
+					glm::vec3(1.f, 1.f, 1.f),  //diff
+					glm::vec3(0.2f, 0.2f, 0.2f), //spec
+					1); //intensity
 		//red spot
 		addSpotLight(glm::vec3(10, 3, 30), //pos
                     glm::vec3(0, 0, -1), //dir
@@ -190,6 +190,10 @@ public:
 					glm::vec3(0.2f, 0.2f, 1.f), 
 					glm::vec3(0.2f, 0.2f, 0.2f), 
 					5);
+		addDirLight(glm::vec3(0.f, -10.f, -15.f), 
+					glm::vec3(1.f, 1.f, 1.f), 
+					glm::vec3(0.2f, 0.2f, 0.2f), 
+					1);
 	}
 
 	void updateHalLights(double t){

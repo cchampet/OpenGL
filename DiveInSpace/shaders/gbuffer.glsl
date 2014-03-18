@@ -17,9 +17,6 @@ void main(void)
 	uv = VertexTexCoord;
 	normal = vec3(Object * vec4(VertexNormal, 1.0));; 
 	position = vec3(Object * vec4(VertexPosition, 1.0));
-	position.x += (gl_InstanceID % 8) * 1.5; 
-	position.y += (gl_InstanceID % 4) * 1.5; 
-	position.z += (int(gl_InstanceID / 8) * 1.5); 
 	gl_Position = Projection * View * vec4(position, 1.0);
 }
 

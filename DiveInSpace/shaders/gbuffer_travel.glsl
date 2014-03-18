@@ -14,6 +14,9 @@ out vec2 uv;
 out vec3 normal;
 out vec3 position;
 
+//Equation of circle
+//(a-x)^2 +(y-b)^2 = r^2
+
 void main(void)
 {	
 	/**
@@ -24,16 +27,6 @@ void main(void)
 		vec3(0, cos(Time), -sin(Time)),
 		vec3(0, sin(Time), cos(Time))
 		);
-	mat3 rotY = mat3(
-		vec3(cos(Time), 0, sin(Time)),
-		vec3(0, 1, 0),
-		vec3(-sin(Time), 0, cos(Time))
-		);
-	/**
-	* Rotation around the world
-	*/
-	float rotationX = cos(Time);
-	float rotationY = sin(Time);
 
 	/**
 	* Compute uv, normal, and position of each vertices.
@@ -41,17 +34,26 @@ void main(void)
 	uv = VertexTexCoord;
 	normal = vec3(Object * vec4(VertexNormal, 1.0));; 
 
-	position = vec3(VertexPosition); //+ vec3(gl_InstanceID*rotationX, gl_InstanceID*rotationY, 0));
-	//rotation on himself
-	position *= rotX;
-	position *= rotY;
+	position = vec3(VertexPosition); 
+	//scale elements
+	position.x *= 0.5;
+	position.y *= 0.5;
+	position.z *= 0.5;
+	//rotation elements on themself
+	if(gl_InstanceID % 2 == 0)
+		position *= rotX;
+	else
+		position *= inverse(rotX);
+	//rotate elements between them
+	position.x += cos(gl_InstanceID/10.) * 10;
+	position.z += cos(gl_InstanceID/20.) * 10;
+	if(gl_InstanceID % 2 == 0)
+		position.y += cos(gl_InstanceID/10.) * cos(Time);
+	else
+		position.y += cos(gl_InstanceID/10.) * sin(Time);
 	//offset between elements
-	position.x += (gl_InstanceID % 50) * 2; 
-	position.y += (int(gl_InstanceID/50)) * 2;
-	//movement of elements
-	position.z += cos(gl_InstanceID/15.)*10*cos(Time);
-	//depend on the camera
-	//position.x += CameraPosition.x;
+	position.x += (gl_InstanceID % 50);
+	position.y += (int(gl_InstanceID/250));
 
 	gl_Position = Projection * View * vec4(position, 1.0);
 }
