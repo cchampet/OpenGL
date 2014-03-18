@@ -44,7 +44,8 @@ struct ShaderManager
 		COC,
 		DOF,
 		EXPLOSION,
-        COLORSPACE
+        COLORSPACE, 
+        STAR
 	};
 
 	ShaderManager();
@@ -196,6 +197,10 @@ private:
     // Location for colorspace shader
     GLuint colorspace_resolutionLocation;
     GLuint colorspace_timeLocation;
+
+    // Location for star shader
+    GLuint star_resolutionLocation;
+    GLuint star_timeLocation;
 
 
 };

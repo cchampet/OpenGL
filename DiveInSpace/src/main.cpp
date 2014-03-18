@@ -154,6 +154,8 @@ int main( int argc, char **argv )
     shaderManager.addShader("shaders/explosion.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::EXPLOSION);
 
     shaderManager.addShader("shaders/colorSpace.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::COLORSPACE);
+    shaderManager.addShader("shaders/star.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::STAR);
+    
     /* --------------------------------------------------------------------------------------------- */
     /* ------------------------------------------ Geometry ----------------------------------------- */
     /* --------------------------------------------------------------------------------------------- */
@@ -488,6 +490,10 @@ int main( int argc, char **argv )
 
             // ColorSpace pass
             shaderManager.renderTextureWithShader(ShaderManager::COLORSPACE, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
+            
+            // Star pass
+             shaderManager.renderTextureWithShader(ShaderManager::STAR, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
+
             // // COC
             // shaderManager.computeCoc(width, height, gbufferTextures[2], fxBufferTextures[2], vao, camera.m_eye, t);
 
