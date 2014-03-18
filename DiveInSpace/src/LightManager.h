@@ -168,11 +168,12 @@ public:
 		addDirLight(glm::vec3(0.f, -10.f, -15.f), 
 					glm::vec3(0.2f, 0.2f, 1.f), 
 					glm::vec3(0.2f, 0.2f, 0.2f), 
-					5);
-		addDirLight(glm::vec3(0.f, -10.f, -15.f), 
+					2);
+		//white light, from the monolythe
+		addDirLight(glm::vec3(0.f, -10.f, 0.f), 
 					glm::vec3(1.f, 1.f, 1.f), 
 					glm::vec3(0.2f, 0.2f, 0.2f), 
-					1);
+					10);
 	}
 
 	void updateHalLights(double t){

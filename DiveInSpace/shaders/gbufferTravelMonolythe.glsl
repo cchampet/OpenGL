@@ -4,6 +4,7 @@ uniform mat4 Projection;
 uniform mat4 View;
 uniform mat4 Object;
 uniform float Time;
+uniform float TranslateFactor;
 
 in vec3 VertexPosition;
 in vec3 VertexNormal;
@@ -23,9 +24,11 @@ void main(void)
 
 	position = vec3(VertexPosition); 
 	//scale elements
-	position.x *= 5;
-	position.y *= 5;
-	position.z *= 5;
+	position.x *= 15;
+	position.y *= 2;
+	position.z *= 10;
+	//movement
+	position.y += TranslateFactor*Time;
 
 	gl_Position = Projection * View * vec4(position, 1.0);
 }

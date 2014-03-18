@@ -11,6 +11,10 @@ void TextureManager::loadTextures(GLuint* tab, size_t size) {
     int y;
     int comp; 
 
+    /**
+    * Robot
+    */
+
 	// Diffuse texture
     unsigned char * robotDiffuse = stbi_load("textures/robot_diffuse.jpg", &x, &y, &comp, 3);
     glActiveTexture(GL_TEXTURE0);
@@ -32,12 +36,67 @@ void TextureManager::loadTextures(GLuint* tab, size_t size) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     fprintf(stderr, "Spec %dx%d:%d\n", x, y, comp);
+
+    /**
+    * Monolythe
+    */
+
+    // Diffuse texture
+    unsigned char * monolytheDiffuse = stbi_load("textures/monolythe_diffuse.jpg", &x, &y, &comp, 3);
+    glActiveTexture(GL_TEXTURE2);
+    glBindTexture(GL_TEXTURE_2D, tab[3]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, monolytheDiffuse);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    fprintf(stderr, "Diffuse %dx%d:%d\n", x, y, comp);
+
+    // Specular texture
+    unsigned char * monolytheSpec = stbi_load("textures/monolythe_spec.jpg", &x, &y, &comp, 1);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_2D, tab[4]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, x, y, 0, GL_RED, GL_UNSIGNED_BYTE, monolytheSpec);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    fprintf(stderr, "Spec %dx%d:%d\n", x, y, comp);
+
+    /**
+    * Planetes
+    */
+
+    // Diffuse texture
+    unsigned char * planeteDiffuse = stbi_load("textures/planete_diffuse.jpg", &x, &y, &comp, 3);
+    glActiveTexture(GL_TEXTURE4);
+    glBindTexture(GL_TEXTURE_2D, tab[5]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, planeteDiffuse);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    fprintf(stderr, "Diffuse %dx%d:%d\n", x, y, comp);
+
+    // Specular texture
+    unsigned char * planeteSpec = stbi_load("textures/planete_spec.jpg", &x, &y, &comp, 1);
+    glActiveTexture(GL_TEXTURE5);
+    glBindTexture(GL_TEXTURE_2D, tab[6]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, x, y, 0, GL_RED, GL_UNSIGNED_BYTE, planeteSpec);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    fprintf(stderr, "Spec %dx%d:%d\n", x, y, comp);
 }
 
 void TextureManager::loadBufferTextures(GLuint* gbufferTextures, size_t size, int width, int height) {
 
 	glGenTextures(size, gbufferTextures);
 
+    /**
+    * Robot
+    */
 	// Create color texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[0]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
@@ -54,9 +113,50 @@ void TextureManager::loadBufferTextures(GLuint* gbufferTextures, size_t size, in
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
+    /**
+    * Depth
+    */
     // Create depth texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[2]);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, width, height, 0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    /**
+    * Monolythe
+    */
+    // Create color texture
+    glBindTexture(GL_TEXTURE_2D, gbufferTextures[3]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Create normal texture
+    glBindTexture(GL_TEXTURE_2D, gbufferTextures[4]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    /**
+    * Planetes
+    */
+    // Create color texture
+    glBindTexture(GL_TEXTURE_2D, gbufferTextures[5]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Create normal texture
+    glBindTexture(GL_TEXTURE_2D, gbufferTextures[6]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -115,30 +215,36 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     // Clear the front buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Bind gbuffer travel shader
-    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_1).program);
+    /**
+    * Planetes
+    */
+    // Bind gbuffer travelPlanetes shader
+    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_PLANETES).program);
     // Upload uniforms
-    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_1, cameraEye, t);
+    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_PLANETES, cameraEye, t);
     // Bind textures
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, bufferTextures[0]);
+    glBindTexture(GL_TEXTURE_2D, bufferTextures[5]);
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, bufferTextures[1]);
+    glBindTexture(GL_TEXTURE_2D, bufferTextures[6]);
     // Render vaos
     glBindVertexArray(vao[3]); //sphere
     glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 10000);
 
-    // Bind gbuffer travel shader
-    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_2).program);
+    /**
+    * Monolythe
+    */
+    // Bind gbuffer travelMonolythe shader
+    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_MONOLYTHE).program);
     // Upload uniforms
-    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_2, cameraEye, t);
+    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_MONOLYTHE, cameraEye, t);
     // Bind textures
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, bufferTextures[0]);
+    glBindTexture(GL_TEXTURE_2D, bufferTextures[3]);
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, bufferTextures[1]);
+    glBindTexture(GL_TEXTURE_2D, bufferTextures[4]);
     // Render vaos
-    glBindVertexArray(vao[3]); //sphere
+    glBindVertexArray(vao[0]); //cube
     glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
 
     // Unbind framebuffer

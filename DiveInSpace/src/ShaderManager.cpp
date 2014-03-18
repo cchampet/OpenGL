@@ -38,24 +38,25 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
 
             break;
 
-        case GBUFFER_TRAVEL_1:
-            gbufferTravel1_projectionLocation = glGetUniformLocation(shader.program, "Projection");
-            gbufferTravel1_viewLocation = glGetUniformLocation(shader.program, "View");
-            gbufferTravel1_objectLocation = glGetUniformLocation(shader.program, "Object");
-            gbufferTravel1_timeLocation = glGetUniformLocation(shader.program, "Time");
-            gbufferTravel1_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
-            gbufferTravel1_specLocation = glGetUniformLocation(shader.program, "Spec");
-            gbufferTravel1_translateFactorLocation = glGetUniformLocation(shader.program, "TranslateFactor");
+        case GBUFFER_TRAVEL_PLANETES:
+            gbufferTravelPlanetes_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            gbufferTravelPlanetes_viewLocation = glGetUniformLocation(shader.program, "View");
+            gbufferTravelPlanetes_objectLocation = glGetUniformLocation(shader.program, "Object");
+            gbufferTravelPlanetes_timeLocation = glGetUniformLocation(shader.program, "Time");
+            gbufferTravelPlanetes_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
+            gbufferTravelPlanetes_specLocation = glGetUniformLocation(shader.program, "Spec");
+            gbufferTravelPlanetes_translateFactorLocation = glGetUniformLocation(shader.program, "TranslateFactor");
 
             break;
 
-        case GBUFFER_TRAVEL_2:
-            gbufferTravel2_projectionLocation = glGetUniformLocation(shader.program, "Projection");
-            gbufferTravel2_viewLocation = glGetUniformLocation(shader.program, "View");
-            gbufferTravel2_objectLocation = glGetUniformLocation(shader.program, "Object");
-            gbufferTravel2_timeLocation = glGetUniformLocation(shader.program, "Time");
-            gbufferTravel2_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
-            gbufferTravel2_specLocation = glGetUniformLocation(shader.program, "Spec");
+        case GBUFFER_TRAVEL_MONOLYTHE:
+            gbufferTravelMonolythe_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            gbufferTravelMonolythe_viewLocation = glGetUniformLocation(shader.program, "View");
+            gbufferTravelMonolythe_objectLocation = glGetUniformLocation(shader.program, "Object");
+            gbufferTravelMonolythe_timeLocation = glGetUniformLocation(shader.program, "Time");
+            gbufferTravelMonolythe_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
+            gbufferTravelMonolythe_specLocation = glGetUniformLocation(shader.program, "Spec");
+            gbufferTravelMonolythe_translateFactorLocation = glGetUniformLocation(shader.program, "TranslateFactor");
 
             break;
 
@@ -180,24 +181,25 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
 
             break;
 
-        case GBUFFER_TRAVEL_1:
-            glUniformMatrix4fv(gbufferTravel1_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
-            glUniformMatrix4fv(gbufferTravel1_viewLocation, 1, 0, glm::value_ptr(worldToView));
-            glUniformMatrix4fv(gbufferTravel1_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
-            glUniform1f(gbufferTravel1_timeLocation, t);
-            glUniform1i(gbufferTravel1_diffuseLocation, 0);
-            glUniform1i(gbufferTravel1_specLocation, 1);
-            glUniform1f(gbufferTravel1_translateFactorLocation, translateFactor);
+        case GBUFFER_TRAVEL_PLANETES:
+            glUniformMatrix4fv(gbufferTravelPlanetes_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
+            glUniformMatrix4fv(gbufferTravelPlanetes_viewLocation, 1, 0, glm::value_ptr(worldToView));
+            glUniformMatrix4fv(gbufferTravelPlanetes_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
+            glUniform1f(gbufferTravelPlanetes_timeLocation, t);
+            glUniform1i(gbufferTravelPlanetes_diffuseLocation, 0);
+            glUniform1i(gbufferTravelPlanetes_specLocation, 1);
+            glUniform1f(gbufferTravelPlanetes_translateFactorLocation, translateFactor);
 
             break;
 
-        case GBUFFER_TRAVEL_2:
-            glUniformMatrix4fv(gbufferTravel2_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
-            glUniformMatrix4fv(gbufferTravel2_viewLocation, 1, 0, glm::value_ptr(worldToView));
-            glUniformMatrix4fv(gbufferTravel2_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
-            glUniform1f(gbufferTravel2_timeLocation, t);
-            glUniform1i(gbufferTravel2_diffuseLocation, 0);
-            glUniform1i(gbufferTravel2_specLocation, 1);
+        case GBUFFER_TRAVEL_MONOLYTHE:
+            glUniformMatrix4fv(gbufferTravelMonolythe_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
+            glUniformMatrix4fv(gbufferTravelMonolythe_viewLocation, 1, 0, glm::value_ptr(worldToView));
+            glUniformMatrix4fv(gbufferTravelMonolythe_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
+            glUniform1f(gbufferTravelMonolythe_timeLocation, t);
+            glUniform1i(gbufferTravelMonolythe_diffuseLocation, 0);
+            glUniform1i(gbufferTravelMonolythe_specLocation, 1);
+            glUniform1f(gbufferTravelMonolythe_translateFactorLocation, translateFactor);
 
             break;
 
@@ -365,10 +367,8 @@ void ShaderManager::renderTextureWithShader(ListShaderType shaderType, int width
         case DOF:
             glActiveTexture(GL_TEXTURE0);//color
             glBindTexture(GL_TEXTURE_2D, bufferTexture[1]);
-
             glActiveTexture(GL_TEXTURE1);//blur
             glBindTexture(GL_TEXTURE_2D, bufferTexture[3]);
-
             glActiveTexture(GL_TEXTURE2);//coc
             glBindTexture(GL_TEXTURE_2D, bufferTexture[2]);
 

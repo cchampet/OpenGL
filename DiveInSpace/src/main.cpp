@@ -130,16 +130,25 @@ int main( int argc, char **argv )
     TextureManager textureManager;
 
     // Load images and upload textures
-    GLuint textures[3];
-    textureManager.loadTextures(textures, 3);
+    /**
+    * 0 => robot diffuse
+    * 1 => robot spec
+    * 2 => depth
+    * 3 => monolythe diffuse
+    * 4 => monolythe spec
+    * 5 => planete diffuse
+    * 6 => planete spec
+    */
+    GLuint textures[7];
+    textureManager.loadTextures(textures, 7);
 
 
     /* --------------------------------------------------------------------------------------------- */
     /* ------------------------------------------ Shaders ------------------------------------------ */
     /* --------------------------------------------------------------------------------------------- */
     shaderManager.addShader("shaders/gbuffer.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER);
-    shaderManager.addShader("shaders/gbuffer_travel_1.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_1);
-    shaderManager.addShader("shaders/gbuffer_travel_2.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_2);
+    shaderManager.addShader("shaders/gbufferTravelPlanetes.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_PLANETES);
+    shaderManager.addShader("shaders/gbufferTravelMonolythe.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_MONOLYTHE);
     shaderManager.addShader("shaders/blit.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLIT);
     //Light
     shaderManager.addShader("shaders/dirLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::DIR_LIGHT);
@@ -323,9 +332,9 @@ int main( int argc, char **argv )
     // Create gbuffer frame buffer object
     //
     GLuint gbufferFbo;
-    GLuint gbufferTextures[3];
+    GLuint gbufferTextures[7];
     GLuint gbufferDrawBuffers[2];
-    textureManager.loadBufferTextures(gbufferTextures, 3, width, height);
+    textureManager.loadBufferTextures(gbufferTextures, 7, width, height);
 
     // Create Framebuffer Object
     glGenFramebuffers(1, &gbufferFbo);
@@ -458,8 +467,8 @@ int main( int argc, char **argv )
 
             #if MODE_TRAVEL == 1
                 lightManager.updateTravel1Lights(t);
-                if(*shaderManager.getBlurSamples() < 20.f)
-                    shaderManager.setBlurSamples(*shaderManager.getBlurSamples()+0.01f);
+                // if(*shaderManager.getBlurSamples() < 20.f)
+                //     shaderManager.setBlurSamples(*shaderManager.getBlurSamples()+0.01f);
             #endif
 
             #if MODE_HAL == 1 || MODE_TRAVEL == 1

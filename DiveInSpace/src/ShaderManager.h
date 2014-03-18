@@ -33,8 +33,8 @@ struct ShaderManager
 	*/
 	enum ListShaderType{
 		GBUFFER,
-        GBUFFER_TRAVEL_1,
-        GBUFFER_TRAVEL_2,
+        GBUFFER_TRAVEL_PLANETES,
+        GBUFFER_TRAVEL_MONOLYTHE,
 		BLIT,
 		DIR_LIGHT,
         POINT_LIGHT,
@@ -114,22 +114,23 @@ private:
     GLuint gbuffer_diffuseLocation;
     GLuint gbuffer_specLocation;
 
-    // Location for gbufferTravel1_shader
-    GLuint gbufferTravel1_projectionLocation;
-    GLuint gbufferTravel1_viewLocation; 
-    GLuint gbufferTravel1_objectLocation;
-    GLuint gbufferTravel1_timeLocation;  
-    GLuint gbufferTravel1_diffuseLocation;
-    GLuint gbufferTravel1_specLocation;
-    GLuint gbufferTravel1_translateFactorLocation;
+    // Location for gbufferTravelPlanetes_shader
+    GLuint gbufferTravelPlanetes_projectionLocation;
+    GLuint gbufferTravelPlanetes_viewLocation; 
+    GLuint gbufferTravelPlanetes_objectLocation;
+    GLuint gbufferTravelPlanetes_timeLocation;  
+    GLuint gbufferTravelPlanetes_diffuseLocation;
+    GLuint gbufferTravelPlanetes_specLocation;
+    GLuint gbufferTravelPlanetes_translateFactorLocation;
 
-    // Location for gbufferTravel2_shader
-    GLuint gbufferTravel2_projectionLocation;
-    GLuint gbufferTravel2_viewLocation; 
-    GLuint gbufferTravel2_objectLocation;
-    GLuint gbufferTravel2_timeLocation;  
-    GLuint gbufferTravel2_diffuseLocation;
-    GLuint gbufferTravel2_specLocation;
+    // Location for gbufferTravelMonolythe_shader
+    GLuint gbufferTravelMonolythe_projectionLocation;
+    GLuint gbufferTravelMonolythe_viewLocation; 
+    GLuint gbufferTravelMonolythe_objectLocation;
+    GLuint gbufferTravelMonolythe_timeLocation;  
+    GLuint gbufferTravelMonolythe_diffuseLocation;
+    GLuint gbufferTravelMonolythe_specLocation;
+    GLuint gbufferTravelMonolythe_translateFactorLocation;
 
     // Location for blit_shader
     GLuint blit_tex1Location;
