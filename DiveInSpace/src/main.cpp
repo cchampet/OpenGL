@@ -24,7 +24,7 @@
 #include "ShaderManager.h"
 #include "Camera.h"
 #include "Shader.h"
-#include "ImGui.h"
+#include "GUI.h"
 #include "LightManager.h"
 #include "Geometry.h"
 #include "TextureManager.h"

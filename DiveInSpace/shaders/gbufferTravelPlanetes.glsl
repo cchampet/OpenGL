@@ -35,6 +35,7 @@ void main(void)
 		position.x += pow(SpiralRadius, angle) * sin(angle);
 		position.y += pow(SpiralRadius, angle) * cos(angle);
 	}
+	//position.z -= 3000;//offset to have the time to start the video record
 	position.z -= gl_InstanceID;
 	//movement of elements
 	position.z += 25*TranslateFactor*Time;
