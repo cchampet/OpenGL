@@ -113,7 +113,6 @@ private:
 	float farPlane;
 	float gamma;
 	float sobelCoef;
-    bool  glow;
 
     float translateFactor;
     bool  bIsHalStop;

@@ -6,7 +6,7 @@ uniform mat4 Object;
 uniform float Time;
 
 uniform float TranslateFactor;
-uniform bool IsMonolitheStop;
+uniform int IsMonolitheStop;
 
 in vec3 VertexPosition;
 in vec3 VertexNormal;
@@ -29,13 +29,12 @@ void main(void)
 	position.x *= 10;
 	position.y *= 15;
 	position.z *= 2;
-	if(!IsMonolitheStop){
+	if(IsMonolitheStop == 0){
 		//offset of the element
 		position.z -= 2000;//5000;
 		//movement
 		position.z += 25*TranslateFactor*Time;
 	}
-
 	gl_Position = Projection * View * vec4(position, 1.0);
 }
 

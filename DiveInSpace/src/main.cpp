@@ -174,8 +174,8 @@ int main( int argc, char **argv )
     /* ------------------------------------------ Geometry ----------------------------------------- */
     /* --------------------------------------------------------------------------------------------- */
     // Vertex Array Object
-    GLuint vao[5];
-    glGenVertexArrays(5, vao);
+    GLuint vao[10]; //not necessary to have 10 vao...but fix bug when MODE_TRAVEL = 1
+    glGenVertexArrays(10, vao);
     // Vertex Buffer Objects
     GLuint vbo[18];
     glGenBuffers(18, vbo);
@@ -368,7 +368,7 @@ int main( int argc, char **argv )
     * 0 / 1 => ping pong textures
     * 2 => Coc
     * 3 => Blur
-    * 4 => Lights
+    * 4 => Scene without blur
     */
     textureManager.loadFxTextures(fxBufferTextures, 5, width, height);
 

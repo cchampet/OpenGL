@@ -13,7 +13,6 @@ ShaderManager::ShaderManager() {
     farPlane = 50.0;
     gamma = 1.0;
     sobelCoef = 0.0;
-    glow = true;
     //Specific elements
     translateFactor = 5.0; //for Travel_Planetes & Travel_Monolithe
     bIsHalStop = false; //for Hal
@@ -238,7 +237,7 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniform1i(gbufferTravelMonolithe_diffuseLocation, 0);
             glUniform1i(gbufferTravelMonolithe_specLocation, 1);
             glUniform1f(gbufferTravelMonolithe_translateFactorLocation, translateFactor);
-            glUniform1f(gbufferTravelMonolithe_isMonolitheStopLocation, *isMonolitheStop());
+            glUniform1i(gbufferTravelMonolithe_isMonolitheStopLocation, static_cast<int>(*isMonolitheStop()));
 
             break;
 

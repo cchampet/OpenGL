@@ -24,7 +24,7 @@ void main(void)
 	float angle = SpiralAngle * 3.1415926 * gl_InstanceID / 50;
 
 	uv = VertexTexCoord;
-	normal = vec3(Object * vec4(VertexNormal, 1.0)); 
+	normal = vec3(Object * vec4((VertexNormal+1.0)*0.5, 1.0));
 	position = vec3(VertexPosition);
 	//spirale
 	if(gl_InstanceID % 2 == 0){

@@ -224,9 +224,9 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     /**
-    * Planetes
+    * Spiral
     */
-    // Bind gbuffer travelPlanetes shader
+    // Bind gbuffer travelSpiral shader
     glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_SPIRAL).program);
     // Upload uniforms
     shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_SPIRAL, cameraEye, t);
@@ -238,7 +238,6 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     // Render vaos
     glBindVertexArray(vao[3]); //sphere
     glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 5000);
-
     /**
     * Monolithe
     */
@@ -253,7 +252,7 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     glBindTexture(GL_TEXTURE_2D, bufferTextures[4]);
     // Render vaos
     glBindVertexArray(vao[0]); //cube
-    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
+    glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
     
     // Unbind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
