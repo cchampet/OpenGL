@@ -26,10 +26,20 @@ void main(void)
 	vec3 blur = texture(TextureBlur, uv).rgb;
 	vec3 renderScene = texture(TextureColor, uv).rgb;
 	
-	//mix the color of the scene with the blur
-	OutColor = vec4((renderScene+blur)/2., 1.0);
+	//more the scene has colors, more we display the scene
+	//less the scene has colors, more we display the blur
+	
+	//curious mix !
+	//vec3 mix = vec3(renderScene.r/blur.r, renderScene.g/blur.g, renderScene.b/blur.b);
+	//OutColor = vec4(mix, 1.0);
+	
+	//the mix in theory
+	//float mix = (renderScene.r + renderScene.y + renderScene.z) / 3.;
+	//OutColor = vec4((renderScene*mix)+(blur*(1-mix)), 1.0);
+	
+	OutColor = vec4((renderScene+(blur/5.))/2., 1.0);
 	if(renderScene == vec3(0, 0, 0)){
-		//display full blur if the scene is black
+		//full blur
 		OutColor = vec4(blur, 1.0);
 	}
 }

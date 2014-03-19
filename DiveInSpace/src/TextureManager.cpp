@@ -238,6 +238,7 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     // Render vaos
     glBindVertexArray(vao[3]); //sphere
     glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 5000);
+    
     /**
     * Monolithe
     */

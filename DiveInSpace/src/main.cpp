@@ -548,9 +548,9 @@ int main( int argc, char **argv )
             textureManager.renderMainScreen(shaderManager, width, height, fxBufferTextures[1], vao, camera.m_eye, t);
         #endif
         // Display debug (pas à la noix non non non !)
-        textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
+        //textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
 #if 1
-        drawGUI(width, height, shaderManager, lightManager, fps, leftButton);
+        //drawGUI(width, height, shaderManager, lightManager, fps, leftButton);
 #endif
         
         // Check for errors
