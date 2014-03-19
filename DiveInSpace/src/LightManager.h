@@ -164,16 +164,16 @@ public:
 	}
 
 	void createTravel1Lights(){
-		// Ambiante white light, to see the sphere
-		addDirLight(glm::vec3(0.f, -10.f, -15.f), 
-					glm::vec3(0.2f, 0.2f, 1.f), 
+		// Ambiante light (update color in updateTravel1Lights())
+		addDirLight(glm::vec3(0.f, -1.f, 0.f), 
+					glm::vec3(0.f, 0.f, 0.f), 
 					glm::vec3(0.2f, 0.2f, 0.2f), 
-					2);
-		//white light, from the monolythe
-		addDirLight(glm::vec3(0.f, -10.f, 0.f), 
+					1.f);
+		//white light
+		addDirLight(glm::vec3(0.f, -1.f, 0.f), 
 					glm::vec3(1.f, 1.f, 1.f), 
 					glm::vec3(0.2f, 0.2f, 0.2f), 
-					10);
+					0.5f);
 	}
 
 	void updateHalLights(double t){
@@ -183,7 +183,7 @@ public:
 
 	void updateTravel1Lights(double t){
 		glm::vec3 oldColor = getDLDiffuse(0);
-		glm::vec3 newColor = glm::vec3((oldColor.r + cos(t))/2.f, (oldColor.g + sin(t))/2.f, 0.5f+(oldColor.b + cos(t))/2.f);
+		glm::vec3 newColor = glm::vec3((oldColor.r + cos(10*t))/2.f, (oldColor.g + sin(10*t))/2.f, 0.5f+(oldColor.b + cos(10*t))/2.f);
 		setDLDiffuse(0, newColor);
 	}
 

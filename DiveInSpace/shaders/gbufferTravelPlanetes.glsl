@@ -4,7 +4,12 @@ uniform mat4 Projection;
 uniform mat4 View;
 uniform mat4 Object;
 uniform float Time;
+
 uniform float TranslateFactor;
+
+uniform float SpiralRadius;
+uniform float SpiralAngle;
+
 
 in vec3 VertexPosition;
 in vec3 VertexNormal;
@@ -16,26 +21,43 @@ out vec3 position;
 
 void main(void)
 {	
-	/**
-	* Rotation on himself
-	*/
+	float angle = SpiralAngle * 3.1415926 * gl_InstanceID / 50;
+
+	uv = VertexTexCoord;
+	normal = vec3(Object * vec4(VertexNormal, 1.0)); 
+	position = vec3(VertexPosition);
+	//spirale
+	if(gl_InstanceID % 2 == 0){
+		position.x += pow(SpiralRadius, angle) * cos(angle);
+		position.y += pow(SpiralRadius, angle) * sin(angle);
+	}
+	else{
+		position.x += pow(SpiralRadius, angle) * sin(angle);
+		position.y += pow(SpiralRadius, angle) * cos(angle);
+	}
+	position.z -= gl_InstanceID;
+	//movement of elements
+	position.z += 25*TranslateFactor*Time;
+	gl_Position = Projection * View * vec4(position, 1.0);
+
+
+	/*
+	// Rotation on himself
 	mat3 rotX = mat3(
 		vec3(1, 0, 0),
 		vec3(0, cos(Time), -sin(Time)),
 		vec3(0, sin(Time), cos(Time))
 		);
 
-	/**
-	* Compute uv, normal, and position of each vertices.
-	*/
+	// Compute uv, normal, and position of each vertices.
 	uv = VertexTexCoord;
-	normal = vec3(Object * vec4(VertexNormal, 1.0));; 
+	normal = vec3(Object * vec4(VertexNormal, 1.0)); 
 
 	position = vec3(VertexPosition); 
 	//scale elements
-	position.x *= 0.1;
-	position.y *= 0.1;
-	position.z *= 0.1;
+	position.x *= 0.2;
+	position.y *= 0.2;
+	position.z *= 0.2;
 	//rotation elements on themself
 	if(gl_InstanceID % 2 == 0)
 		position *= rotX;
@@ -52,7 +74,8 @@ void main(void)
 	position.x += (gl_InstanceID % 20);
 	position.y += (int(gl_InstanceID/50));
 	//movement
-	position.y += TranslateFactor*Time;
+	position.z += TranslateFactor*Time;
+	*/
 
 	gl_Position = Projection * View * vec4(position, 1.0);
 }

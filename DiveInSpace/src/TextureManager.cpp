@@ -38,14 +38,14 @@ void TextureManager::loadTextures(GLuint* tab, size_t size) {
     fprintf(stderr, "Spec %dx%d:%d\n", x, y, comp);
 
     /**
-    * Monolythe
+    * Monolithe
     */
 
     // Diffuse texture
-    unsigned char * monolytheDiffuse = stbi_load("textures/monolythe_diffuse.jpg", &x, &y, &comp, 3);
+    unsigned char * monolitheDiffuse = stbi_load("textures/monolithe_diffuse.jpg", &x, &y, &comp, 3);
     glActiveTexture(GL_TEXTURE2);
     glBindTexture(GL_TEXTURE_2D, tab[3]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, monolytheDiffuse);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, monolitheDiffuse);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -53,10 +53,10 @@ void TextureManager::loadTextures(GLuint* tab, size_t size) {
     fprintf(stderr, "Diffuse %dx%d:%d\n", x, y, comp);
 
     // Specular texture
-    unsigned char * monolytheSpec = stbi_load("textures/monolythe_spec.jpg", &x, &y, &comp, 1);
+    unsigned char * monolitheSpec = stbi_load("textures/monolithe_spec.jpg", &x, &y, &comp, 1);
     glActiveTexture(GL_TEXTURE3);
     glBindTexture(GL_TEXTURE_2D, tab[4]);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, x, y, 0, GL_RED, GL_UNSIGNED_BYTE, monolytheSpec);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, x, y, 0, GL_RED, GL_UNSIGNED_BYTE, monolitheSpec);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -125,7 +125,7 @@ void TextureManager::loadBufferTextures(GLuint* gbufferTextures, size_t size, in
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
     /**
-    * Monolythe
+    * Monolithe
     */
     // Create color texture
     glBindTexture(GL_TEXTURE_2D, gbufferTextures[3]);
@@ -229,15 +229,15 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     glBindTexture(GL_TEXTURE_2D, bufferTextures[6]);
     // Render vaos
     glBindVertexArray(vao[3]); //sphere
-    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 10000);
+    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 5000);
 
     /**
-    * Monolythe
+    * Monolithe
     */
-    // Bind gbuffer travelMonolythe shader
-    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_MONOLYTHE).program);
+    // Bind gbuffer travelMonolithe shader
+    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_MONOLITHE).program);
     // Upload uniforms
-    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_MONOLYTHE, cameraEye, t);
+    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_MONOLITHE, cameraEye, t);
     // Bind textures
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, bufferTextures[3]);
@@ -246,7 +246,7 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     // Render vaos
     glBindVertexArray(vao[0]); //cube
     glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
-
+    
     // Unbind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

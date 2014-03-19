@@ -34,7 +34,7 @@ struct ShaderManager
 	enum ListShaderType{
 		GBUFFER,
         GBUFFER_TRAVEL_PLANETES,
-        GBUFFER_TRAVEL_MONOLYTHE,
+        GBUFFER_TRAVEL_MONOLITHE,
 		BLIT,
 		DIR_LIGHT,
         POINT_LIGHT,
@@ -77,6 +77,9 @@ struct ShaderManager
 	inline float* getSobelCoeff() { return &sobelCoef;}
     inline float* getTranslateFactor() { return &translateFactor;}
     inline bool* isHalStop() { return &bIsHalStop;}
+    inline bool* isMonolitheStop() { return &bIsMonolitheStop;}
+    inline float* getSpiralAngle() { return &spiralAngle;}
+    inline float* getSpiralRadius() { return &spiralRadius;}
 
 	inline void setBlurSamples(float blur) { blurSamples = blur;}
 	inline void setFocusPlane(float focus) { focusPlane = focus;}
@@ -86,6 +89,17 @@ struct ShaderManager
 	inline void setSobelCoef(float sobel) { sobelCoef = sobel;}
     inline void setTranslateFactor(float newFactor) { translateFactor = newFactor;}
     inline void setIsHalStop(bool flag) { bIsHalStop = flag;}
+    inline void setIsMonolitheStop(bool flag) { bIsMonolitheStop = flag;}
+    inline void setSpiralAngle(float angle) { spiralAngle = angle;}
+    inline void setSpiralRadius(float radius) { spiralRadius = radius;}
+
+    /**
+    * Manage specific scenes
+    */
+    void updateTravelElements(double t){
+        //sobelCoef = 1.f;
+        //gamma = 1+(1+cos(10*t));
+    }
 
 private:
 	
@@ -98,8 +112,12 @@ private:
 	float farPlane;
 	float gamma;
 	float sobelCoef;
+
     float translateFactor;
     bool  bIsHalStop;
+    bool  bIsMonolitheStop;
+    float spiralAngle;
+    float spiralRadius;
 
     // Location for camera
     glm::mat4 projection;
@@ -125,15 +143,18 @@ private:
     GLuint gbufferTravelPlanetes_diffuseLocation;
     GLuint gbufferTravelPlanetes_specLocation;
     GLuint gbufferTravelPlanetes_translateFactorLocation;
+    GLuint gbufferTravelPlanetes_spiralRadiusLocation;
+    GLuint gbufferTravelPlanetes_spiralAngleLocation;
 
     // Location for gbufferTravelMonolythe_shader
-    GLuint gbufferTravelMonolythe_projectionLocation;
-    GLuint gbufferTravelMonolythe_viewLocation; 
-    GLuint gbufferTravelMonolythe_objectLocation;
-    GLuint gbufferTravelMonolythe_timeLocation;  
-    GLuint gbufferTravelMonolythe_diffuseLocation;
-    GLuint gbufferTravelMonolythe_specLocation;
-    GLuint gbufferTravelMonolythe_translateFactorLocation;
+    GLuint gbufferTravelMonolithe_projectionLocation;
+    GLuint gbufferTravelMonolithe_viewLocation; 
+    GLuint gbufferTravelMonolithe_objectLocation;
+    GLuint gbufferTravelMonolithe_timeLocation;  
+    GLuint gbufferTravelMonolithe_diffuseLocation;
+    GLuint gbufferTravelMonolithe_specLocation;
+    GLuint gbufferTravelMonolithe_translateFactorLocation;
+    GLuint gbufferTravelMonolithe_isMonolitheStopLocation;
 
     // Location for blit_shader
     GLuint blit_tex1Location;

@@ -6,14 +6,19 @@
 #include <cstdio> //fprintf
 
 ShaderManager::ShaderManager() {
-    blurSamples = 5.0;
+    //FX
+    blurSamples = 1.0;
     focusPlane = 5.0;
     nearPlane = 1.0;
     farPlane = 50.0;
-    gamma = 3.0;
+    gamma = 1.0;
     sobelCoef = 0.0;
-    translateFactor = 5.0; //for Travel_Planetes & Travel_Monolythe
+    //Specific elements
+    translateFactor = 5.0; //for Travel_Planetes & Travel_Monolithe
     bIsHalStop = false; //for Hal
+    bIsMonolitheStop = false; //for Monolithe
+    spiralAngle = 1.1f; //for Travel_Planetes
+    spiralRadius = 1.05f; //for Travel_Planetes
 }
 
 void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderType shaderType){
@@ -47,17 +52,20 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
             gbufferTravelPlanetes_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
             gbufferTravelPlanetes_specLocation = glGetUniformLocation(shader.program, "Spec");
             gbufferTravelPlanetes_translateFactorLocation = glGetUniformLocation(shader.program, "TranslateFactor");
+            gbufferTravelPlanetes_spiralRadiusLocation = glGetUniformLocation(shader.program, "SpiralRadius");
+            gbufferTravelPlanetes_spiralAngleLocation = glGetUniformLocation(shader.program, "SpiralAngle");
 
             break;
 
-        case GBUFFER_TRAVEL_MONOLYTHE:
-            gbufferTravelMonolythe_projectionLocation = glGetUniformLocation(shader.program, "Projection");
-            gbufferTravelMonolythe_viewLocation = glGetUniformLocation(shader.program, "View");
-            gbufferTravelMonolythe_objectLocation = glGetUniformLocation(shader.program, "Object");
-            gbufferTravelMonolythe_timeLocation = glGetUniformLocation(shader.program, "Time");
-            gbufferTravelMonolythe_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
-            gbufferTravelMonolythe_specLocation = glGetUniformLocation(shader.program, "Spec");
-            gbufferTravelMonolythe_translateFactorLocation = glGetUniformLocation(shader.program, "TranslateFactor");
+        case GBUFFER_TRAVEL_MONOLITHE:
+            gbufferTravelMonolithe_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            gbufferTravelMonolithe_viewLocation = glGetUniformLocation(shader.program, "View");
+            gbufferTravelMonolithe_objectLocation = glGetUniformLocation(shader.program, "Object");
+            gbufferTravelMonolithe_timeLocation = glGetUniformLocation(shader.program, "Time");
+            gbufferTravelMonolithe_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
+            gbufferTravelMonolithe_specLocation = glGetUniformLocation(shader.program, "Spec");
+            gbufferTravelMonolithe_translateFactorLocation = glGetUniformLocation(shader.program, "TranslateFactor");
+            gbufferTravelMonolithe_isMonolitheStopLocation = glGetUniformLocation(shader.program, "IsMonolitheStop");
 
             break;
 
@@ -190,17 +198,20 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniform1i(gbufferTravelPlanetes_diffuseLocation, 0);
             glUniform1i(gbufferTravelPlanetes_specLocation, 1);
             glUniform1f(gbufferTravelPlanetes_translateFactorLocation, translateFactor);
+            glUniform1f(gbufferTravelPlanetes_spiralRadiusLocation, spiralRadius);
+            glUniform1f(gbufferTravelPlanetes_spiralAngleLocation, spiralAngle);
 
             break;
 
-        case GBUFFER_TRAVEL_MONOLYTHE:
-            glUniformMatrix4fv(gbufferTravelMonolythe_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
-            glUniformMatrix4fv(gbufferTravelMonolythe_viewLocation, 1, 0, glm::value_ptr(worldToView));
-            glUniformMatrix4fv(gbufferTravelMonolythe_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
-            glUniform1f(gbufferTravelMonolythe_timeLocation, t);
-            glUniform1i(gbufferTravelMonolythe_diffuseLocation, 0);
-            glUniform1i(gbufferTravelMonolythe_specLocation, 1);
-            glUniform1f(gbufferTravelMonolythe_translateFactorLocation, translateFactor);
+        case GBUFFER_TRAVEL_MONOLITHE:
+            glUniformMatrix4fv(gbufferTravelMonolithe_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
+            glUniformMatrix4fv(gbufferTravelMonolithe_viewLocation, 1, 0, glm::value_ptr(worldToView));
+            glUniformMatrix4fv(gbufferTravelMonolithe_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
+            glUniform1f(gbufferTravelMonolithe_timeLocation, t);
+            glUniform1i(gbufferTravelMonolithe_diffuseLocation, 0);
+            glUniform1i(gbufferTravelMonolithe_specLocation, 1);
+            glUniform1f(gbufferTravelMonolithe_translateFactorLocation, translateFactor);
+            glUniform1f(gbufferTravelMonolithe_isMonolitheStopLocation, *isMonolitheStop());
 
             break;
 
@@ -456,7 +467,7 @@ Shader& ShaderManager::getShader(ListShaderType shaderType){
 }
 
 void ShaderManager::getCameraMatrices(float widthf, float heightf, glm::vec3 cameraEye, glm::vec3 cameraO, glm::vec3 cameraUp) {
-    projection = glm::perspective(45.0f, widthf / heightf, 0.1f, 100.f); 
+    projection = glm::perspective(45.0f, widthf / heightf, 0.1f, 10000.f); 
     worldToView = glm::lookAt(cameraEye, cameraO, cameraUp);
     worldToScreen = projection * worldToView;
     screenToWorld = glm::transpose(glm::inverse(worldToScreen));

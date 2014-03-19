@@ -35,8 +35,8 @@
 * 0   => not activated
 * > 0 => activate the version of the scene (v1, v2...)
 */
-#define MODE_HAL    1
-#define MODE_TRAVEL 0
+#define MODE_HAL    0
+#define MODE_TRAVEL 1
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -134,8 +134,8 @@ int main( int argc, char **argv )
     * 0 => robot diffuse
     * 1 => robot spec
     * 2 => depth
-    * 3 => monolythe diffuse
-    * 4 => monolythe spec
+    * 3 => monolithe diffuse
+    * 4 => monolithe spec
     * 5 => planete diffuse
     * 6 => planete spec
     */
@@ -148,7 +148,7 @@ int main( int argc, char **argv )
     /* --------------------------------------------------------------------------------------------- */
     shaderManager.addShader("shaders/gbuffer.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER);
     shaderManager.addShader("shaders/gbufferTravelPlanetes.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_PLANETES);
-    shaderManager.addShader("shaders/gbufferTravelMonolythe.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_MONOLYTHE);
+    shaderManager.addShader("shaders/gbufferTravelMonolithe.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_MONOLITHE);
     shaderManager.addShader("shaders/blit.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLIT);
     //Light
     shaderManager.addShader("shaders/dirLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::DIR_LIGHT);
@@ -453,6 +453,7 @@ int main( int argc, char **argv )
         if (spacePressed == GLFW_PRESS)
         {
             shaderManager.setIsHalStop(true);
+            shaderManager.setIsMonolitheStop(true);
         }
   
         // Get camera matrices
@@ -487,6 +488,7 @@ int main( int argc, char **argv )
 
             #if MODE_TRAVEL == 1
                 lightManager.updateTravel1Lights(t);
+                shaderManager.updateTravelElements(t);
                 // if(*shaderManager.getBlurSamples() < 20.f)
                 //     shaderManager.setBlurSamples(*shaderManager.getBlurSamples()+0.01f);
             #endif
@@ -524,9 +526,9 @@ int main( int argc, char **argv )
         // Display main screen 
         textureManager.renderMainScreen(shaderManager, width, height, fxBufferTextures[1], vao, camera.m_eye, t);
         // Display debug (pas à la noix non non non !)
-        //textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
+        textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
 #if 1
-        //drawGUI(width, height, shaderManager, lightManager, fps, leftButton);
+        drawGUI(width, height, shaderManager, lightManager, fps, leftButton);
 #endif
         
         // Check for errors
