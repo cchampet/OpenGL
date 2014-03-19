@@ -76,9 +76,9 @@ void main(void)
 	position.y += (int(gl_InstanceID/50));
 	//movement
 	position.z += TranslateFactor*Time;
-	*/
 
 	gl_Position = Projection * View * vec4(position, 1.0);
+	*/
 }
 
 #endif

@@ -176,6 +176,14 @@ public:
 					0.5f);
 	}
 
+	void createTravel2Lights(){
+		//white light
+		addDirLight(glm::vec3(0.f, -1.f, 0.f), 
+					glm::vec3(1.f, 1.f, 1.f), 
+					glm::vec3(0.f, 0.f, 0.f), 
+					0.1f);
+	}
+
 	void updateHalLights(double t){
 		// Between 0.9 and 1.5
 		setSPLExternalAngle(1, 1.2f + cos(t)/3.);
@@ -185,6 +193,10 @@ public:
 		glm::vec3 oldColor = getDLDiffuse(0);
 		glm::vec3 newColor = glm::vec3((oldColor.r + cos(10*t))/2.f, (oldColor.g + sin(10*t))/2.f, 0.5f+(oldColor.b + cos(10*t))/2.f);
 		setDLDiffuse(0, newColor);
+	}
+
+	void updateTravel2Lights(double t){
+		setDLIntensity(0, getDLIntensity(0)+0.001f);
 	}
 
 

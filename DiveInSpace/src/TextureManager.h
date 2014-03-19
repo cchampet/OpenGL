@@ -21,6 +21,7 @@ struct TextureManager
 	void loadFxTextures(GLuint* fxBufferTextures, size_t size, int width, int height);
 
 	void fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t);
+	void fillFrameBufferTravel2(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t);
 	void fillFrameBufferHal(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t);
 
 	void renderMainScreen(ShaderManager& shaderManager, int width, int height, GLuint bufferTexture, GLuint* vao, glm::vec3 cameraEye, double t);

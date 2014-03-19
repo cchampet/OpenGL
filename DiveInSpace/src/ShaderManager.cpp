@@ -13,6 +13,7 @@ ShaderManager::ShaderManager() {
     farPlane = 50.0;
     gamma = 1.0;
     sobelCoef = 0.0;
+    glow = true;
     //Specific elements
     translateFactor = 5.0; //for Travel_Planetes & Travel_Monolithe
     bIsHalStop = false; //for Hal
@@ -44,16 +45,26 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
 
             break;
 
-        case GBUFFER_TRAVEL_PLANETES:
-            gbufferTravelPlanetes_projectionLocation = glGetUniformLocation(shader.program, "Projection");
-            gbufferTravelPlanetes_viewLocation = glGetUniformLocation(shader.program, "View");
-            gbufferTravelPlanetes_objectLocation = glGetUniformLocation(shader.program, "Object");
-            gbufferTravelPlanetes_timeLocation = glGetUniformLocation(shader.program, "Time");
-            gbufferTravelPlanetes_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
-            gbufferTravelPlanetes_specLocation = glGetUniformLocation(shader.program, "Spec");
-            gbufferTravelPlanetes_translateFactorLocation = glGetUniformLocation(shader.program, "TranslateFactor");
-            gbufferTravelPlanetes_spiralRadiusLocation = glGetUniformLocation(shader.program, "SpiralRadius");
-            gbufferTravelPlanetes_spiralAngleLocation = glGetUniformLocation(shader.program, "SpiralAngle");
+        case GBUFFER_TRAVEL_PLANETE:
+            gbufferTravelPlanete_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            gbufferTravelPlanete_viewLocation = glGetUniformLocation(shader.program, "View");
+            gbufferTravelPlanete_objectLocation = glGetUniformLocation(shader.program, "Object");
+            gbufferTravelPlanete_timeLocation = glGetUniformLocation(shader.program, "Time");
+            gbufferTravelPlanete_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
+            gbufferTravelPlanete_specLocation = glGetUniformLocation(shader.program, "Spec");
+
+            break;
+
+        case GBUFFER_TRAVEL_SPIRAL:
+            gbufferTravelSpiral_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            gbufferTravelSpiral_viewLocation = glGetUniformLocation(shader.program, "View");
+            gbufferTravelSpiral_objectLocation = glGetUniformLocation(shader.program, "Object");
+            gbufferTravelSpiral_timeLocation = glGetUniformLocation(shader.program, "Time");
+            gbufferTravelSpiral_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
+            gbufferTravelSpiral_specLocation = glGetUniformLocation(shader.program, "Spec");
+            gbufferTravelSpiral_translateFactorLocation = glGetUniformLocation(shader.program, "TranslateFactor");
+            gbufferTravelSpiral_spiralRadiusLocation = glGetUniformLocation(shader.program, "SpiralRadius");
+            gbufferTravelSpiral_spiralAngleLocation = glGetUniformLocation(shader.program, "SpiralAngle");
 
             break;
 
@@ -157,6 +168,12 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
 
             break;
 
+        case  GLOW:
+            glow_colorLocation = glGetUniformLocation(shader.program, "TextureColor");
+            glow_blurLocation = glGetUniformLocation(shader.program, "TextureBlur");
+
+            break;
+
         case EXPLOSION:
             explosion_channelLocation = glGetUniformLocation(shader.program, "Channel");
             explosion_timeLocation = glGetUniformLocation(shader.program, "Time");
@@ -190,16 +207,26 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
 
             break;
 
-        case GBUFFER_TRAVEL_PLANETES:
-            glUniformMatrix4fv(gbufferTravelPlanetes_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
-            glUniformMatrix4fv(gbufferTravelPlanetes_viewLocation, 1, 0, glm::value_ptr(worldToView));
-            glUniformMatrix4fv(gbufferTravelPlanetes_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
-            glUniform1f(gbufferTravelPlanetes_timeLocation, t);
-            glUniform1i(gbufferTravelPlanetes_diffuseLocation, 0);
-            glUniform1i(gbufferTravelPlanetes_specLocation, 1);
-            glUniform1f(gbufferTravelPlanetes_translateFactorLocation, translateFactor);
-            glUniform1f(gbufferTravelPlanetes_spiralRadiusLocation, spiralRadius);
-            glUniform1f(gbufferTravelPlanetes_spiralAngleLocation, spiralAngle);
+        case GBUFFER_TRAVEL_PLANETE:
+            glUniformMatrix4fv(gbufferTravelPlanete_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
+            glUniformMatrix4fv(gbufferTravelPlanete_viewLocation, 1, 0, glm::value_ptr(worldToView));
+            glUniformMatrix4fv(gbufferTravelPlanete_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
+            glUniform1f(gbufferTravelPlanete_timeLocation, t);
+            glUniform1i(gbufferTravelPlanete_diffuseLocation, 0);
+            glUniform1i(gbufferTravelPlanete_specLocation, 1);
+
+            break;
+
+        case GBUFFER_TRAVEL_SPIRAL:
+            glUniformMatrix4fv(gbufferTravelSpiral_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
+            glUniformMatrix4fv(gbufferTravelSpiral_viewLocation, 1, 0, glm::value_ptr(worldToView));
+            glUniformMatrix4fv(gbufferTravelSpiral_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
+            glUniform1f(gbufferTravelSpiral_timeLocation, t);
+            glUniform1i(gbufferTravelSpiral_diffuseLocation, 0);
+            glUniform1i(gbufferTravelSpiral_specLocation, 1);
+            glUniform1f(gbufferTravelSpiral_translateFactorLocation, translateFactor);
+            glUniform1f(gbufferTravelSpiral_spiralRadiusLocation, spiralRadius);
+            glUniform1f(gbufferTravelSpiral_spiralAngleLocation, spiralAngle);
 
             break;
 
@@ -280,6 +307,12 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniform1i(dof_colorLocation, 0);
             glUniform1i(dof_blurLocation, 1);
             glUniform1i(dof_cocLocation, 2);
+
+            break;
+
+        case  GLOW:
+            glUniform1i(glow_colorLocation, 0);
+            glUniform1i(glow_blurLocation, 1);
 
             break;
 
@@ -378,7 +411,7 @@ void ShaderManager::renderTextureWithShader(ListShaderType shaderType, int width
     switch(shaderType) {
         case DOF:
             glActiveTexture(GL_TEXTURE0);//color
-            glBindTexture(GL_TEXTURE_2D, bufferTexture[1]);
+            glBindTexture(GL_TEXTURE_2D, bufferTexture[pong]);
             glActiveTexture(GL_TEXTURE1);//blur
             glBindTexture(GL_TEXTURE_2D, bufferTexture[3]);
             glActiveTexture(GL_TEXTURE2);//coc
@@ -386,13 +419,21 @@ void ShaderManager::renderTextureWithShader(ListShaderType shaderType, int width
 
             break;
 
-        default:
-            break;
-    }    
+        case GLOW:
+            glActiveTexture(GL_TEXTURE0);//color
+            glBindTexture(GL_TEXTURE_2D, bufferTexture[4]);
+            glActiveTexture(GL_TEXTURE1);//blur
+            glBindTexture(GL_TEXTURE_2D, bufferTexture[3]);
 
-    // Bind textures we want to render
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, bufferTexture[pong]);   
+            break;
+
+        default:
+            // Bind textures we want to render
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, bufferTexture[pong]);
+
+            break;
+    }
 
     // Draw scene
     glBindVertexArray(vao[2]);
@@ -400,6 +441,7 @@ void ShaderManager::renderTextureWithShader(ListShaderType shaderType, int width
 }
 
 void ShaderManager::renderLighting(ShaderManager& shaderManager, LightManager& lightManager,  int width, int height, GLuint* texturesToRead, GLuint textureToWrite, GLuint* vao, glm::vec3 cameraEye, double t){
+    
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 , GL_TEXTURE_2D, textureToWrite, 0);
 
     // Clear the front buffer
@@ -412,13 +454,13 @@ void ShaderManager::renderLighting(ShaderManager& shaderManager, LightManager& l
     // Bind textures we want to render
     // Bind color to unit 0
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texturesToRead[0]);        
+    glBindTexture(GL_TEXTURE_2D, texturesToRead[0]);
     // Bind normal to unit 1
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, texturesToRead[1]);    
+    glBindTexture(GL_TEXTURE_2D, texturesToRead[1]);
     // Bind depth to unit 2
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, texturesToRead[2]);        
+    glBindTexture(GL_TEXTURE_2D, texturesToRead[2]);
 
     // Deferred lights on quad
     glBindVertexArray(vao[2]);
@@ -460,7 +502,6 @@ void ShaderManager::computeCoc(int width, int height, GLuint bufferTextureToRead
     glBindVertexArray(vao[2]);
     glDrawElements(GL_TRIANGLES, quad_triangleCount * 3, GL_UNSIGNED_INT, (void*)0);
 }
-
 
 Shader& ShaderManager::getShader(ListShaderType shaderType){
 	return m_shaderMap.at(shaderType);

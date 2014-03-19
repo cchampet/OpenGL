@@ -199,6 +199,14 @@ void TextureManager::loadFxTextures(GLuint* fxBufferTextures, size_t size, int w
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+    // Create texture => Lights
+    glBindTexture(GL_TEXTURE_2D, fxBufferTextures[4]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
@@ -219,9 +227,9 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     * Planetes
     */
     // Bind gbuffer travelPlanetes shader
-    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_PLANETES).program);
+    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_SPIRAL).program);
     // Upload uniforms
-    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_PLANETES, cameraEye, t);
+    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_SPIRAL, cameraEye, t);
     // Bind textures
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, bufferTextures[5]);
@@ -245,6 +253,40 @@ void TextureManager::fillFrameBufferTravel1(GLuint fbo, GLuint* drawBuffers, int
     glBindTexture(GL_TEXTURE_2D, bufferTextures[4]);
     // Render vaos
     glBindVertexArray(vao[0]); //cube
+    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
+    
+    // Unbind framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+void TextureManager::fillFrameBufferTravel2(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glDrawBuffers(2, drawBuffers);
+
+    // Viewport 
+    glViewport(0, 0, width, height );
+
+    // Default states
+    glEnable(GL_DEPTH_TEST);
+
+    // Clear the front buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    /**
+    * Planetes
+    */
+    // Bind gbuffer travelPlanetes shader
+    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_TRAVEL_PLANETE).program);
+    // Upload uniforms
+    shaderManager.uploadUniforms(ShaderManager::GBUFFER_TRAVEL_PLANETE, cameraEye, t);
+    // Bind textures
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, bufferTextures[5]);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, bufferTextures[6]);
+    // Render vaos
+    glBindVertexArray(vao[3]); //sphere
     glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
     
     // Unbind framebuffer

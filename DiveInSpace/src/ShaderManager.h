@@ -33,7 +33,8 @@ struct ShaderManager
 	*/
 	enum ListShaderType{
 		GBUFFER,
-        GBUFFER_TRAVEL_PLANETES,
+        GBUFFER_TRAVEL_PLANETE,
+        GBUFFER_TRAVEL_SPIRAL,
         GBUFFER_TRAVEL_MONOLITHE,
 		BLIT,
 		DIR_LIGHT,
@@ -44,6 +45,7 @@ struct ShaderManager
 		BLUR,
 		COC,
 		DOF,
+        GLOW,
 		EXPLOSION,
         COLORSPACE, 
         STAR
@@ -52,7 +54,6 @@ struct ShaderManager
 	ShaderManager();
 
     void addShader(const char* shaderFile, int typemask, ListShaderType shaderType);
-
 
 	void uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEye, double t);
 
@@ -96,9 +97,9 @@ struct ShaderManager
     /**
     * Manage specific scenes
     */
-    void updateTravelElements(double t){
-        //sobelCoef = 1.f;
-        //gamma = 1+(1+cos(10*t));
+    void updateTravel2Elements(double t){
+        sobelCoef = 1.f;
+        blurSamples = 15.f;
     }
 
 private:
@@ -112,6 +113,7 @@ private:
 	float farPlane;
 	float gamma;
 	float sobelCoef;
+    bool  glow;
 
     float translateFactor;
     bool  bIsHalStop;
@@ -135,16 +137,24 @@ private:
     GLuint gbuffer_diffuseLocation;
     GLuint gbuffer_specLocation;
 
-    // Location for gbufferTravelPlanetes_shader
-    GLuint gbufferTravelPlanetes_projectionLocation;
-    GLuint gbufferTravelPlanetes_viewLocation; 
-    GLuint gbufferTravelPlanetes_objectLocation;
-    GLuint gbufferTravelPlanetes_timeLocation;  
-    GLuint gbufferTravelPlanetes_diffuseLocation;
-    GLuint gbufferTravelPlanetes_specLocation;
-    GLuint gbufferTravelPlanetes_translateFactorLocation;
-    GLuint gbufferTravelPlanetes_spiralRadiusLocation;
-    GLuint gbufferTravelPlanetes_spiralAngleLocation;
+    // Location for gbufferTravelPlanete_shader
+    GLuint gbufferTravelPlanete_projectionLocation;
+    GLuint gbufferTravelPlanete_viewLocation; 
+    GLuint gbufferTravelPlanete_objectLocation;
+    GLuint gbufferTravelPlanete_timeLocation;  
+    GLuint gbufferTravelPlanete_diffuseLocation;
+    GLuint gbufferTravelPlanete_specLocation;
+
+    // Location for gbufferTravelSpiral_shader
+    GLuint gbufferTravelSpiral_projectionLocation;
+    GLuint gbufferTravelSpiral_viewLocation; 
+    GLuint gbufferTravelSpiral_objectLocation;
+    GLuint gbufferTravelSpiral_timeLocation;  
+    GLuint gbufferTravelSpiral_diffuseLocation;
+    GLuint gbufferTravelSpiral_specLocation;
+    GLuint gbufferTravelSpiral_translateFactorLocation;
+    GLuint gbufferTravelSpiral_spiralRadiusLocation;
+    GLuint gbufferTravelSpiral_spiralAngleLocation;
 
     // Location for gbufferTravelMonolythe_shader
     GLuint gbufferTravelMonolithe_projectionLocation;
@@ -225,6 +235,10 @@ private:
     GLuint dof_colorLocation;
     GLuint dof_blurLocation;
     GLuint dof_cocLocation;
+
+    // Location for glow_shader
+    GLuint glow_colorLocation;
+    GLuint glow_blurLocation;
 
     // Location for explosion_shader
     GLuint explosion_channelLocation;
