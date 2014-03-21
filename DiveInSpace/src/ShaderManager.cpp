@@ -153,6 +153,14 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
             star_timeLocation = glGetUniformLocation(shader.program, "Time");
 
             break;
+
+        case INTERSTELLAR:
+            interstellar_resolutionLocation = glGetUniformLocation(shader.program, "Resolution");
+            interstellar_timeLocation = glGetUniformLocation(shader.program, "Time");
+            interstellar_tex1Location = glGetUniformLocation(shader.program, "iChannel0");
+
+            break;
+
     }
 }
 
@@ -265,6 +273,14 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniform1f(star_timeLocation, t);
 
             break;
+
+        case INTERSTELLAR:
+            glUniform3fv(interstellar_resolutionLocation, 1, glm::value_ptr(glm::vec3(800, 800, 800)));
+            glUniform1f(interstellar_timeLocation, t);
+            glUniform1i(interstellar_tex1Location, 0);
+
+            break;
+
   
     }
 }
@@ -353,13 +369,17 @@ void ShaderManager::renderTextureWithShader(ListShaderType shaderType, int width
 
             break;
 
+
         default:
+
+            // Bind textures we want to render
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, bufferTexture[pong]);   
+            
             break;
     }    
 
-    // Bind textures we want to render
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, bufferTexture[pong]);   
+    
 
     // Draw scene
     glBindVertexArray(vao[2]);

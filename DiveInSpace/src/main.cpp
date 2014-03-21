@@ -36,7 +36,7 @@
 * > 0 => activate the version of the scene (v1, v2...)
 */
 #define MODE_HAL    0
-#define MODE_TRAVEL 1
+#define MODE_TRAVEL 4
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -154,6 +154,7 @@ int main( int argc, char **argv )
     shaderManager.addShader("shaders/explosion.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::EXPLOSION);
     shaderManager.addShader("shaders/colorSpace.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::COLORSPACE);
     shaderManager.addShader("shaders/star.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::STAR);
+    shaderManager.addShader("shaders/interstellar.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::INTERSTELLAR);
     
     /* --------------------------------------------------------------------------------------------- */
     /* ------------------------------------------ Geometry ----------------------------------------- */
@@ -484,6 +485,13 @@ int main( int argc, char **argv )
             #if MODE_TRAVEL == 3
                 // Star pass
                 shaderManager.renderTextureWithShader(ShaderManager::STAR, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
+            #endif
+
+            #if MODE_TRAVEL == 4
+
+
+                // Star pass
+                //shaderManager.renderTextureWithShader(ShaderManager::INTERSTELLAR, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
             #endif
 
         //

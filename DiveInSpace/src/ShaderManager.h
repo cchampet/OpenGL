@@ -45,7 +45,8 @@ struct ShaderManager
 		DOF,
 		EXPLOSION,
         COLORSPACE, 
-        STAR
+        STAR, 
+        INTERSTELLAR
 	};
 
 	ShaderManager();
@@ -201,6 +202,12 @@ private:
     // Location for star shader
     GLuint star_resolutionLocation;
     GLuint star_timeLocation;
+
+    // Location for interstellar shader
+    GLuint interstellar_resolutionLocation;
+    GLuint interstellar_timeLocation;
+    GLuint interstellar_tex1Location;
+
 
 
 };
