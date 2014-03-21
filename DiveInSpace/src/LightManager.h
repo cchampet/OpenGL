@@ -163,6 +163,30 @@ public:
 			1.f);								// Intensity
 	}
 
+	void createIMACLights(){
+		// White light
+		addDirLight(glm::vec3(0.f, -1.f, 0.f), 		// Direction
+					glm::vec3(1.f, 1.f, 1.f), 		// Color
+					glm::vec3(0.2f, 0.2f, 0.2f),	// Specular 
+					0.5f);							// Intensity
+
+		// White light
+		addDirLight(glm::vec3(1.f, 0.f, 0.f), 
+					glm::vec3(1.f, 1.f, 1.f), 
+					glm::vec3(0.2f, 0.2f, 0.2f), 
+					0.5f);
+
+		// White light
+		addDirLight(glm::vec3(0.f, 0.f, -1.f), 
+					glm::vec3(1.f, 1.f, 1.f), 
+					glm::vec3(0.2f, 0.2f, 0.2f), 
+					0.5f);
+
+
+
+
+	}
+
 	void createTravel1Lights(){
 		//Ambiante light (update color in updateTravel1Lights())
 		addDirLight(glm::vec3(0.f, -1.f, 0.f), 
