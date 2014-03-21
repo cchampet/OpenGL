@@ -64,7 +64,7 @@ void drawGUI(int width, int height, ShaderManager& shaderManager, LightManager& 
     
         int logScroll_1 = 0;
         char lineBuffer[512];
-        imguiBeginScrollArea("Dive In Space", width - 210, height - 350, 200, 300, &logScroll_1);
+        imguiBeginScrollArea("Dive In Space", width - 210, height - 550, 200, 500, &logScroll_1);
             sprintf(lineBuffer, "FPS %f", fps);
             imguiLabel(lineBuffer);
             imguiSlider("Gamma", shaderManager.getGamma(), 0.0, 3.0, 0.1);
@@ -77,6 +77,10 @@ void drawGUI(int width, int height, ShaderManager& shaderManager, LightManager& 
             imguiSlider("Translate Factor", shaderManager.getTranslateFactor(), -5.0, 5.0, 0.1);
             imguiSlider("Spiral Angle", shaderManager.getSpiralAngle(), 1.0, 5.0, 0.1);
             imguiSlider("Spiral Radius", shaderManager.getSpiralRadius(), 1.0, 5.0, 0.1);
+
+            imguiSlider("Star Size", shaderManager.getStarSize(), 0., 15.0, 0.1);
+            imguiSlider("Num Star", shaderManager.getNumStar(), 10., 150.0, 1.);
+            imguiSlider("Distance Factor", shaderManager.getDistanceFactor(), 0., 4000.0, 1.);
         imguiEndScrollArea();
 
         int logScroll_2 = 1;

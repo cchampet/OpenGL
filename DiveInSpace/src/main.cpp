@@ -36,8 +36,8 @@
 * > 0 => activate the version of the scene (v1, v2...)
 */
 #define MODE_HAL    0
-#define MODE_IMAC   1
-#define MODE_TRAVEL 0
+#define MODE_IMAC   0
+#define MODE_TRAVEL 4
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -488,7 +488,7 @@ int main( int argc, char **argv )
             textureManager.fillFrameBufferTravel1(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
         #endif
 
-        #if MODE_TRAVEL == 2
+        #if MODE_TRAVEL == 2 || MODE_TRAVEL == 4
             textureManager.fillFrameBufferTravel2(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
         #endif
         
@@ -535,7 +535,7 @@ int main( int argc, char **argv )
                 shaderManager.updateTravel2Elements(t);
             #endif
 
-            #if MODE_HAL == 1 || MODE_TRAVEL == 1 || MODE_TRAVEL == 2 || MODE_IMAC == 1
+            #if MODE_HAL == 1 || MODE_TRAVEL == 1 || MODE_TRAVEL == 2 || MODE_IMAC == 1 || MODE_TRAVEL == 4
                 // LIGHTS
                 shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
                 shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[4], vao, camera.m_eye, t);
@@ -583,7 +583,7 @@ int main( int argc, char **argv )
         // Display debug (pas à la noix non non non !)
         //textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
 #if 1
-        //drawGUI(width, height, shaderManager, lightManager, fps, leftButton);
+        drawGUI(width, height, shaderManager, lightManager, fps, leftButton);
 #endif
         
         // Check for errors

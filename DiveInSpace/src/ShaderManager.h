@@ -82,6 +82,10 @@ struct ShaderManager
     inline bool* isMonolitheStop() { return &bIsMonolitheStop;}
     inline float* getSpiralAngle() { return &spiralAngle;}
     inline float* getSpiralRadius() { return &spiralRadius;}
+    inline float* getStarSize() { return &starSize;}
+    inline float* getNumStar() { return &numStar;}
+    inline float* getDistanceFactor() { return &distanceFactor;}
+    inline glm::vec4* getDominantColor() { return &dominantColor;}
 
 	inline void setBlurSamples(float blur) { blurSamples = blur;}
 	inline void setFocusPlane(float focus) { focusPlane = focus;}
@@ -94,13 +98,17 @@ struct ShaderManager
     inline void setIsMonolitheStop(bool flag) { bIsMonolitheStop = flag;}
     inline void setSpiralAngle(float angle) { spiralAngle = angle;}
     inline void setSpiralRadius(float radius) { spiralRadius = radius;}
+    inline void setStarSize(float newStarSize) { starSize = newStarSize;}
+    inline void setNumStar(float newNumStar) { numStar = newNumStar;}
+    inline void setDistanceFactor(float newDistanceFactor) { distanceFactor = newDistanceFactor;}
+    inline void setDominantColor(glm::vec4 newDominantColor) { dominantColor = newDominantColor;}
 
     /**
     * Manage specific scenes
     */
     void updateTravel2Elements(double t){
-        sobelCoef = 1.f;
-        blurSamples = 15.f;
+        // sobelCoef = 1.f;
+        blurSamples = 20.f;
     }
 
 private:
@@ -116,10 +124,18 @@ private:
 	float sobelCoef;
 
     float translateFactor;
+    
     bool  bIsHalStop;
+    
     bool  bIsMonolitheStop;
+    
     float spiralAngle;
     float spiralRadius;
+    
+    float starSize;
+    float numStar;
+    float distanceFactor;
+    glm::vec4 dominantColor;
 
     // Location for camera
     glm::mat4 projection;
@@ -133,7 +149,7 @@ private:
     GLuint gbuffer_projectionLocation;
     GLuint gbuffer_viewLocation; 
     GLuint gbuffer_objectLocation;
-    GLuint gbuffer_timeLocation;  
+    GLuint gbuffer_timeLocation;
     GLuint gbuffer_diffuseLocation;
     GLuint gbuffer_specLocation;
 
@@ -260,8 +276,10 @@ private:
     // Location for star shader
     GLuint star_resolutionLocation;
     GLuint star_timeLocation;
-
-
+    GLuint star_starSizeLocation;
+    GLuint star_numStarLocation;
+    GLuint star_distanceFactorLocation;
+    GLuint star_dominantColorLocation;
 };
 
 #endif

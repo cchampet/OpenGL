@@ -19,6 +19,10 @@ ShaderManager::ShaderManager() {
     bIsMonolitheStop = false; //for Monolithe
     spiralAngle = 1.1f; //for Travel_Planetes
     spiralRadius = 1.05f; //for Travel_Planetes
+    starSize = 12.f; //for Star
+    numStar = 50.f; //for Star
+    distanceFactor = 1.f; //for Star
+    dominantColor = glm::vec4(0.5,0.3,0.2, 1.0); //for Star
 }
 
 void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderType shaderType){
@@ -199,6 +203,10 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
         case STAR:
             star_resolutionLocation = glGetUniformLocation(shader.program, "Resolution");
             star_timeLocation = glGetUniformLocation(shader.program, "Time");
+            star_starSizeLocation = glGetUniformLocation(shader.program, "StarSize");
+            star_numStarLocation = glGetUniformLocation(shader.program, "NumStar");
+            star_distanceFactorLocation = glGetUniformLocation(shader.program, "DistanceFactor");
+            star_dominantColorLocation = glGetUniformLocation(shader.program, "DominantColor");
 
             break;
     }
@@ -351,6 +359,10 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
         case  STAR:
             glUniform3fv(star_resolutionLocation, 1, glm::value_ptr(glm::vec3(800, 800, 800)));
             glUniform1f(star_timeLocation, t);
+            glUniform1f(star_starSizeLocation, starSize);
+            glUniform1i(star_numStarLocation, numStar);
+            glUniform1f(star_distanceFactorLocation, distanceFactor);
+            glUniform4fv(star_dominantColorLocation, 1, glm::value_ptr(dominantColor));
 
             break;
   
