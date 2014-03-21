@@ -26,6 +26,10 @@ void main(void)
 	uv = VertexTexCoord;
 	normal = vec3(Object * vec4((VertexNormal+1.0)*0.5, 1.0));
 	position = vec3(VertexPosition);
+	//scale elements
+	position.x *= 0.2;
+	position.y *= 0.2;
+	position.z *= 0.2;
 	//spirale
 	if(gl_InstanceID % 2 == 0){
 		position.x += pow(SpiralRadius, angle) * cos(angle);
@@ -35,7 +39,7 @@ void main(void)
 		position.x += pow(SpiralRadius, angle) * sin(angle);
 		position.y += pow(SpiralRadius, angle) * cos(angle);
 	}
-	//position.z -= 3000;//offset to have the time to start the video record
+	position.z -= 1000;//offset to have the time to start the video record
 	position.z -= gl_InstanceID;
 	//movement of elements
 	position.z += 25*TranslateFactor*Time;

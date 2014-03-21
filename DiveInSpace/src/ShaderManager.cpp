@@ -5,6 +5,8 @@
 #include <cstdlib> //EXIT_FAILURE
 #include <cstdio> //fprintf
 
+const float TIME_SCALE_FOR_RECORDING = 0.25f;
+
 ShaderManager::ShaderManager() {
     //FX
     blurSamples = 1.0;
@@ -208,7 +210,7 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniformMatrix4fv(gbuffer_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
             glUniformMatrix4fv(gbuffer_viewLocation, 1, 0, glm::value_ptr(worldToView));
             glUniformMatrix4fv(gbuffer_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
-            glUniform1f(gbuffer_timeLocation, t);
+            glUniform1f(gbuffer_timeLocation, t*TIME_SCALE_FOR_RECORDING);
             glUniform1i(gbuffer_diffuseLocation, 0);
             glUniform1i(gbuffer_specLocation, 1);
 
@@ -218,7 +220,7 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniformMatrix4fv(gbufferTravelPlanete_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
             glUniformMatrix4fv(gbufferTravelPlanete_viewLocation, 1, 0, glm::value_ptr(worldToView));
             glUniformMatrix4fv(gbufferTravelPlanete_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
-            glUniform1f(gbufferTravelPlanete_timeLocation, t);
+            glUniform1f(gbufferTravelPlanete_timeLocation, t*TIME_SCALE_FOR_RECORDING);
             glUniform1i(gbufferTravelPlanete_diffuseLocation, 0);
             glUniform1i(gbufferTravelPlanete_specLocation, 1);
 
@@ -228,7 +230,7 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniformMatrix4fv(gbufferTravelSpiral_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
             glUniformMatrix4fv(gbufferTravelSpiral_viewLocation, 1, 0, glm::value_ptr(worldToView));
             glUniformMatrix4fv(gbufferTravelSpiral_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
-            glUniform1f(gbufferTravelSpiral_timeLocation, t);
+            glUniform1f(gbufferTravelSpiral_timeLocation, t*TIME_SCALE_FOR_RECORDING);
             glUniform1i(gbufferTravelSpiral_diffuseLocation, 0);
             glUniform1i(gbufferTravelSpiral_specLocation, 1);
             glUniform1f(gbufferTravelSpiral_translateFactorLocation, translateFactor);
@@ -241,7 +243,7 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniformMatrix4fv(gbufferTravelMonolithe_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
             glUniformMatrix4fv(gbufferTravelMonolithe_viewLocation, 1, 0, glm::value_ptr(worldToView));
             glUniformMatrix4fv(gbufferTravelMonolithe_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
-            glUniform1f(gbufferTravelMonolithe_timeLocation, t);
+            glUniform1f(gbufferTravelMonolithe_timeLocation, t*TIME_SCALE_FOR_RECORDING);
             glUniform1i(gbufferTravelMonolithe_diffuseLocation, 0);
             glUniform1i(gbufferTravelMonolithe_specLocation, 1);
             glUniform1f(gbufferTravelMonolithe_translateFactorLocation, translateFactor);
@@ -260,7 +262,7 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniform1i(dirLight_depthLocation, 2);
             glUniform3fv(dirLight_cameraPositionLocation, 1, glm::value_ptr(cameraEye));
             glUniformMatrix4fv(dirLight_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
-            glUniform1f(dirLight_timeLocation, t);
+            glUniform1f(dirLight_timeLocation, t*TIME_SCALE_FOR_RECORDING);
 
             break;
 
@@ -270,7 +272,7 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniform1i(pointLight_depthLocation, 2);
             glUniform3fv(pointLight_cameraPositionLocation, 1, glm::value_ptr(cameraEye));
             glUniformMatrix4fv(pointLight_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
-            glUniform1f(pointLight_timeLocation, t);
+            glUniform1f(pointLight_timeLocation, t*TIME_SCALE_FOR_RECORDING);
 
             break;
 
@@ -280,7 +282,7 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniform1i(spotLight_depthLocation, 2);
             glUniform3fv(spotLight_cameraPositionLocation, 1, glm::value_ptr(cameraEye));
             glUniformMatrix4fv(spotLight_inverseViewProjectionLocation, 1, 0, glm::value_ptr(screenToWorld));
-            glUniform1f(spotLight_timeLocation, t);
+            glUniform1f(spotLight_timeLocation, t*TIME_SCALE_FOR_RECORDING);
 
             break;
 
@@ -325,19 +327,19 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
 
         case  EXPLOSION:
             glUniform1i(explosion_channelLocation, 0);
-            glUniform1i(explosion_timeLocation, t);
+            glUniform1i(explosion_timeLocation, t*TIME_SCALE_FOR_RECORDING);
 
             break;
 
         case  COLORSPACE:
             glUniform3fv(colorspace_resolutionLocation, 1, glm::value_ptr(glm::vec3(800, 800, 800)));
-            glUniform1f(colorspace_timeLocation, t);
+            glUniform1f(colorspace_timeLocation, t*TIME_SCALE_FOR_RECORDING);
 
             break;
 
         case  STAR:
             glUniform3fv(star_resolutionLocation, 1, glm::value_ptr(glm::vec3(800, 800, 800)));
-            glUniform1f(star_timeLocation, t);
+            glUniform1f(star_timeLocation, t*TIME_SCALE_FOR_RECORDING);
             glUniform1f(star_starSizeLocation, starSize);
             glUniform1i(star_numStarLocation, numStar);
             glUniform1f(star_distanceFactorLocation, distanceFactor);

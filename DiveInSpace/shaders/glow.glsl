@@ -37,7 +37,7 @@ void main(void)
 	//float mix = (renderScene.r + renderScene.y + renderScene.z) / 3.;
 	//OutColor = vec4((renderScene*mix)+(blur*(1-mix)), 1.0);
 	
-	OutColor = vec4((renderScene+(blur/5.))/2., 1.0);
+	OutColor = vec4((renderScene+(blur*0.2))*0.5, 1.0);
 	if(renderScene == vec3(0, 0, 0)){
 		//full blur
 		OutColor = vec4(blur, 1.0);

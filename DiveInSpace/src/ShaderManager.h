@@ -105,6 +105,10 @@ struct ShaderManager
     /**
     * Manage specific scenes
     */
+    void updateHalElements(double t){
+        gamma = 2.f;
+    }
+
     void updateTravel2Elements(double t){
         // sobelCoef = 1.f;
         blurSamples = 20.f;

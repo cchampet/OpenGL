@@ -31,7 +31,7 @@ void main(void)
 	position.z *= 2;
 	if(IsMonolitheStop == 0){
 		//offset of the element
-		position.z -= 2000;//5000;
+		position.z -= 3000;//2000
 		//movement
 		position.z += 25*TranslateFactor*Time;
 	}

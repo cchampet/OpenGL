@@ -492,6 +492,7 @@ int main( int argc, char **argv )
             
             // Lighting
             #if MODE_HAL == 1
+                shaderManager.updateHalElements(t);
                 if(!(*(shaderManager.isHalStop())))
                     lightManager.updateHalLights(t);
             #endif
@@ -505,7 +506,7 @@ int main( int argc, char **argv )
                 shaderManager.updateTravel2Elements(t);
             #endif
 
-            #if MODE_HAL == 1 || MODE_TRAVEL == 1 || MODE_TRAVEL == 2 || MODE_TRAVEL == 4
+            #if MODE_HAL == 1 || MODE_TRAVEL == 1 || MODE_TRAVEL == 2
                 // LIGHTS
                 shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
                 shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[4], vao, camera.m_eye, t);
@@ -550,7 +551,7 @@ int main( int argc, char **argv )
         // Display debug (pas à la noix non non non !)
         //textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
 #if 1
-        drawGUI(width, height, shaderManager, lightManager, fps, leftButton);
+        //drawGUI(width, height, shaderManager, lightManager, fps, leftButton);
 #endif
         
         // Check for errors

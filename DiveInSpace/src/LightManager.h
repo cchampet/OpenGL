@@ -164,7 +164,7 @@ public:
 	}
 
 	void createTravel1Lights(){
-		// Ambiante light (update color in updateTravel1Lights())
+		//Ambiante light (update color in updateTravel1Lights())
 		addDirLight(glm::vec3(0.f, -1.f, 0.f), 
 					glm::vec3(0.f, 0.f, 0.f), 
 					glm::vec3(0.2f, 0.2f, 0.2f), 
@@ -186,12 +186,12 @@ public:
 
 	void updateHalLights(double t){
 		// Between 0.9 and 1.5
-		setSPLExternalAngle(1, 1.2f + cos(t)/3.);
+		setSPLExternalAngle(1, 1.2f + cos(t*0.25f)/3.);
 	}
 
 	void updateTravel1Lights(double t){
 		glm::vec3 oldColor = getDLDiffuse(0);
-		glm::vec3 newColor = glm::vec3((oldColor.r + cos(10*t))/2.f, (oldColor.g + sin(10*t))/2.f, 0.5f+(oldColor.b + cos(10*t))/2.f);
+		glm::vec3 newColor = glm::vec3(oldColor.r, (oldColor.g + sin(10*t))/2.f, 0.5f+(oldColor.b + cos(10*t))/2.f);
 		setDLDiffuse(0, newColor);
 	}
 

@@ -55,8 +55,9 @@ void main(void)
 		//scale element
 		position *= vec3(5, 5, 5);
 		//rotation arround origin
-		position.x += 100*gl_InstanceID*cos(Time/gl_InstanceID);
-		position.z += 100*gl_InstanceID*sin(Time/gl_InstanceID);
+		position.x += 150*gl_InstanceID*cos(Time/gl_InstanceID);
+		position.y -= 20;
+		position.z += 150*gl_InstanceID*sin(Time/gl_InstanceID);
 	}
 
 	gl_Position = Projection * View * vec4(position, 1.0);
