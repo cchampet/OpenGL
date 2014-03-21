@@ -327,6 +327,40 @@ void TextureManager::fillFrameBufferHal(GLuint fbo, GLuint* drawBuffers, int wid
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+void TextureManager::fillFrameBufferImac(GLuint fbo, GLuint* drawBuffers, int width, int height, ShaderManager& shaderManager, GLuint* bufferTextures, GLuint* vao, glm::vec3 cameraEye, double t){
+
+    glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+    glDrawBuffers(2, drawBuffers);
+
+    // Viewport 
+    glViewport(0, 0, width, height );
+
+    // Default states
+    glEnable(GL_DEPTH_TEST);
+
+    // Clear the front buffer
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    // Bind gbuffer shader
+    glUseProgram(shaderManager.getShader(ShaderManager::GBUFFER_IMAC).program);
+
+    // Upload uniforms
+    shaderManager.uploadUniforms(ShaderManager::GBUFFER_IMAC, cameraEye, t);
+    
+    // Bind textures
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, bufferTextures[0]);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, bufferTextures[1]);
+
+    // Render vaos
+    glBindVertexArray(vao[0]); // Cube
+    glDrawElementsInstanced(GL_TRIANGLES, cube_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 3);
+
+    // Unbind framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
 void TextureManager::renderMainScreen(ShaderManager& shaderManager, int width, int height, GLuint bufferTexture, GLuint* vao, glm::vec3 cameraEye, double t){
     
     glViewport( 0, 0, width, height);

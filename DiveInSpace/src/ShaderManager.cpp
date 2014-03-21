@@ -44,6 +44,17 @@ void ShaderManager::addShader(const char* shaderFile, int typemask, ListShaderTy
 
             break;
 
+        case GBUFFER_IMAC:
+            gbuffer_imac_projectionLocation = glGetUniformLocation(shader.program, "Projection");
+            gbuffer_imac_viewLocation = glGetUniformLocation(shader.program, "View");
+            gbuffer_imac_objectLocation = glGetUniformLocation(shader.program, "Object");
+            gbuffer_imac_timeLocation = glGetUniformLocation(shader.program, "Time");
+            gbuffer_imac_diffuseLocation = glGetUniformLocation(shader.program, "Diffuse");
+            gbuffer_imac_specLocation = glGetUniformLocation(shader.program, "Spec");
+
+            break;
+
+
         case GBUFFER_TRAVEL_PLANETE:
             gbufferTravelPlanete_projectionLocation = glGetUniformLocation(shader.program, "Projection");
             gbufferTravelPlanete_viewLocation = glGetUniformLocation(shader.program, "View");
@@ -203,6 +214,16 @@ void ShaderManager::uploadUniforms(ListShaderType shaderType, glm::vec3 cameraEy
             glUniform1f(gbuffer_timeLocation, t);
             glUniform1i(gbuffer_diffuseLocation, 0);
             glUniform1i(gbuffer_specLocation, 1);
+
+            break;
+
+        case GBUFFER_IMAC:
+            glUniformMatrix4fv(gbuffer_imac_projectionLocation, 1, 0, glm::value_ptr(ShaderManager::projection));
+            glUniformMatrix4fv(gbuffer_imac_viewLocation, 1, 0, glm::value_ptr(worldToView));
+            glUniformMatrix4fv(gbuffer_imac_objectLocation, 1, 0, glm::value_ptr(objectToWorld));
+            glUniform1f(gbuffer_imac_timeLocation, t);
+            glUniform1i(gbuffer_imac_diffuseLocation, 0);
+            glUniform1i(gbuffer_imac_specLocation, 1);
 
             break;
 

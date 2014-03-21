@@ -33,6 +33,7 @@ struct ShaderManager
 	*/
 	enum ListShaderType{
 		GBUFFER,
+        GBUFFER_IMAC,
         GBUFFER_TRAVEL_PLANETE,
         GBUFFER_TRAVEL_SPIRAL,
         GBUFFER_TRAVEL_MONOLITHE,
@@ -135,6 +136,15 @@ private:
     GLuint gbuffer_timeLocation;  
     GLuint gbuffer_diffuseLocation;
     GLuint gbuffer_specLocation;
+
+    // Location for gbuffer_imac_shader
+    GLuint gbuffer_imac_projectionLocation;
+    GLuint gbuffer_imac_viewLocation; 
+    GLuint gbuffer_imac_objectLocation;
+    GLuint gbuffer_imac_timeLocation;  
+    GLuint gbuffer_imac_diffuseLocation;
+    GLuint gbuffer_imac_specLocation;
+
 
     // Location for gbufferTravelPlanete_shader
     GLuint gbufferTravelPlanete_projectionLocation;

@@ -36,7 +36,8 @@
 * > 0 => activate the version of the scene (v1, v2...)
 */
 #define MODE_HAL    0
-#define MODE_TRAVEL 2
+#define MODE_IMAC   1
+#define MODE_TRAVEL 0
 
 #ifndef DEBUG_PRINT
 #define DEBUG_PRINT 1
@@ -122,7 +123,10 @@ int main( int argc, char **argv )
     #if MODE_HAL == 1
         lightManager.createHalLights();
     #endif
-    
+    #if MODE_IMAC == 1
+        lightManager.createIMACLights();
+    #endif
+
     #if MODE_TRAVEL == 1
         lightManager.createTravel1Lights();
     #endif
@@ -150,10 +154,13 @@ int main( int argc, char **argv )
     /* ------------------------------------------ Shaders ------------------------------------------ */
     /* --------------------------------------------------------------------------------------------- */
     shaderManager.addShader("shaders/gbuffer.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER);
+    shaderManager.addShader("shaders/imac.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_IMAC);
     shaderManager.addShader("shaders/gbufferTravelPlanete.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_PLANETE);
     shaderManager.addShader("shaders/gbufferTravelSpiral.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_SPIRAL);
     shaderManager.addShader("shaders/gbufferTravelMonolithe.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::GBUFFER_TRAVEL_MONOLITHE);
     shaderManager.addShader("shaders/blit.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::BLIT);
+    
+
     //Light
     shaderManager.addShader("shaders/dirLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::DIR_LIGHT);
     shaderManager.addShader("shaders/pointLight.glsl", Shader::VERTEX_SHADER | Shader::FRAGMENT_SHADER, ShaderManager::POINT_LIGHT);
@@ -473,6 +480,10 @@ int main( int argc, char **argv )
             textureManager.fillFrameBufferHal(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
         #endif
 
+        #if MODE_IMAC == 1
+            textureManager.fillFrameBufferImac(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
+        #endif
+
         #if MODE_TRAVEL == 1
             textureManager.fillFrameBufferTravel1(gbufferFbo, gbufferDrawBuffers, width, height, shaderManager, textures, vao, camera.m_eye, t);
         #endif
@@ -496,6 +507,25 @@ int main( int argc, char **argv )
                     lightManager.updateHalLights(t);
             #endif
 
+            // #if MODE_IMAC == 1
+            //     // LIGHTS
+            //     shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
+            //     shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[4], vao, camera.m_eye, t);
+            //     // COC
+            //     shaderManager.computeCoc(width, height, gbufferTextures[2], fxBufferTextures[2], vao, camera.m_eye, t);
+            //     // SOBEL
+            //     shaderManager.renderTextureWithShader(ShaderManager::SOBEL, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
+            //     shaderManager.renderTextureWithShader(ShaderManager::SOBEL, width, height, fxBufferTextures, vao, 4, 0, camera.m_eye, t);
+            //     // BLUR
+            //     shaderManager.renderTextureWithShader(ShaderManager::BLUR, width, height, fxBufferTextures, vao, 3, 1, camera.m_eye, t);
+            //     // DOF
+            //     shaderManager.renderTextureWithShader(ShaderManager::DOF, width, height, fxBufferTextures, vao, 0, 1, camera.m_eye, t);
+            //     // GLOW
+            //     shaderManager.renderTextureWithShader(ShaderManager::GLOW, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
+            //     // GAMMA
+            //     shaderManager.renderTextureWithShader(ShaderManager::GAMMA, width, height, fxBufferTextures, vao, 0, 1, camera.m_eye, t);
+            // #endif
+
             #if MODE_TRAVEL == 1
                 lightManager.updateTravel1Lights(t);
             #endif
@@ -505,7 +535,7 @@ int main( int argc, char **argv )
                 shaderManager.updateTravel2Elements(t);
             #endif
 
-            #if MODE_HAL == 1 || MODE_TRAVEL == 1 || MODE_TRAVEL == 2
+            #if MODE_HAL == 1 || MODE_TRAVEL == 1 || MODE_TRAVEL == 2 || MODE_IMAC == 1
                 // LIGHTS
                 shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[0], vao, camera.m_eye, t);
                 shaderManager.renderLighting(shaderManager, lightManager, width, height, gbufferTextures, fxBufferTextures[4], vao, camera.m_eye, t);
@@ -535,7 +565,7 @@ int main( int argc, char **argv )
                 shaderManager.renderTextureWithShader(ShaderManager::STAR, width, height, fxBufferTextures, vao, 1, 0, camera.m_eye, t);
             #endif
 
-        //
+        //²²
         // Unbind framebuffer : now that we render all the textures, we can debind the fxBuffer
         //
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -546,6 +576,9 @@ int main( int argc, char **argv )
         #endif
         #if MODE_TRAVEL == 3 || MODE_TRAVEL == 4
             textureManager.renderMainScreen(shaderManager, width, height, fxBufferTextures[1], vao, camera.m_eye, t);
+        #endif
+        #if MODE_IMAC == 1
+            textureManager.renderMainScreen(shaderManager, width, height, fxBufferTextures[0], vao, camera.m_eye, t);
         #endif
         // Display debug (pas à la noix non non non !)
         //textureManager.renderDebugScreens(3, width, height, gbufferTextures, vao);
