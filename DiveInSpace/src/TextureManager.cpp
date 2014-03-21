@@ -287,7 +287,7 @@ void TextureManager::fillFrameBufferTravel2(GLuint fbo, GLuint* drawBuffers, int
     glBindTexture(GL_TEXTURE_2D, bufferTextures[6]);
     // Render vaos
     glBindVertexArray(vao[3]); //sphere
-    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 1);
+    glDrawElementsInstanced(GL_TRIANGLES, sphere_triangleCount * 3, GL_UNSIGNED_INT, (void*)0, 10);
     
     // Unbind framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

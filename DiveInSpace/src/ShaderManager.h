@@ -98,8 +98,8 @@ struct ShaderManager
     * Manage specific scenes
     */
     void updateTravel2Elements(double t){
-        sobelCoef = 1.f;
-        blurSamples = 15.f;
+        // sobelCoef = 1.f;
+        blurSamples = 20.f;
     }
 
 private:

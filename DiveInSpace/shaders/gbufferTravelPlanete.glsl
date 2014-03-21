@@ -32,13 +32,32 @@ void main(void)
 	uv = VertexTexCoord;
 	normal = vec3(Object * vec4((VertexNormal+1.0)*0.5, 1.0));
 	position = vec3(VertexPosition);
-	//scale element
-	position *= vec3(10, 10, 10);
-	//rotation on himself
-	position *= rotY;
-	//offset
-	position.x -= 5;
-	position.y += 5;
+	if(gl_InstanceID == 0){
+		//rotation on himself
+		position *= rotY;
+		//scale element
+		position *= vec3(10, 10, 10);
+		//offset
+		position.x -= 8;
+		position.y += 5;
+	}
+	// the element just in front of camera
+	else if(gl_InstanceID == 1){
+		//scale element
+		position *= vec3(20, 20, 20);
+		//offset
+		position.x += 20;
+		position.y -= 20;
+		position.z += 30;
+	}
+	// far planete
+	else{
+		//scale element
+		position *= vec3(5, 5, 5);
+		//rotation arround origin
+		position.x += 100*gl_InstanceID*cos(Time/gl_InstanceID);
+		position.z += 100*gl_InstanceID*sin(Time/gl_InstanceID);
+	}
 
 	gl_Position = Projection * View * vec4(position, 1.0);
 }
