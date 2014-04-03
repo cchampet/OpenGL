@@ -8,7 +8,7 @@ Content :
   - TD2 : lighting
   - TD3 : shadow mapping
   - TD4 : post-processing
-  - DiveInSpace : a demoscene in real time of an adventure in space and time, inspired by the movie "2001, a space odyssey".
+  - DiveInSpace : a demoscene in real time of an adventure in space and time, inspired by the movie "2001, a space odyssey". If you want to have a better idea of the demoscene, take a look at this video : http://vimeo.com/89742388
 
 Contributors :
   - Clément Champetier
